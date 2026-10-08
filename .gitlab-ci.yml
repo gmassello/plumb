@@ -1,0 +1,14 @@
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
+stages:
+  - verify
+
+baseline:
+  stage: verify
+  image: alpine:3.20
+  script:
+    - test -f LICENSE
+    - grep -q "MIT License" LICENSE
