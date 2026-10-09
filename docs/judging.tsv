@@ -1,0 +1,8 @@
+# criterion	weight	regex — Official Rules §6, "equally-weighted criteria"
+Stage One: uses GitLab Duo Agent Platform	pass/fail	duo agent platform|duo|agents?|flows?|mcp|triggers?
+Technological Implementation	20%	pipeline|\.gitlab-ci|ci/cd|merge request|automat\w*|tests?|scan\w*|deploy\w*
+Design	20%	end[- ]to[- ]end|workflow|full loop|issue to production|from (an )?issue
+Potential Impact	20%	teams?|developers?|on-?call|incidents?|hours saved|minutes|cost|real[- ]world|production
+Innovation/Idea	20%	novel|first|unlike|instead of|new approach|self[- ]heal\w*|autonom\w*
+Presentation	20%	video|demo|youtube|walkthrough
+Google Cloud bonus	+0.2	google cloud|gcp|cloud run|gke|vertex

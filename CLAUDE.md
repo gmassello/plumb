@@ -8,8 +8,9 @@
 - CI/CD pipeline history must stay visible: never rewrite main's history.
 - Never commit secrets. Use CI/CD variables on this project only, never on the parent group.
 
-## Local context
-- `docs/HACKATHON.md` holds the hackathon brief (rules, judging, competition, setup). It is git-ignored and must never be committed.
+## Event context
+- `docs/HACKATHON.md` holds the event brief (dates, prizes, judging criteria, submission requirements); `docs/judging.tsv` lists the criteria.
+- `docs/NOTES.md` holds personal status, setup, competition and strategy. It is git-ignored and must never be committed.
 
 ## Layout (create each folder when first needed)
 - `.gitlab-ci.yml` — pipeline
@@ -25,3 +26,5 @@
 
 ## Deadline
 - Submission closes 2026-10-27 10:00 ART (13:00 UTC). Video < 3 min.
+
+@~/Documents/dotfiles/projects/hackathon/CLAUDE.md
