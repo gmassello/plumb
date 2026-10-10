@@ -44,6 +44,7 @@ Today the workaround is manual: someone notices the red pipeline, re-runs it, gu
 - Web app tested with Playwright, plus unit tests — chosen over an API with pytest and a mobile app because UI flakiness is the most common and visible kind, and it runs on shared runners. settled: user-approved
 - Appointment booking as the app under test — chosen over a shop checkout and dogfooding the product's own dashboard because its flakiness sources occur naturally and read in seconds on video. settled: user-approved
 - Evidence from verified public sources only, no internal data from the author's employer. settled: user-directed
+- The booking app is only the subject under test: no language, theme or register toggles, and no polish beyond what the flakiness sources need. settled: user-directed
 - Deterministic code decides the verdict and the merge; the model diagnoses and writes the fix. settled: user-approved
 
 ## Scope boundaries
@@ -55,6 +56,7 @@ Today the workaround is manual: someone notices the red pipeline, re-runs it, gu
 - Test frameworks other than Playwright (Cypress, Jest, Appium).
 - Infrastructure flakiness (a runner that dies, a registry outage).
 - A dashboard of its own: the record lives in GitLab merge requests, issues and comments.
+- A polished booking product: the app exists to be tested, so it skips the language, theme and register toggles.
 
 ## Assumptions
 - The Pipeline events trigger works in this group (its documentation is inconsistent). If it does not, a mention on the failed pipeline's MR starts the same flow, and the demo loses the "no human" moment.
@@ -64,5 +66,5 @@ Today the workaround is manual: someone notices the red pipeline, re-runs it, gu
 ## Outstanding questions
 - Product name (chosen by the author; the event FAQ asks not to let AI name it) — blocks: none | resolve before planning: no
 - Opt in to Most Environmentally Impactful? — blocks: R8 | resolve before planning: no
-- Does the booking app carry the language, theme and register toggles, or is it only a test subject? — blocks: R10 | resolve before planning: yes
+- ~~Does the booking app carry the language, theme and register toggles, or is it only a test subject?~~ Resolved 2026-10-09: test subject only, no toggles (see Key decisions).
 - Google Cloud account for the deploy — blocks: R6 | resolve before planning: no
