@@ -12,7 +12,7 @@ informed: []
 
 The product must turn a red pipeline caused by a flaky Playwright test into a merged fix or a quarantined test with no human in the loop (BRIEF R1–R5), and it must genuinely use GitLab Duo Agent Platform (R7). A fix that still fails 10% of the time must almost never be merged (QA-02: 0.9^50 ≈ 0.5% with 50 runs).
 
-Platform spikes on 2026-10-09/10 showed that a "Pipeline events → Failed" trigger starts a flow about 3 s after the failure (S1), that the flow job cannot see CI/CD variables (S2), that the flow has no tool to merge or enable auto-merge (S3), and that it can poll its own MR pipeline and read the result (S6).
+Platform spikes on 2026-10-09/10 showed that a "Pipeline events → Failed" trigger starts a flow about 3 s after the failure (S1), that the flow job cannot see CI/CD variables (S2), that the flow has no tool to merge or enable auto-merge (S3), that a CI job in the flow's MR pipeline can merge it with a token (S3b), that the flow can poll its own MR pipeline and read the result (S6), and that it can read a job artifact (S7).
 
 Who decides whether a test is flaky, whether a fix is proven, and whether it is merged: the model or deterministic CI jobs?
 
@@ -37,7 +37,7 @@ Chose option "A", because it is the only one where the verdict and the merge com
 ### Consequences
 
 * Good: correctness of the merge rule (QA-02) does not depend on a prompt; the verdict and proof jobs keep working if the flow is removed.
-* Bad: the merge needs a project access token in a masked CI variable (`MERGE_BOT_TOKEN`), which is one more secret to rotate, and the pipeline gets two extra jobs.
+* Bad: the merge needs the author's personal access token in a masked CI variable (`MERGE_BOT_TOKEN`), so merges are recorded as the author's and the token can do anything the author can; it is one more secret to rotate, and the pipeline gets two extra jobs.
 * To watch: if the flow's polling of its MR pipeline (S6) hits the 900 s timeout in practice, the red-proof path stops being hands-off and this decision needs a CI-side quarantine instead.
 
 ### Confirmation
@@ -64,4 +64,4 @@ Chose option "A", because it is the only one where the verdict and the merge com
 
 ## More Information
 
-`docs/ARCHITECTURE.md` (spikes S1–S7 and contracts). Revisit after spike S3b, which proves the `merge-gate` job can merge with the project token.
+`docs/ARCHITECTURE.md` (spikes S1–S7 and contracts). Spike S3b (2026-10-10) confirmed that `merge-gate` merges with an `api`-only personal access token. Revisit if the author gets the Maintainer role: a project access token would take the merge off the author's identity.
