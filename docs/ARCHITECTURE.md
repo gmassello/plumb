@@ -22,7 +22,7 @@ CI jobs decide (verdict, proof, merge, deploy) and the Duo flow diagnoses and wr
 | C3 | Only human actions fire flow triggers; pipelines started by the flow's service account do not | GitLab Duo Agent Platform triggers documentation; a retry through the API with the author's token did fire it (S1) | assumption for the non-human half: the design does not depend on it, it only explains why `fix-proof` needs S6 |
 | C4 | The flow job does not see CI/CD variables, custom or predefined; context arrives only through the trigger payload | spike S2 (`SPIKE_VISIBLE=unset CI_PROJECT_ID=unset`) | yes |
 | C5 | The flow has no tool that merges or enables auto-merge; `update_merge_request` only offers labels, assignees, reviewers, title, description, squash, target branch and `state_event: close` | spike S3 (issue #3) | yes |
-| C6 | Deploy target is Google Cloud for the bonus | `docs/judging.tsv` "Google Cloud bonus" | yes; account pending → spike S5 |
+| C6 | Deploy target is Google Cloud for the bonus | `docs/judging.tsv` "Google Cloud bonus" | yes; project `showcase-flaky`, spike S5 |
 | C7 | CI variables and secrets live on this project only, never on the parent group | `CLAUDE.md` | yes |
 | C8 | Deadline 2026-10-27 13:00 UTC | `docs/HACKATHON.md` § Timeline | yes |
 
@@ -83,7 +83,7 @@ graph TB
 | `fix-proof` | In the flow MR's pipeline, runs each test the MR changes 50 times; any failure fails the job | CI job, `rules: changes`, `--repeat-each=50` | R4, R8 |
 | `merge-gate` | Last job of the flow MR's pipeline; when every earlier job passed, asks GitLab to merge the MR once its pipeline succeeds | CI job with `MERGE_BOT_TOKEN` (the author's personal access token, scope `api` only, masked, expires 2026-11-09) | R4 |
 | `quarantine` | Keeps quarantined tests running without blocking: the blocking job skips `@quarantine`, a separate job runs them with `allow_failure: true` | Playwright `--grep-invert @quarantine` / `--grep @quarantine` | R5 |
-| `deploy` | On main, deploys the app to Cloud Run, checks that the URL serves the booking page, and posts the run summary | CI job, `gcloud run deploy`, `curl` content check | R6, R8 |
+| `deploy` | On main, deploys the app to Cloud Run, checks that the URL serves the booking page, and posts the run summary | CI job, `google/cloud-sdk:586.0.0-slim`, `gcloud run deploy --source`, `curl` content check; authenticates with Workload Identity Federation (GitLab `id_tokens` → pool `gitlab-pool`, restricted to this GitLab project → service account `gitlab-deploy`), so no Google key is stored anywhere | R6, R8 |
 
 R7's stages map to: plan (issues), create (fix commit), verify (verdict, proof), release (merge-gate), configure (CI and flow YAML in the repo), monitor (live check, GitLab Observability traces of CI), govern (service account identity, token scope, quarantine expiry).
 
@@ -112,6 +112,7 @@ Nothing persistent of its own. Evidence lives in GitLab: CI artifacts (`verdict.
 | `fix-proof` fails | The flow, still polling the MR pipeline, commits the quarantine on the same branch and opens the issue | `head_pipeline.status == failed` read by `gitlab_api_get` | The new pipeline skips the proof (no changed test outside quarantine) and `merge-gate` merges it |
 | The flow times out while polling (timeout 900 s) | The MR stays open, red or green, with no merge | MR open > 30 min with label `flaky` | A human merges or closes; documented as a known limit |
 | `MERGE_BOT_TOKEN` expired, revoked or with extra scopes | `merge-gate` fails (401 expired; 403 `insufficient_scope` was seen with a token that also carried `ai_workflows` and `mcp`) and the MR stays open | Red `merge-gate` job | Replace it with an `api`-only token in the project variables |
+| Workload Identity Federation rejects the token (wrong audience, project id or pool) | `deploy` fails at `gcloud auth login` | Red `deploy` job | Check the `id_tokens` audience against the provider name |
 | Cloud Run deploy or live check fails | Main pipeline red after the merge; it counts as human-started (the merge is the author's), so the flow starts, finds no `flake-verdict` job and stops | Red `deploy` job | Re-run the job by hand |
 | A real regression is classified flaky | Prevented by construction: `flaky` needs at least one pass in 10 re-runs | QA-01 run on seeded regressions | — |
 
@@ -123,7 +124,7 @@ Nothing persistent of its own. Evidence lives in GitLab: CI artifacts (`verdict.
 | S3 | The flow can leave its MR with auto-merge | flow opens MR !1 and calls `update_merge_request` | MR shows merge when pipeline succeeds | failed: the tool has no auto-merge option (C5); the MR itself was created and its pipeline ran | `merge-gate` CI job with a project access token (adopted; see S3b) |
 | S3b | A CI job in the flow's MR pipeline can merge it with a token | `merge-gate` job on MR !2 (branch `fix/s3b-…`, opened by the flow) with `MERGE_BOT_TOKEN` | MR merged by the job | passed: the variable reaches pipelines started by the flow's service account; HTTP 200 and MR merged once its pipeline succeeded. A first token with `ai_workflows` and `mcp` scopes got 403 `insufficient_scope`; an `api`-only one works | the flow comments "proof passed" and a human merges |
 | S4 | `--repeat-each=50` fits a small shared runner | job with the Playwright image and one test | ≤ 10 min | passed: 50 runs in 37 s; job 88 s in total | lower N using the QA-02 numbers |
-| S5 | CI can deploy to Cloud Run | deploy job with a GCP service account key | URL serves the booking page | pending: blocked until a Google Cloud account exists | deploy elsewhere and lose the bonus |
+| S5 | CI can deploy to Cloud Run | `spike-deploy` job: GitLab OIDC token → Workload Identity Federation → `gcloud run deploy --source` of a one-page container, then `curl` | URL serves the page | passed: `gcloud run deploy` took 44 s on the first deploy (job 89 s) and the URL served the page; no service account key was created | deploy elsewhere and lose the bonus |
 | S6 | Someone reacts to a red proof without a human trigger | flow polls its MR with `run_command "sleep 30"` + `gitlab_api_get` | flow reads the final pipeline status | passed: one 30 s poll read the MR pipeline status both green (`success`, S3 run) and red (`failed`, S7 run) | run the 50 repetitions inside a CI job the flow cannot see (no reaction) |
 | S7 | The flow can read `verdict.json` from the failed pipeline's job artifacts | `gitlab_api_get` on the artifact path | JSON parsed in the flow | passed: `gitlab_api_get projects/:id/jobs/:job_id/artifacts/verdict.json` returned the JSON; the job id came from the trigger payload with no extra call | `flake-verdict` prints the JSON as the last log line and the flow reads the job trace |
 
