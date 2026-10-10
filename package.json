@@ -10,6 +10,10 @@
   "scripts": {
     "start": "node src/server.js",
     "test": "node --test tests/unit/slots.test.js",
-    "lint": "node --check src/server.js && node --check src/slots.js && node --check src/public/app.js && node --check tests/unit/slots.test.js"
+    "lint": "node --check src/server.js && node --check src/slots.js && node --check src/public/app.js && node --check tests/unit/slots.test.js",
+    "e2e": "playwright test --grep-invert @quarantine"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.63.0"
   }
 }

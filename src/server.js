@@ -6,7 +6,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import { SEED, listSlots, isValidBooking } from './slots.js';
 
 const CONFIRM_MAX_MS = 800;
-const BOOKING_GAP_MAX_MS = 50;
+const BOOKING_GAP_MAX_MS = 20;
 const PUBLIC = {
   '/': ['index.html', 'text/html; charset=utf-8'],
   '/app.js': ['app.js', 'text/javascript; charset=utf-8'],

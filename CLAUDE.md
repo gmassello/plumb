@@ -24,8 +24,10 @@ Run before calling a task done. The commands live in the README's `## Commands`:
 ```bash
 npm run lint && npm test
 PORT=8080 node src/server.js & python3 cases/small-booking-api/checks.py http://localhost:8080   # 6 passed
+docker run --rm -e CI=1 -v "$PWD":/w -w /w mcr.microsoft.com/playwright:v1.63.0-noble sh -c 'npm ci && npx playwright test --list'   # 5 tests
 ```
-`npm run lint` is `node --check` on every file: there is no ESLint, because the app has no dependencies. Run a single test with `node --test --test-name-pattern="<name>" tests/unit/slots.test.js`. `node --test tests/unit` fails, because it does not walk a directory.
+The e2e suite is flaky on purpose. Its gate is that every spec loads and the five are listed, not that a run is green. Run it in the CI image, not on the laptop: the laptop's time zone breaks `timezone.spec.ts`. To change a pause or a delay, re-measure with `--repeat-each=50` and update the rates in `docs/PLAN.md` U2.
+`npm run lint` is `node --check` on every JavaScript file. There is no ESLint, because the app has no runtime dependencies. Run a single test with `node --test --test-name-pattern="<name>" tests/unit/slots.test.js`. `node --test tests/unit` fails, because it does not walk a directory.
 
 ## Tooling
 - Use `glab` for MRs, pipelines and CI logs (`glab mr create --fill`, `glab ci status`, `glab ci trace <job>`).

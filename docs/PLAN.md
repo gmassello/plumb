@@ -42,7 +42,7 @@ At the end of this plan a real red pipeline on the booking app's e2e suite is tu
 - **Covers:** R10, R5 · F3
 - **Files:** `tests/e2e/booking.spec.ts`, `tests/e2e/timezone.spec.ts`, `tests/e2e/concurrency.spec.ts`, `tests/e2e/shared-state.spec.ts`, `tests/e2e/modal.spec.ts`, `playwright.config.ts`, `.gitlab-ci.yml`
 - **Depends on:** U1
-- **Status:** todo
+- **Status:** done. Measured locally in the CI image, 50 runs each: async wait 16/50 failed (32%, pause 600 ms), concurrency 13/50 (26%, 20 ms check-to-insert gap), animation 12/50 (24%, pause 450 ms); shared state fails on its second repetition; time zone passes in UTC.
 - **Tests:**
   - happy: a commit with no tagged tests → `e2e` runs all five specs and `e2e-quarantine` reports nothing to run.
   - edge: one test carries `@quarantine` → `e2e` skips it, `e2e-quarantine` runs it, and the pipeline stays green when it fails.

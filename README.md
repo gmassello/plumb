@@ -6,13 +6,16 @@ Entry for the [GitLab Transcend "Life After Code" hackathon](https://gitlab-tran
 
 ## Commands
 
-The app under test is a small appointment-booking app: Node 24, no framework, no dependencies. Its HTTP contract is [`cases/small-booking-api/SPEC.md`](cases/small-booking-api/SPEC.md).
+The app under test is a small appointment-booking app: Node 24, no framework, no runtime dependencies. Its HTTP contract is [`cases/small-booking-api/SPEC.md`](cases/small-booking-api/SPEC.md). The end-to-end suite uses `@playwright/test` 1.63.0 and is meant to run in the CI image, whose time zone is UTC: `timezone.spec.ts` fails on a machine set to another zone.
 
 ```bash
-npm install                                                       # install (no dependencies yet)
+npm ci                                                            # install
 npm start                                                         # dev server on $PORT, default 8080
 npm test                                                          # full unit suite
-node --test --test-name-pattern="slot_taken" tests/unit/slots.test.js   # one test
+node --test --test-name-pattern="slot_taken" tests/unit/slots.test.js   # one unit test
+docker run --rm -e CI=1 -v "$PWD":/w -w /w mcr.microsoft.com/playwright:v1.63.0-noble \
+  sh -c 'npm ci && npx playwright test --grep-invert @quarantine'   # e2e suite, as CI runs it
+npx playwright test tests/e2e/booking.spec.ts --repeat-each=50    # one e2e test, repeated to measure its failure rate
 npm run lint                                                      # syntax check (node --check)
                                                                   # type-check: none, plain JavaScript
 gcloud run deploy booking --source . --region us-central1         # deploy (wired into CI in U7)

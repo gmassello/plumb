@@ -5,6 +5,7 @@ workflow:
 
 stages:
   - verify
+  - test
 
 baseline:
   stage: verify
@@ -12,3 +13,32 @@ baseline:
   script:
     - test -f LICENSE
     - grep -q "MIT License" LICENSE
+
+.playwright:
+  stage: test
+  image: mcr.microsoft.com/playwright:v1.63.0-noble
+  before_script:
+    - npm ci --no-audit --no-fund
+
+e2e:
+  extends: .playwright
+  script:
+    - npx playwright test --grep-invert @quarantine
+  artifacts:
+    when: always
+    paths:
+      - test-results/
+      - server.log
+    expire_in: 7 days
+
+e2e-quarantine:
+  extends: .playwright
+  allow_failure: true
+  script:
+    - npx playwright test --grep @quarantine --pass-with-no-tests
+  artifacts:
+    when: always
+    paths:
+      - test-results/
+      - server.log
+    expire_in: 7 days
