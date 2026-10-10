@@ -1,0 +1,135 @@
+# <Product> — Architecture
+
+**Status:** planned (describes the intended design; the README describes what is built) · **Date:** 2026-10-10
+
+## Summary
+CI jobs decide (verdict, proof, merge, deploy) and the Duo flow diagnoses and writes the change; the trade-off is that the merge needs a project token held by CI, because the flow has no tool that merges.
+
+## Drivers
+| ID | Quality attribute | Scenario (source, stimulus, environment, response) | Measure | From |
+|---|---|---|---|---|
+| QA-01 | Functional correctness | A developer pushes a commit that really breaks booking; the e2e job fails; the verdict re-runs the failing test | 0 "flaky" verdicts on 10 of 10 seeded real regressions (a real regression fails 10 of 10 re-runs) | R1, R2 |
+| QA-02 | Functional correctness | The flow proposes a fix for a test that still fails sometimes; the proof runs the fixed test 50 times | A fix that still fails 10% of runs passes the proof with probability 0.9^50 ≈ 0.5%; at 30% failure, ≈ 2e-8 | R4, R5 |
+| QA-03 | Time behaviour | A pipeline fails on an e2e test on a shared small runner | Verdict available ≤ 15 min after the failure | R1 |
+| QA-04 | Time behaviour | A fix MR is merged to main | App deployed and verified live ≤ 10 min after the merge | R6 |
+| QA-05 | Accountability | Any action the flow takes (comment, MR, quarantine, issue) | 100% of actions link back to the pipeline id that started them | R3, R8 |
+
+## Constraints
+| # | Constraint | Source | Confirmed? |
+|---|---|---|---|
+| C1 | Must use GitLab Duo Agent Platform agents or flows reacting to triggers | `docs/HACKATHON.md` § Required tech | yes |
+| C2 | Code is MIT-licensed and new since 2026-10-05 (Path A) | `docs/HACKATHON.md`, `LICENSE` | yes |
+| C3 | Only human actions fire flow triggers; pipelines started by the flow's service account do not | GitLab Duo Agent Platform triggers documentation; a retry through the API with the author's token did fire it (S1) | assumption for the non-human half: the design does not depend on it, it only explains why `fix-proof` needs S6 |
+| C4 | The flow job does not see CI/CD variables, custom or predefined; context arrives only through the trigger payload | spike S2 (`SPIKE_VISIBLE=unset CI_PROJECT_ID=unset`) | yes |
+| C5 | The flow has no tool that merges or enables auto-merge; `update_merge_request` only offers labels, assignees, reviewers, title, description, squash, target branch and `state_event: close` | spike S3 (issue #3) | yes |
+| C6 | Deploy target is Google Cloud for the bonus | `docs/judging.tsv` "Google Cloud bonus" | yes; account pending → spike S5 |
+| C7 | CI variables and secrets live on this project only, never on the parent group | `CLAUDE.md` | yes |
+| C8 | Deadline 2026-10-27 13:00 UTC | `docs/HACKATHON.md` § Timeline | yes |
+
+## Options considered
+| | C — the boring one: CI only | A — CI decides, Duo fixes | B — the flow does everything |
+|---|---|---|---|
+| What it looks like | `retry: 2` plus a script that tags a failing test as quarantined | CI jobs re-run, prove, merge and deploy; the flow reads the verdict, classifies, writes the fix or the quarantine, and waits on the MR pipeline | The flow re-runs the test, proves the fix and decides the merge inside its own job |
+| Scenario it favours | QA-03, QA-04 | QA-01, QA-02, QA-05 | Fewest moving parts in the demo |
+| Scenario it sacrifices | R3, R4, R7: no diagnosis, no fix, no agent | One more token (the merge token) and a longer pipeline | QA-02 and R4: the model would decide the merge, and the flow job has no Playwright browsers |
+| What breaks first | Fails Stage One (no Duo Agent Platform) | The merge token expires or loses its role | A prompt change silently changes the merge rule |
+| Cost to operate | CI minutes only | CI minutes + one flow session per red pipeline | Flow minutes for 60 test runs per failure |
+| **Cost to exit** | Low, but it is not the product | Medium: the verdict and proof jobs are plain CI and survive dropping Duo | High: the logic lives in a prompt |
+
+A is chosen: it is the only option where a deterministic job decides the verdict and the merge (R4) and Duo still does real work (R7). C loses Stage One; B makes the model the judge. settled: user-approved
+
+## Chosen design
+
+### Context
+```mermaid
+graph TB
+  dev[Developer] -->|git push HTTPS| gl[GitLab project]
+  gl -->|Pipeline events: Failed| flow[Duo flow on GitLab Duo Agent Platform]
+  flow -->|commits, MR, notes, issues via GitLab tools| gl
+  gl -->|CI deploy job, gcloud| gcp[Google Cloud Run]
+  maint[Maintainer] -->|reads MR, issue, summary note| gl
+  user[Anyone] -->|HTTPS| gcp
+```
+
+### Containers
+```mermaid
+graph TB
+  subgraph pipeline[GitLab CI pipeline]
+    e2e[e2e: Playwright 1.63, blocking]
+    verdict[flake-verdict: re-runs failed tests 10x, writes verdict.json]
+    proof[fix-proof: changed test --repeat-each=50]
+    gate[merge-gate: merges the flow MR via API]
+    quar[e2e-quarantine: @quarantine tests, allow_failure]
+    deploy[deploy: Cloud Run + live check]
+  end
+  flow[triage-flow: Duo flow, one agent]
+  app[booking-app: web app under test]
+  e2e -->|on failure| verdict
+  verdict -.->|pipeline failed fires trigger| flow
+  flow -->|create_commit + create_merge_request| proof
+  proof --> gate
+  gate -->|merge to main| deploy
+  deploy --> app
+  e2e --> app
+```
+
+### Components
+| Component | Responsibility (one sentence) | Technology | Covers |
+|---|---|---|---|
+| `booking-app` | Small appointment-booking web app whose features carry natural flakiness sources (time zones, concurrent bookings, async confirmation, shared test data, animated modals) | Node web app, container image | R10 |
+| `e2e-suite` | Playwright tests of the booking app, each source of flakiness covered by at least one test | `@playwright/test` 1.63.0, image `mcr.microsoft.com/playwright:v1.63.0-noble` | R10 |
+| `flake-verdict` | When `e2e` fails, re-runs only the failed tests 10 times on the same commit and writes `verdict.json`, then fails the pipeline so the trigger fires | CI job, `when: on_failure`, `--last-failed --repeat-each=10` | R1, R2, R8 |
+| `triage-flow` | Reads the verdict; on `real` comments and stops; on `flaky` classifies the cause, commits a fix on a new branch, opens the MR, waits on its pipeline, and on a red proof replaces the fix with a quarantine and an issue | Duo Agent Platform custom flow (YAML v1, `ambient`), tools `gitlab_api_get`, `create_commit`, `create_merge_request`, `create_issue`, `run_command` | R2, R3, R5, R7 |
+| `fix-proof` | In the flow MR's pipeline, runs each test the MR changes 50 times; any failure fails the job | CI job, `rules: changes`, `--repeat-each=50` | R4, R8 |
+| `merge-gate` | Last job of the flow MR's pipeline; when every earlier job passed, merges the MR through the API | CI job with `MERGE_BOT_TOKEN` (project access token, masked) | R4 |
+| `quarantine` | Keeps quarantined tests running without blocking: the blocking job skips `@quarantine`, a separate job runs them with `allow_failure: true` | Playwright `--grep-invert @quarantine` / `--grep @quarantine` | R5 |
+| `deploy` | On main, deploys the app to Cloud Run, checks that the URL serves the booking page, and posts the run summary | CI job, `gcloud run deploy`, `curl` content check | R6, R8 |
+
+R7's stages map to: plan (issues), create (fix commit), verify (verdict, proof), release (merge-gate), configure (CI and flow YAML in the repo), monitor (live check, GitLab Observability traces of CI), govern (service account identity, token scope, quarantine expiry).
+
+### Contracts
+- **Trigger:** project trigger "Pipeline events → Failed" on `triage-flow`. `context:goal` is the pipeline webhook JSON (`object_attributes.id`, `ref`, `sha`, `status`, `user`, `builds[]`); `context:project_id` is the project id.
+- **`verdict.json`** (artifact of `flake-verdict`, `expire_in: 30 days`):
+  ```json
+  {"pipeline_id": 0, "sha": "", "runs": 10,
+   "tests": [{"file": "tests/e2e/booking.spec.ts", "title": "", "passed": 7, "failed": 3,
+              "verdict": "flaky", "trace": "test-results/.../trace.zip"}]}
+  ```
+  `verdict` is `real` when `passed == 0`, `flaky` when `0 < passed < runs`. Read by the flow with `gitlab_api_get projects/:id/jobs/:job_id/artifacts/verdict.json` (spike S7).
+- **Flow branch:** `fix/<pipeline_id>-<test-slug>`; MR title `Fix flaky test: <title> (pipeline <id>)`; MR description starts with the cause class (`async-wait`, `concurrency`, `time-zone`, `shared-state`, `animation`) and the pass rate.
+- **Quarantine:** the test title gets the tag `@quarantine`; the issue title is `Quarantined: <title>` with labels `flaky`, `quarantine`, the pass rates of verdict and proof, the trace links and `Expires: <date + 14 days>`.
+- **Merge:** `merge-gate` calls `PUT /projects/:id/merge_requests/:iid/merge` with `MERGE_BOT_TOKEN`, only when `$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME =~ /^fix\//`.
+- **Summary:** one note on the original commit with the verdict, the MR, the proof result and the live URL.
+
+### Data
+Nothing persistent of its own. Evidence lives in GitLab: CI artifacts (`verdict.json`, Playwright traces, 30 days), MRs, issues and notes. The booking app keeps its bookings in memory; a restart resets them.
+
+## Failure modes
+| What fails | What happens | How it is detected | How it recovers |
+|---|---|---|---|
+| The model returns nothing (`finish_reason: content_filter`) | The flow session shows "Finished" with no action | No MR or note for a failed pipeline after 15 min; the GraphQL `duoWorkflowEvents` checkpoint shows 0 output tokens | A human retries the failed job, which fires the trigger again |
+| `fix-proof` fails | The flow, still polling the MR pipeline, commits the quarantine on the same branch and opens the issue | `head_pipeline.status == failed` read by `gitlab_api_get` | The new pipeline skips the proof (no changed test outside quarantine) and `merge-gate` merges it |
+| The flow times out while polling (timeout 900 s) | The MR stays open, red or green, with no merge | MR open > 30 min with label `flaky` | A human merges or closes; documented as a known limit |
+| `MERGE_BOT_TOKEN` expired or revoked | `merge-gate` fails with 401 and the MR stays open | Red `merge-gate` job | Rotate the token in the project variables |
+| Cloud Run deploy or live check fails | Main pipeline red after the merge; no flow runs because the pipeline was not started by a human (C3) | Red `deploy` job | Re-run the job by hand |
+| A real regression is classified flaky | Prevented by construction: `flaky` needs at least one pass in 10 re-runs | QA-01 run on seeded regressions | — |
+
+## Spikes
+| ID | Assumption | Experiment | Success criterion | Result | Plan B |
+|---|---|---|---|---|---|
+| S1 | "Pipeline events → Failed" starts a custom flow in this group | flow `spike-hello` with that trigger; branch `spike/platform` with a job that runs `exit 1` | flow session created ≤ 5 min | passed: the flow pipeline starts about 3 s after the failure and its job takes 37–40 s | trigger by mention on the MR |
+| S2 | What the flow job can see | `run_command` prints named variables; `curl` to gitlab.com | variables and network recorded | passed with a finding: CI variables are not visible (C4); network goes out through a proxy on `localhost:3128` and reaches gitlab.com | pass context through the payload (adopted) |
+| S3 | The flow can leave its MR with auto-merge | flow opens MR !1 and calls `update_merge_request` | MR shows merge when pipeline succeeds | failed: the tool has no auto-merge option (C5); the MR itself was created and its pipeline ran | `merge-gate` CI job with a project access token (adopted; see S3b) |
+| S3b | A CI job in the flow's MR pipeline can merge it with a project token | `merge-gate` job on a `fix/` branch with `MERGE_BOT_TOKEN` | MR merged by the job | pending: needs the project access token, created by the author | the flow comments "proof passed" and a human merges; the demo loses the hands-off merge |
+| S4 | `--repeat-each=50` fits a small shared runner | job with the Playwright image and one test | ≤ 10 min | passed: 50 runs in 37 s; job 88 s in total | lower N using the QA-02 numbers |
+| S5 | CI can deploy to Cloud Run | deploy job with a GCP service account key | URL serves the booking page | pending: blocked until a Google Cloud account exists | deploy elsewhere and lose the bonus |
+| S6 | Someone reacts to a red proof without a human trigger | flow polls its MR with `run_command "sleep 30"` + `gitlab_api_get` | flow reads the final pipeline status | passed: one 30 s poll read `head_pipeline.status=success` of the MR pipeline (8 s pipeline) | run the 50 repetitions inside a CI job the flow cannot see (no reaction) |
+| S7 | The flow can read `verdict.json` from the failed pipeline's job artifacts | `gitlab_api_get` on the artifact path | JSON parsed in the flow | pending: first unit of the plan | `flake-verdict` prints the JSON as the last log line and the flow reads the job trace |
+
+## Decisions
+- [ADR-0001](adr/0001-ci-decides-duo-fixes.md) — CI jobs decide verdict, proof and merge; the Duo flow diagnoses and writes the change.
+
+## Out of this design
+- R9 (demo video under 3 min) is presentation work, covered by the record-video step, not by a component.
+- Releasing a test from quarantine automatically, prediction of flakiness, multi-project runs: deferred in the BRIEF.
+- Infrastructure flakiness (runner or registry outages): outside the product.
