@@ -25,11 +25,11 @@ At the end of this plan a real red pipeline on the booking app's e2e suite is tu
 - **Covers:** R10 · F1
 - **Files:** `src/server.js`, `src/slots.js`, `src/public/index.html`, `src/public/app.js`, `src/public/styles.css`, `Dockerfile`, `package.json`, `tests/unit/slots.test.js`, `README.md`, `CLAUDE.md`
 - **Depends on:** —
-- **Status:** todo
+- **Status:** done
 - **Tests:**
   - happy: a visitor books a free 10:00 slot → the server stores it and the confirmation endpoint reports it as booked.
-  - edge: two booking requests for the same slot arrive at once → exactly one succeeds and the other gets a "slot taken" response.
-  - edge: a slot at 23:30 UTC is listed for a visitor in UTC−3 → it is shown on the previous calendar day at 20:30.
+  - edge: a second booking for an already booked slot → it gets a "slot taken" response. Two requests that arrive at once can both succeed: that race is the intended flakiness source (R10), not a defect.
+  - edge: slots are listed for a visitor in UTC−3 → 23:30 UTC shows the same day at 20:30, and 01:30 UTC shows the previous calendar day at 22:30.
   - error: a booking for a slot that does not exist → a 404 with a message, and nothing is stored.
 
 ### U2. End-to-end suite and quarantine lanes

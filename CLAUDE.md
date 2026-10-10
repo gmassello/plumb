@@ -19,6 +19,14 @@
 - `src/` — application code
 - `tests/` — tests
 
+## Gate
+Run before calling a task done. The commands live in the README's `## Commands`:
+```bash
+npm run lint && npm test
+PORT=8080 node src/server.js & python3 cases/small-booking-api/checks.py http://localhost:8080   # 6 passed
+```
+`npm run lint` is `node --check` on every file: there is no ESLint, because the app has no dependencies. Run a single test with `node --test --test-name-pattern="<name>" tests/unit/slots.test.js`. `node --test tests/unit` fails, because it does not walk a directory.
+
 ## Tooling
 - Use `glab` for MRs, pipelines and CI logs (`glab mr create --fill`, `glab ci status`, `glab ci trace <job>`).
 - GitLab MCP server is available as `GitLab`; Observability MCP as `gitlab-o11y`.

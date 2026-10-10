@@ -1,0 +1,15 @@
+{
+  "name": "showcase-booking-app",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "node --test tests/unit/slots.test.js",
+    "lint": "node --check src/server.js && node --check src/slots.js && node --check src/public/app.js && node --check tests/unit/slots.test.js"
+  }
+}

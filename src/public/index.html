@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Book an appointment</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <main>
+    <h1>Book an appointment</h1>
+    <p>Times shown in <strong data-testid="time-zone"></strong>.</p>
+    <label for="name">Your name</label>
+    <input id="name" data-testid="name" autocomplete="name">
+    <ul id="slots" data-testid="slots"></ul>
+    <p id="booking-status" data-testid="booking-status" role="status"></p>
+  </main>
+  <dialog id="confirm" data-testid="confirm-modal">
+    <p>Book <span data-testid="confirm-slot"></span>?</p>
+    <button type="button" id="confirm-book" data-testid="confirm-book" disabled>Book</button>
+    <button type="button" id="confirm-cancel">Cancel</button>
+  </dialog>
+  <script type="module" src="/app.js"></script>
+</body>
+</html>
