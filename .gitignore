@@ -2,3 +2,4 @@ docs/NOTES.md
 .idea/
 .DS_Store
 .env*
+__pycache__/
