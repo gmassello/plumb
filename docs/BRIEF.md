@@ -17,7 +17,7 @@ Today the workaround is manual: someone notices the red pipeline, re-runs it, gu
 
 ## Requirements
 - R1. When a pipeline fails on an e2e test, the developer gets a verdict — flaky or real regression — decided by re-running that test N times on the same commit. [criterion: Technological Implementation]
-- R2. A real regression is never touched: the flow only explains it in a comment on the pipeline's MR or commit. [criterion: Design]
+- R2. A real regression is never touched: the flow only explains it in an issue that links the commit and the pipeline. [criterion: Design]
 - R3. A proven flaky test gets its root cause classified (async wait, concurrency or load order, time or time zone, shared state or test order, animation) with the evidence: pass rate, traces and the failing step. [criterion: Innovation/Idea]
 - R4. The flow proposes a fix and merges it only if N repeated runs of the fixed test pass; the language model never decides the merge. [criterion: Innovation/Idea]
 - R5. When the fix cannot be proven, the test is quarantined: it keeps running without blocking the pipeline, and an issue records the evidence and an expiry date. [criterion: Design]
@@ -29,11 +29,11 @@ Today the workaround is manual: someone notices the red pipeline, re-runs it, gu
 
 ## Key flows
 - F1. **Flaky test fixed** — pipeline fails on an e2e test → the test is re-run N times on the same commit and passes sometimes → the cause is classified from traces and code → a fix is opened as an MR → N repeated runs pass → the fix is merged → the app deploys and is verified live → summary posted. (A1, A2; R1, R3, R4, R6)
-- F2. **Real regression** — pipeline fails on an e2e test → the test fails on every re-run → the flow comments with the evidence and stops. (A1, A2; R1, R2)
+- F2. **Real regression** — pipeline fails on an e2e test → the test fails on every re-run → the flow opens an issue with the evidence and stops. (A1, A2; R1, R2)
 - F3. **Fix not proven** — same as F1 until the proof → the repeated runs still fail sometimes → the test moves to quarantine and an issue records the evidence and the expiry date → the pipeline is green again. (A2, A3; R1, R3, R5)
 
 ## Acceptance examples
-- AE1. **Covers R1, R2.** Given a commit that breaks the booking confirmation, when the pipeline fails and the test fails on all N re-runs, then the flow posts a "real regression" comment with the run evidence and opens no MR.
+- AE1. **Covers R1, R2.** Given a commit that breaks the booking confirmation, when the pipeline fails and the test fails on all N re-runs, then the flow opens a "Real regression" issue with the run evidence and opens no MR.
 - AE2. **Covers R1, R3, R4.** Given a test that clicks "Book" before the async confirmation arrives and fails about 3 times in 10, when the pipeline fails, then the flow classifies it as async wait, opens an MR that waits for the confirmation, and merges it only after N repeated runs pass.
 - AE3. **Covers R5.** Given a flaky test whose proposed fix still fails at least once in N runs, when the proof ends, then the test runs in a non-blocking job and an issue holds the pass rate, the traces and an expiry date.
 - AE4. **Covers R6.** Given a merged fix, when the deploy job finishes, then the public app URL serves the booking page and the summary links the pipeline, the MR and the URL.
@@ -46,6 +46,7 @@ Today the workaround is manual: someone notices the red pipeline, re-runs it, gu
 - Evidence from verified public sources only, no internal data from the author's employer. settled: user-directed
 - The booking app is only the subject under test: no language, theme or register toggles, and no polish beyond what the flakiness sources need. settled: user-directed
 - Deterministic code decides the verdict and the merge; the model diagnoses and writes the fix. settled: user-approved
+- A real regression is reported in an issue, not a commit comment — the flow toolset has no tool that writes a note on a commit (GitLab `tools_registry.py` only reads commit comments), and an issue keeps the action with Duo instead of a CI token. settled: user-approved (2026-10-11)
 
 ## Scope boundaries
 ### Deferred

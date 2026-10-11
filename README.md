@@ -28,6 +28,8 @@ python3 cases/small-booking-api/checks.py http://localhost:8080   # contract che
 
 Every merge request and every push to `main` runs the pipeline defined in [`.gitlab-ci.yml`](.gitlab-ci.yml). See [CI/CD → Pipelines](https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43144947/showcase/-/pipelines) for the history.
 
+When `e2e` fails on `main`, `flake-verdict` re-runs the failed tests 10 times and writes `verdict.json`. The red pipeline starts the Duo triage flow defined in [`.gitlab/duo/triage-flow.yml`](.gitlab/duo/triage-flow.yml). If a test fails on every re-run, the flow opens a "Real regression" issue. If it passes some of the time, the flow fixes the flaky test on a `fix/<pipeline>-<test>` branch and opens a merge request.
+
 ## License
 
 [MIT](LICENSE)

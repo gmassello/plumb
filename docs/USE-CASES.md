@@ -6,7 +6,7 @@ Source: `docs/BRIEF.md` (R, F, AE) and `docs/PLAN.md` (priorities from its Cut l
 | Feature | IDs | Actor | Priority | Criterion | In the video |
 |---|---|---|---|---|---|
 | Verdict by re-running the failed test N times | R1 · F1, F2 | A2 | must (U3) | Technological Implementation | yes: the 7/10 or 0/10 count |
-| A real regression is only explained, never touched | R2 · F2 | A2 | must (U4) | Design | yes: the note on the commit |
+| A real regression is only explained, never touched | R2 · F2 | A2 | must (U4) | Design | yes: the "Real regression" issue |
 | Root cause classified with evidence | R3 · F1, F3 | A2 | must (U4) | Innovation/Idea | yes: the cause in the MR description |
 | Fix merged only after N proof runs pass | R4 · F1 | A2 | must (U6) | Innovation/Idea | yes: the 50/50 proof and the merge |
 | Quarantine with an issue and an expiry date | R5 · F3 | A2, A3 | must (U2, U5) | Design | yes: the issue |
@@ -37,10 +37,10 @@ Initial state: main green. The developer pushes `def5678`, which removes the con
 
 1. `e2e` fails on `async confirmation`.
 2. `flake-verdict` re-runs it 10 times: 0 pass, and `verdict.json` says `real`.
-3. The flow reads the verdict, posts one note on `def5678` with "real regression" and the 0/10 evidence, and stops.
+3. The flow reads the verdict, opens the issue `Real regression: async confirmation (pipeline <id>)` with `def5678`, the 0/10 evidence and the pipeline link, and stops.
 
 Acceptance criteria:
-- **AE1.** "Given a commit that breaks the booking confirmation, when the pipeline fails and the test fails on all N re-runs, then the flow posts a "real regression" comment with the run evidence and opens no MR." — How it is proven: `verdict.json` (passed 0 of 10), the commit's notes read through the API (one note), and the project's MR list with no MR whose source branch starts with `fix/<pipeline_id>`.
+- **AE1.** "Given a commit that breaks the booking confirmation, when the pipeline fails and the test fails on all N re-runs, then the flow opens a "Real regression" issue with the run evidence and opens no MR." — How it is proven: `verdict.json` (passed 0 of 10), the issue read through the API (label `regression`, title naming the pipeline), and the project's MR list with no MR whose source branch starts with `fix/<pipeline_id>`.
 
 ### F3. Fix not proven — R1, R3, R5
 Initial state: main green. The `two visitors book the same slot` test fails about 3 times in 10 because the server checks and inserts with an awaited gap (PLAN U1).
@@ -70,7 +70,7 @@ A subset of the delivery with no event-provided suite: F2 and F3 on the same app
 
 | Layer | Criterion | How it is proven |
 |---|---|---|
-| Product | A real regression gets one explanatory note and no MR (AE1) | `verdict.json` 0/10, commit notes and the MR list through the API |
+| Product | A real regression gets one explanatory issue and no MR (AE1) | `verdict.json` 0/10, the issue and the MR list through the API |
 | Product | An unprovable fix ends in quarantine with an issue and a green main (AE3) | red `fix-proof` log, the issue through the API, the next main pipeline status |
 | System | No human acted between the push and the outcome | the only human event in the pipeline and MR history is the initial push |
 | System | Each path finishes within 15 min of the failure (QA-03) | pipeline and flow session timestamps, recorded in `docs/RESULTS.md` (U8) |

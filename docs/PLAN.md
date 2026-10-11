@@ -65,14 +65,14 @@ At the end of this plan a real red pipeline on the booking app's e2e suite is tu
 ### U4. Triage flow: detect and fix
 - **Goal:** the Duo flow, started by "Pipeline events → Failed", reads `verdict.json` through the API.
   - No `flake-verdict` job: it stops without acting.
-  - `real`: it posts one note on the commit with the run evidence and opens nothing.
+  - `real`: it opens one "Real regression" issue with the run evidence and opens no branch or MR.
   - `flaky`: it classifies the cause (async wait, concurrency, time zone, shared state, animation) from the trace and the code, commits a fix on `fix/<pipeline_id>-<slug>`, and opens an MR whose description starts with the cause and the pass rate.
 - **Covers:** R2, R3, R7 · F1, F2
 - **Files:** `.gitlab/duo/triage-flow.yml`, `docs/ARCHITECTURE.md` (contract updates only if they change)
 - **Depends on:** U3
 - **Status:** todo
 - **Tests:**
-  - happy: a real regression → one note on the commit with "real regression" and the 0/10 evidence, and no MR or branch. Covers AE1.
+  - happy: a real regression → one issue "Real regression: <title> (pipeline <id>)" with the 0/10 evidence, and no MR or branch. Covers AE1.
   - happy: the async confirmation test fails 3 in 10 → MR titled with the test, cause `async-wait`, fix waiting for the confirmation. Covers AE2.
   - edge: a red pipeline with no `flake-verdict` job (a failed deploy) → the flow session ends with no note, MR or issue.
   - error: the model returns nothing (`content_filter`) → no action is taken, and the checkpoint shows `finish_reason` for diagnosis.

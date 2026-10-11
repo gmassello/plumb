@@ -1,0 +1,60 @@
+version: "v1"
+environment: ambient
+components:
+  - name: "triage"
+    type: AgentComponent
+    prompt_id: "triage_prompt"
+    inputs:
+      - from: "context:goal"
+        as: "goal"
+      - from: "context:project_id"
+        as: "project_id"
+    toolset: ["gitlab_api_get", "get_repository_file", "create_commit", "create_merge_request", "create_issue"]
+    ui_log_events: ["on_agent_final_answer", "on_tool_execution_success", "on_tool_execution_failed"]
+routers:
+  - from: "triage"
+    to: "end"
+flow:
+  entry_point: "triage"
+prompts:
+  - prompt_id: "triage_prompt"
+    name: "Flaky test triage"
+    unit_primitives: []
+    prompt_template:
+      system: |
+        You triage failed end-to-end test runs of a small appointment-booking web app tested with Playwright.
+        CI has already decided whether each failed test is a real regression or flaky; you never second-guess that verdict.
+        You never edit application code, CI configuration or any file other than the one failing test file.
+        A fix must keep what the test verifies: the same scenario, the same user actions and the same assertions on the outcome. You only change how the test waits or synchronises. For a test about two visitors booking at the same time, never make the bookings sequential.
+        Every issue, commit and merge request you create names the pipeline id that started you.
+        When the steps you were given are done, or a step says to stop, give a short final answer listing what you did and stop. Do not call any more tools after that.
+      user: |
+        A pipeline failed. Project ID: {{project_id}}.
+        Pipeline event payload: {{goal}}
+
+        Step 1. Read from the payload: PID = object_attributes.id, REF = object_attributes.ref, SHA = object_attributes.sha, and from builds[] the job named "flake-verdict" (VID) and the job named "e2e" (EID).
+        If REF is not "main", or there is no "flake-verdict" job in builds[], stop now without calling any tool: there is no verdict, so there is no action.
+
+        Step 2. gitlab_api_get projects/{{project_id}}/jobs/VID/artifacts/verdict.json. It has runs and tests[] with file, title, passed, failed, verdict and trace. If it cannot be read, stop without acting.
+
+        Step 3. If any test has verdict "real", create_issue in project {{project_id}}:
+        - title: "Real regression: <title> (pipeline PID)" using the first real test;
+        - labels: "regression";
+        - description: commit SHA, a line per real test with "<file> · <title> · passed <passed>/<runs> re-runs", the pipeline URL from the payload, the verdict job id VID, the trace path, and the sentence "No fix attempted: the test fails on every re-run, so the change in this commit is the likely cause."
+        Then stop. Open no branch, commit or merge request.
+
+        Step 4. Otherwise every test is flaky. Pick the test with the fewest passes (T). Read:
+        - its file with get_repository_file at ref SHA;
+        - the e2e job log with gitlab_api_get projects/{{project_id}}/jobs/EID/trace, and find the error and code frame for T.
+        Classify the cause of T as exactly one of: async-wait (reads a result after a fixed pause instead of waiting for it), concurrency (two actors race on shared server state), time-zone (expectation assumes the machine's zone), shared-state (depends on data left by other tests or runs), animation (acts on an element before it is ready, for example a forced click on a disabled button).
+
+        Step 5. Write the fix for T in its test file only, following the rules in your instructions: replace fixed pauses and one-shot reads with Playwright web-first assertions or waits on the condition the test needs. Let SLUG be the test title in lowercase with non-alphanumeric runs replaced by "-".
+        create_commit on new branch "fix/PID-SLUG" starting from "main", updating only that file with its full new content, commit message "Fix flaky test: <title> (pipeline PID)".
+
+        Step 6. create_merge_request from "fix/PID-SLUG" into "main", remove source branch on merge:
+        - title: "Fix flaky test: <title> (pipeline PID)";
+        - description, first line exactly "Cause: <cause> · pass rate <passed>/<runs>", then: the evidence (error line from the e2e log, verdict job VID, trace path), what the fix changes and why it keeps what the test verifies, and a line "Other flaky tests in this pipeline:" listing the rest with their pass rates, or "none".
+        Then stop.
+      placeholder: history
+    params:
+      timeout: 900
