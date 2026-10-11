@@ -70,7 +70,7 @@ At the end of this plan a real red pipeline on the booking app's e2e suite is tu
 - **Covers:** R2, R3, R7 · F1, F2
 - **Files:** `.gitlab/duo/triage-flow.yml`, `docs/ARCHITECTURE.md` (contract updates only if they change)
 - **Depends on:** U3
-- **Status:** todo
+- **Status:** done. Flow `triage-flow` (AI Catalog item 1017874, v1.1.0, same as `.gitlab/duo/triage-flow.yml`), enabled with Pipeline events → Failed. AE2: pipeline 2936535281, async confirmation 8/10 `flaky` → MR !3 `Cause: async-wait · pass rate 8/10`, diff only in `tests/e2e/booking.spec.ts`. AE1: pipeline 2936546100 (deliberate regression d4dd783, reverted in 2f47272), 0/10 `real` → issue #6, no MR. A job log cannot be read with `gitlab_api_get`, so `verdict.json` carries `error` and `error_at`.
 - **Tests:**
   - happy: a real regression → one issue "Real regression: <title> (pipeline <id>)" with the 0/10 evidence, and no MR or branch. Covers AE1.
   - happy: the async confirmation test fails 3 in 10 → MR titled with the test, cause `async-wait`, fix waiting for the confirmation. Covers AE2.
