@@ -16,6 +16,8 @@ node --test --test-name-pattern="slot_taken" tests/unit/slots.test.js   # one un
 docker run --rm -e CI=1 -v "$PWD":/w -w /w mcr.microsoft.com/playwright:v1.63.0-noble \
   sh -c 'npm ci && npx playwright test --grep-invert @quarantine'   # e2e suite, as CI runs it
 npx playwright test tests/e2e/booking.spec.ts --repeat-each=50    # one e2e test, repeated to measure its failure rate
+node tools/verdict.mjs --failed e2e-report.json                   # failed tests of the last e2e run, as file:line
+node tools/verdict.mjs report.json verdict.json                   # verdict from a --repeat-each=10 JSON report
 npm run lint                                                      # syntax check (node --check)
                                                                   # type-check: none, plain JavaScript
 gcloud run deploy booking --source . --region us-central1         # deploy (wired into CI in U7)

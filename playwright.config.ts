@@ -5,6 +5,7 @@ export default defineConfig({
   workers: 1,
   fullyParallel: false,
   retries: 0,
+  reporter: [['list'], ['json', { outputFile: 'e2e-report.json' }]],
   use: {
     baseURL: 'http://localhost:8080',
     trace: 'retain-on-failure',

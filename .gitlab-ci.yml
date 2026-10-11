@@ -6,6 +6,7 @@ workflow:
 stages:
   - verify
   - test
+  - verdict
 
 baseline:
   stage: verify
@@ -22,12 +23,14 @@ baseline:
 
 e2e:
   extends: .playwright
+  needs: []
   script:
     - npx playwright test --grep-invert @quarantine
   artifacts:
     when: always
     paths:
       - test-results/
+      - e2e-report.json
       - server.log
     expire_in: 7 days
 
@@ -42,3 +45,28 @@ e2e-quarantine:
       - test-results/
       - server.log
     expire_in: 7 days
+
+flake-verdict:
+  extends: .playwright
+  stage: verdict
+  needs: [e2e]
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: on_failure
+  script:
+    - 'test -f e2e-report.json || { echo "flake-verdict: e2e-report.json is missing from the e2e artifact, so the failed tests are unknown. No verdict written."; exit 1; }'
+    - failed=$(node tools/verdict.mjs --failed e2e-report.json)
+    - echo "Re-running 10 times each:$failed"
+    - PLAYWRIGHT_JSON_OUTPUT_FILE=report.json npx playwright test $failed --repeat-each=10 --reporter=json > /dev/null || true
+    - node tools/verdict.mjs report.json verdict.json
+    - cat verdict.json
+    - echo "Verdict written. Failing on purpose so the pipeline stays red and the Pipeline Failed trigger fires."
+    - exit 1
+  artifacts:
+    when: always
+    paths:
+      - verdict.json
+      - report.json
+      - test-results/
+      - server.log
+    expire_in: 30 days

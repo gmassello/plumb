@@ -7,3 +7,6 @@ node_modules/
 test-results/
 playwright-report/
 server.log
+e2e-report.json
+report.json
+verdict.json

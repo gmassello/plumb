@@ -78,7 +78,7 @@ graph TB
 |---|---|---|---|
 | `booking-app` | Small appointment-booking web app whose features carry natural flakiness sources (time zones, concurrent bookings, async confirmation, shared test data, animated modals) | Node web app, container image | R10 |
 | `e2e-suite` | Playwright tests of the booking app, each source of flakiness covered by at least one test | `@playwright/test` 1.63.0, image `mcr.microsoft.com/playwright:v1.63.0-noble` | R10 |
-| `flake-verdict` | When `e2e` fails, re-runs only the failed tests 10 times on the same commit and writes `verdict.json`, then fails the pipeline so the trigger fires | CI job, `when: on_failure`, `--last-failed --repeat-each=10` | R1, R2, R8 |
+| `flake-verdict` | When `e2e` fails, re-runs only the failed tests 10 times on the same commit and writes `verdict.json`, then fails the pipeline so the trigger fires | CI job, `needs: [e2e]` + `when: on_failure`; reads the failed tests' `file:line` from `e2e`'s JSON report and runs them with `--repeat-each=10`. Not `--last-failed`: combined with `--repeat-each` it runs each test once (measured 2026-10-10) | R1, R2, R8 |
 | `triage-flow` | Reads the verdict; on `real` comments and stops; on `flaky` classifies the cause, commits a fix on a new branch, opens the MR, waits on its pipeline, and on a red proof replaces the fix with a quarantine and an issue | Duo Agent Platform custom flow (YAML v1, `ambient`), tools `gitlab_api_get`, `create_commit`, `create_merge_request`, `create_issue`, `run_command` | R2, R3, R5, R7 |
 | `fix-proof` | In the flow MR's pipeline, runs each test the MR changes 50 times; any failure fails the job | CI job, `rules: changes`, `--repeat-each=50` | R4, R8 |
 | `merge-gate` | Last job of the flow MR's pipeline; when every earlier job passed, asks GitLab to merge the MR once its pipeline succeeds | CI job with `MERGE_BOT_TOKEN` (the author's personal access token, scope `api` only, masked, expires 2026-11-09) | R4 |
@@ -95,7 +95,7 @@ R7's stages map to: plan (issues), create (fix commit), verify (verdict, proof),
    "tests": [{"file": "tests/e2e/booking.spec.ts", "title": "", "passed": 7, "failed": 3,
               "verdict": "flaky", "trace": "test-results/.../trace.zip"}]}
   ```
-  `verdict` is `real` when `passed == 0`, `flaky` when `0 < passed < runs`. Read by the flow with `gitlab_api_get projects/:id/jobs/:job_id/artifacts/verdict.json` (spike S7).
+  `verdict` is `real` when `passed == 0` and `flaky` otherwise. A test that passes all `runs` re-runs is still `flaky`, because it already failed in `e2e`. Read by the flow with `gitlab_api_get projects/:id/jobs/:job_id/artifacts/verdict.json` (spike S7).
 - **Flow branch:** `fix/<pipeline_id>-<test-slug>`; MR title `Fix flaky test: <title> (pipeline <id>)`; MR description starts with the cause class (`async-wait`, `concurrency`, `time-zone`, `shared-state`, `animation`) and the pass rate.
 - **Quarantine:** the test title gets the tag `@quarantine`; the issue title is `Quarantined: <title>` with labels `flaky`, `quarantine`, the pass rates of verdict and proof, the trace links and `Expires: <date + 14 days>`.
 - **Merge:** `merge-gate` calls `PUT /projects/:id/merge_requests/:iid/merge?auto_merge=true` with `MERGE_BOT_TOKEN`, only when `$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME =~ /^fix\//`. The merge is recorded as the author's, so the main pipeline that follows counts as human-started.

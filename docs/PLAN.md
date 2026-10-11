@@ -33,7 +33,7 @@ At the end of this plan a real red pipeline on the booking app's e2e suite is tu
   - error: a booking for a slot that does not exist → a 404 with a message, and nothing is stored.
 
 ### U2. End-to-end suite and quarantine lanes
-- **Goal:** one Playwright test per flakiness source exercises the app in the browser, with `workers: 1` so order and shared state stay predictable. The blocking `e2e` job runs every test not tagged `@quarantine`. A separate `e2e-quarantine` job runs only the tagged ones and never blocks the pipeline. `e2e` keeps `test-results/.last-run.json` as an artifact for U3.
+- **Goal:** one Playwright test per flakiness source exercises the app in the browser, with `workers: 1` so order and shared state stay predictable. The blocking `e2e` job runs every test not tagged `@quarantine`. A separate `e2e-quarantine` job runs only the tagged ones and never blocks the pipeline. `e2e` keeps its JSON report (`e2e-report.json`) as an artifact for U3.
   - **Rate-flaky (10–40% target):**
     - async wait reads the status after a fixed pause instead of a waiting assertion; this is the AE2 demo source;
     - concurrency is the AE3 quarantine source, because a test-side fix only narrows the server race;
@@ -54,13 +54,13 @@ At the end of this plan a real red pipeline on the booking app's e2e suite is tu
 - **Covers:** R1, R8 · F1, F2
 - **Files:** `.gitlab-ci.yml`, `tools/verdict.mjs`, `tests/unit/verdict.test.js`
 - **Depends on:** U2
-- **Status:** todo
+- **Status:** done. Checked locally in the CI image: a flaky run gave concurrency 7/10 and animation 5/10 (`flaky`); a server that never confirms gave async 0/10 (`real`); a missing report and a green report write no verdict.
 - **Tests:**
   - happy: a test that fails about 3 times in 10 → `verdict.json` lists it with `passed` between 1 and 9 and `verdict: flaky`.
   - happy: a commit that breaks the booking confirmation → the test fails 10 of 10 and `verdict.json` says `real`. Covers AE1.
   - edge: two tests fail in the same run → both appear in `verdict.json`, each with its own counts.
   - error: Playwright writes no report (crash before tests) → `verdict.json` is not produced and the job log says why.
-  - error: `test-results/.last-run.json` is missing from the `e2e` artifact → the job fails loudly. It must not run because `--last-failed` without that file silently re-runs the whole suite.
+  - error: `e2e-report.json` is missing from the `e2e` artifact → the job fails loudly and writes no verdict. The failed tests come from that report as `file:line`, not from `--last-failed`: without `.last-run.json` that flag silently re-runs the whole suite, and with `--repeat-each` it runs each test once.
 
 ### U4. Triage flow: detect and fix
 - **Goal:** the Duo flow, started by "Pipeline events → Failed", reads `verdict.json` through the API.
