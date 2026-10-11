@@ -96,7 +96,7 @@ export function createApp() {
   );
 }
 
-if (import.meta.url === pathToFileURL(process.argv[1]).href) {
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   const port = Number(process.env.PORT || 8080);
   createApp().listen(port, () => console.log(`booking app listening on ${port}`));
 }

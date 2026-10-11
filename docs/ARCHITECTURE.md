@@ -94,9 +94,11 @@ R7's stages map to: plan (issues), create (fix commit), verify (verdict, proof),
   ```json
   {"pipeline_id": 0, "sha": "", "runs": 10,
    "tests": [{"file": "tests/e2e/booking.spec.ts", "title": "", "passed": 7, "failed": 3,
-              "verdict": "flaky", "trace": "test-results/.../trace.zip"}]}
+              "verdict": "flaky", "trace": "test-results/.../trace.zip",
+              "error": "Expected: \"Booking confirmed\" Received: \"Booking pending\"",
+              "error_at": "tests/e2e/booking.spec.ts:13"}]}
   ```
-  `verdict` is `real` when `passed == 0` and `flaky` otherwise. A test that passes all `runs` re-runs is still `flaky`, because it already failed in `e2e`. Read by the flow with `gitlab_api_get projects/:id/jobs/:job_id/artifacts/verdict.json` (spike S7).
+  `verdict` is `real` when `passed == 0` and `flaky` otherwise. A test that passes all `runs` re-runs is still `flaky`, because it already failed in `e2e`. `error` is the first failure message without ANSI codes, cut to 500 characters, and `error_at` is its `file:line`: the flow classifies from them because `gitlab_api_get` cannot read a job log, which is plain text and comes back empty (U4 run, MR !3). Read by the flow with `gitlab_api_get projects/:id/jobs/:job_id/artifacts/verdict.json` (spike S7).
 - **Real regression issue:** title `Real regression: <title> (pipeline <id>)`, label `regression`, with the commit, `passed 0/<runs>` per real test, the pipeline URL, the verdict job id and the trace path; no branch or MR.
 - **Flow branch:** `fix/<pipeline_id>-<test-slug>`; MR title `Fix flaky test: <title> (pipeline <id>)`; MR description starts with the cause class (`async-wait`, `concurrency`, `time-zone`, `shared-state`, `animation`) and the pass rate.
 - **Quarantine:** the test title gets the tag `@quarantine`; the issue title is `Quarantined: <title>` with labels `flaky`, `quarantine`, the pass rates of verdict and proof, the trace links and `Expires: <date + 14 days>`.

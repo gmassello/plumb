@@ -8,6 +8,10 @@ import { buildVerdict, failedLocations } from '../../tools/verdict.mjs';
 
 const ROOT = '/w';
 const OPTS = { pipelineId: 42, sha: 'abc1234', runs: 10, root: ROOT };
+const ERROR = {
+  message: 'Error: \u001b[2mexpect(\u001b[22mreceived).toBe(expected)\n\nExpected: "Booking \u001b[7mconfirmed\u001b[27m"\nReceived: "Booking pending"',
+  location: { file: `${ROOT}/tests/e2e/booking.spec.ts`, line: 13, column: 66 },
+};
 
 function spec(file, title, status) {
   const attachments = status === 'passed' ? [] : [{ name: 'trace', path: `${ROOT}/test-results/${title}/trace.zip` }];
@@ -15,7 +19,7 @@ function spec(file, title, status) {
     title,
     file,
     line: 7,
-    tests: [{ status: status === 'passed' ? 'expected' : 'unexpected', results: [{ status, attachments }] }],
+    tests: [{ status: status === 'passed' ? 'expected' : 'unexpected', results: [{ status, attachments, ...(status === 'passed' ? {} : { error: ERROR }) }] }],
   };
 }
 
@@ -44,6 +48,8 @@ test('a test that passes 7 of 10 re-runs is flaky', () => {
     passed: 7,
     failed: 3,
     trace: 'test-results/async confirmation/trace.zip',
+    error: 'Error: expect(received).toBe(expected)\n\nExpected: "Booking confirmed"\nReceived: "Booking pending"',
+    error_at: 'tests/e2e/booking.spec.ts:13',
     verdict: 'flaky',
   }]);
 });

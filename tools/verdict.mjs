@@ -30,7 +30,7 @@ export function buildVerdict(report, { pipelineId, sha, runs, root }) {
     for (const spec of specsOf(suite)) {
       const file = relative(root, join(testDir, spec.file));
       const key = `${file}\u0000${spec.title}`;
-      const entry = byTest.get(key) ?? { file, title: spec.title, passed: 0, failed: 0, trace: null };
+      const entry = byTest.get(key) ?? { file, title: spec.title, passed: 0, failed: 0, trace: null, error: null, error_at: null };
       for (const test of spec.tests) {
         for (const result of test.results) {
           if (result.status === 'passed') {
@@ -40,6 +40,11 @@ export function buildVerdict(report, { pipelineId, sha, runs, root }) {
           entry.failed += 1;
           const trace = result.attachments?.find((a) => a.name === 'trace' && a.path);
           if (!entry.trace && trace) entry.trace = relative(root, trace.path);
+          if (!entry.error && result.error?.message) {
+            entry.error = result.error.message.replace(/\u001b\[[0-9;]*m/g, '').slice(0, 500);
+            const at = result.error.location;
+            if (at) entry.error_at = `${relative(root, at.file)}:${at.line}`;
+          }
         }
       }
       byTest.set(key, entry);
@@ -95,4 +100,4 @@ function main(args) {
   }
 }
 
-if (import.meta.url === pathToFileURL(process.argv[1]).href) process.exitCode = main(process.argv.slice(2));
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) process.exitCode = main(process.argv.slice(2));

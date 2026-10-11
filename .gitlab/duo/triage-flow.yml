@@ -32,10 +32,10 @@ prompts:
         A pipeline failed. Project ID: {{project_id}}.
         Pipeline event payload: {{goal}}
 
-        Step 1. Read from the payload: PID = object_attributes.id, REF = object_attributes.ref, SHA = object_attributes.sha, and from builds[] the job named "flake-verdict" (VID) and the job named "e2e" (EID).
+        Step 1. Read from the payload: PID = object_attributes.id, REF = object_attributes.ref, SHA = object_attributes.sha, and from builds[] the job named "flake-verdict" (VID).
         If REF is not "main", or there is no "flake-verdict" job in builds[], stop now without calling any tool: there is no verdict, so there is no action.
 
-        Step 2. gitlab_api_get projects/{{project_id}}/jobs/VID/artifacts/verdict.json. It has runs and tests[] with file, title, passed, failed, verdict and trace. If it cannot be read, stop without acting.
+        Step 2. gitlab_api_get projects/{{project_id}}/jobs/VID/artifacts/verdict.json. It has runs and tests[] with file, title, passed, failed, verdict, trace, error (the first failure message) and error_at (file:line of the failing step). If it cannot be read, stop without acting.
 
         Step 3. If any test has verdict "real", create_issue in project {{project_id}}:
         - title: "Real regression: <title> (pipeline PID)" using the first real test;
@@ -43,9 +43,7 @@ prompts:
         - description: commit SHA, a line per real test with "<file> · <title> · passed <passed>/<runs> re-runs", the pipeline URL from the payload, the verdict job id VID, the trace path, and the sentence "No fix attempted: the test fails on every re-run, so the change in this commit is the likely cause."
         Then stop. Open no branch, commit or merge request.
 
-        Step 4. Otherwise every test is flaky. Pick the test with the fewest passes (T). Read:
-        - its file with get_repository_file at ref SHA;
-        - the e2e job log with gitlab_api_get projects/{{project_id}}/jobs/EID/trace, and find the error and code frame for T.
+        Step 4. Otherwise every test is flaky. Pick the test with the fewest passes (T). Read its file with get_repository_file at ref SHA, and look at the line in error_at together with the error message.
         Classify the cause of T as exactly one of: async-wait (reads a result after a fixed pause instead of waiting for it), concurrency (two actors race on shared server state), time-zone (expectation assumes the machine's zone), shared-state (depends on data left by other tests or runs), animation (acts on an element before it is ready, for example a forced click on a disabled button).
 
         Step 5. Write the fix for T in its test file only, following the rules in your instructions: replace fixed pauses and one-shot reads with Playwright web-first assertions or waits on the condition the test needs. Let SLUG be the test title in lowercase with non-alphanumeric runs replaced by "-".
@@ -53,7 +51,7 @@ prompts:
 
         Step 6. create_merge_request from "fix/PID-SLUG" into "main", remove source branch on merge:
         - title: "Fix flaky test: <title> (pipeline PID)";
-        - description, first line exactly "Cause: <cause> · pass rate <passed>/<runs>", then: the evidence (error line from the e2e log, verdict job VID, trace path), what the fix changes and why it keeps what the test verifies, and a line "Other flaky tests in this pipeline:" listing the rest with their pass rates, or "none".
+        - description, first line exactly "Cause: <cause> · pass rate <passed>/<runs>", then: the evidence (the error message and error_at from verdict.json, verdict job VID, trace path), what the fix changes and why it keeps what the test verifies, and a line "Other flaky tests in this pipeline:" listing the rest with their pass rates, or "none".
         Then stop.
       placeholder: history
     params:
