@@ -55,7 +55,7 @@ async function book(req, res) {
   if (takenIds().has(body.slotId)) return fail(res, 409, 'slot_taken', `Slot ${body.slotId} is already booked`);
   await sleep(Math.random() * BOOKING_GAP_MAX_MS);
   const id = randomUUID();
-  const booking = { id, slotId: body.slotId, name: body.name.trim(), confirmAt: Date.now() + Math.random() * CONFIRM_MAX_MS };
+  const booking = { id, slotId: body.slotId, name: body.name.trim(), confirmAt: Infinity };
   bookings.set(id, booking);
   send(res, 201, { ...view(booking), status: 'pending' });
 }
