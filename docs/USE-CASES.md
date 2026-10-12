@@ -14,7 +14,11 @@ Source: `docs/BRIEF.md` (R, F, AE) and `docs/PLAN.md` (priorities from its Cut l
 | Built on Duo Agent Platform flows triggered by pipeline events | R7 · F1, F2, F3 | A2 | must (U4); drift check should (U10) | Stage One | yes: the flow session |
 | Every published number comes from recorded runs | R8 | A3 | must (U3); results table should (U8) | Potential Impact | yes: numbers on screen |
 | Full loop shown in under 3 minutes | R9 · F1 | A1 | must (U9) | Presentation | is the video |
-| Booking app with natural flakiness sources | R10 | A1 | must (U1, U2) | Technological Implementation | yes: the app under test |
+| Booking app with natural flakiness sources and one natural case of each deterministic cause | R10 · F4, F5, F6 | A1 | must (U1, U2, U11) | Technological Implementation | yes: the app under test |
+| An always-failing test gets its cause classified from the commit | R11 · F4, F5, F6 | A2 | must (U12) | Innovation/Idea | yes: the cause in the MR or issue |
+| An intended app change gets a test-update MR that waits for a human | R12 · F4 | A2, A3 | must (U6, U12) | Design | yes: the `update/` MR with `needs-review` |
+| An environment change gets an issue that names the setting | R13 · F5 | A2 | must (U12) | Potential Impact | no: backed by runs in `docs/RESULTS.md` |
+| Missing test data gets a proven fix where the test sets up its data | R14 · F6 | A2 | must (U6, U12) | Technological Implementation | no: backed by runs in `docs/RESULTS.md` |
 
 ## Happy paths
 
@@ -54,10 +58,42 @@ Initial state: main green. The `two visitors book the same slot` test fails abou
 Acceptance criteria:
 - **AE3.** "Given a flaky test whose proposed fix still fails at least once in N runs, when the proof ends, then the test runs in a non-blocking job and an issue holds the pass rate, the traces and an expiry date." — How it is proven: the red `fix-proof` log, the issue read through the API (labels `flaky`, `quarantine`, an `Expires:` line), and the next main pipeline with `e2e` green and `e2e-quarantine` running the tagged test.
 
+### F4. App changed on purpose — R1, R11, R12
+Initial state: main green; `booking.spec.ts` clicks the confirmation modal's button by its accessible name, "Book" (U11 switches it from the test id to the role and name, as Playwright recommends; with a test id the rename would break nothing). The developer pushes the U11 scenario commit `Redesign: rename Book to Confirm booking`, which only changes the button label in `src/public/index.html`.
+
+1. `e2e` fails on `async confirmation`, which clicks "Book"; `flake-verdict` re-runs it 10 times: 0 pass, `real`.
+2. The flow reads the commit message and diff: the label changed on purpose, so the cause is `app-change`.
+3. It commits the test update (click "Confirm booking") on `update/<pipeline_id>-async-confirmation` and opens the MR `Update test after app change: async confirmation (pipeline <id>)` with label `needs-review`, quoting the commit message and the changed line.
+4. `fix-proof` runs the updated spec 50 times: 50 pass. `merge-gate` does not run; the MR waits for a human.
+
+Acceptance criteria:
+- **AE5.** "Given a commit titled as a redesign that renames the "Book" button to "Confirm booking", when the e2e test that clicks "Book" fails on all N re-runs, then the flow classifies it as an app change, opens an MR on an `update/` branch that clicks "Confirm booking", and the MR is not merged without a human." — How it is proven: `verdict.json` 0/10 `real`, the MR read through the API (source branch `update/…`, label `needs-review`, diff only in `tests/e2e/`), the `fix-proof` log (50 passed), the pipeline job list with no `merge-gate`, and the MR still `opened`.
+
+### F5. Environment changed — R1, R11, R13
+Initial state: main green; `timezone.spec.ts` expects slot s3 at `2026-11-03 01:30`, which holds in UTC. The developer pushes the U11 scenario commit that sets `TZ: America/Argentina/Buenos_Aires` for the `e2e` job in `.gitlab-ci.yml`, touching no app or test file.
+
+1. `e2e` fails on `late slot is listed with its local date and time`; `flake-verdict` re-runs it 10 times: 0 pass, `real`.
+2. The flow reads the diff: only `.gitlab-ci.yml` changed, so the cause is `environment`.
+3. It opens the issue `Environment change broke: late slot is listed with its local date and time (pipeline <id>)` with label `environment`, naming `TZ` and the failing step, and stops.
+
+Acceptance criteria:
+- **AE6.** "Given a commit that only sets `TZ` for the e2e job, when the time-zone test fails on all N re-runs, then the flow opens an issue labelled `environment` that names `TZ` and opens no MR." — How it is proven: `verdict.json` 0/10 `real`, the issue read through the API (label `environment`, body naming `TZ`), and the MR list with no MR whose source branch starts with `fix/<pipeline_id>` or `update/<pipeline_id>`.
+
+### F6. Test data missing — R1, R11, R14, R4
+Initial state: main green; `shared-state.spec.ts` books slot s3 without resetting or creating it. The developer pushes the U11 scenario commit that changes the seed so s3 is already booked.
+
+1. `e2e` fails on `a visitor books the last slot of the day`; `flake-verdict` re-runs it 10 times: 0 pass, `real`.
+2. The flow reads the diff: the seed changed and the test reads data it never sets up, so the cause is `test-data`.
+3. It commits a test that resets the app and books a slot it knows is free on `fix/<pipeline_id>-a-visitor-books-the-last-slot-of-the-day`, and opens the MR starting with "Cause: test-data · pass rate 0/10".
+4. `fix-proof` runs it 50 times: 50 pass. `merge-gate` merges the MR.
+
+Acceptance criteria:
+- **AE7.** "Given a test that books a slot it never frees and a seed with no slot left, when it fails on all N re-runs, then the flow opens an MR where the test resets or creates its own data, and it is merged only after N repeated runs pass." — How it is proven: `verdict.json` 0/10 `real`, the MR description (cause `test-data`), the `fix-proof` log (50 passed), and the `merge-gate` log (HTTP 200) with the MR `merged`.
+
 ## Test cases
 
 ### Small — booking app HTTP contract
-A self-owned, trivial case: the app's API that the e2e suite drives and the deploy job checks live. If it fails, the app, the container or the deploy is broken, not the flakiness logic. Units: U1 (local), U7 (live). Spec and checks: `cases/small-booking-api/`.
+A self-owned, trivial case: the app's API that the e2e suite drives and the deploy job checks live. If it fails, the app, the container or the deploy is broken, not the flakiness logic. Units: U1 (local), U7 (live). Spec and checks: `cases/small-booking-api/`. Run it on main without a U11 scenario commit applied: the test-data scenario changes the seed on purpose and breaks `check_slot_taken` while it is in place.
 
 | Layer | Criterion | How it is proven |
 |---|---|---|
@@ -65,14 +101,18 @@ A self-owned, trivial case: the app's API that the e2e suite drives and the depl
 | Product | The same contract holds on the deployed app | `python3 cases/small-booking-api/checks.py <Cloud Run URL>` exits 0 |
 | System | The checks were written from the spec and catch a broken server | Validated 2026-10-10: a reference server passed 6/6, and a mutant accepting a taken slot failed `check_slot_taken` |
 
-### Medium — the two paths that do not end in a fix
-A subset of the delivery with no event-provided suite: F2 and F3 on the same app and the same configuration. They are re-run at closing time as evidence that nothing was tuned by hand for the large case. Units: U3, U4, U5, U6.
+### Medium — the paths beyond the flaky fix
+A subset of the delivery with no event-provided suite: F2 to F6 on the same app and the same configuration, driven by the U11 scenario commits. They are re-run at closing time as evidence that nothing was tuned by hand for the large case. Units: U3, U4, U5, U6, U11, U12.
 
 | Layer | Criterion | How it is proven |
 |---|---|---|
 | Product | A real regression gets one explanatory issue and no MR (AE1) | `verdict.json` 0/10, the issue and the MR list through the API |
 | Product | An unprovable fix ends in quarantine with an issue and a green main (AE3) | red `fix-proof` log, the issue through the API, the next main pipeline status |
-| System | No human acted between the push and the outcome | the only human event in the pipeline and MR history is the initial push |
+| Product | An intended app change gets an `update/` MR that is proven and left open (AE5) | the MR through the API: branch, label `needs-review`, `fix-proof` 50/50, state `opened` |
+| Product | An environment change gets an `environment` issue and no MR (AE6) | `verdict.json` 0/10, the issue and the MR list through the API |
+| Product | Missing test data gets a `test-data` fix that is proven and merged (AE7) | MR description, `fix-proof` 50/50, `merge-gate` HTTP 200 |
+| System | The flow picks the right cause for always-failing tests (QA-06) | 4 scenarios × 3 runs listed in `docs/RESULTS.md` (U8): right cause in ≥ 11 of 12, and 0 merges from `update/` |
+| System | No human acted between the push and the outcome | the only human event in the pipeline and MR history is the initial push, except the review an `update/` MR waits for |
 | System | Each path finishes within 15 min of the failure (QA-03) | pipeline and flow session timestamps, recorded in `docs/RESULTS.md` (U8) |
 
 ### Large — the full delivery
@@ -84,6 +124,7 @@ F1 end to end on a real pipeline, timed and filmed: red push to live URL with th
 | Product | Every number shown in the video exists in recorded runs (R8) | each figure in the video and README traced to a row of `docs/RESULTS.md` |
 | System | Zero human actions after the push; the merge comes from `merge-gate`, never from the flow | MR "merged by" plus the `merge-gate` log; the flow YAML has no merge tool |
 | System | The loop from red to live fits the demo | step timestamps in `docs/DEMO.md`; the edited video is under 3 minutes |
+| Product | The video's short cut shows an outdated test sent to a human instead of reported as a regression (F4) | the `update/` MR link in `docs/DEMO.md` and its timestamp in the cut |
 
 ## Out of scope
 - Releasing a test from quarantine automatically once someone else fixes it.

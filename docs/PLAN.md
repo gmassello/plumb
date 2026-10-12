@@ -148,7 +148,7 @@ At the end of this plan a real red pipeline on the booking app's e2e suite is tu
 
 ### U11. Deterministic failure scenarios
 - **Goal:** three reproducible scenario commits make an e2e test fail on every run for a reason that is not a bug, so each deterministic cause occurs naturally:
-  - **app change:** a redesign renames the "Book" button to "Confirm booking";
+  - **app change:** a redesign renames the "Book" button to "Confirm booking"; `booking.spec.ts` first switches to clicking it by role and name, because with a test id the rename breaks nothing;
   - **environment:** a change to `.gitlab-ci.yml` sets `TZ` for the `e2e` job;
   - **test data:** a seed change leaves no free slot for the test that assumes one.
 
