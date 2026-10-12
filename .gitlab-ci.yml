@@ -84,6 +84,7 @@ fix-proof:
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME =~ /^(fix|update)\//
   script:
+    - 'test -n "$CI_MERGE_REQUEST_DIFF_BASE_SHA" || { echo "fix-proof: GitLab gave no diff base, so this merge request has no changes (for example a duplicate of a fix already merged). Nothing to prove."; exit 1; }'
     - specs=$(git diff --name-only "$CI_MERGE_REQUEST_DIFF_BASE_SHA" HEAD -- 'tests/e2e/*.spec.ts' | tr '\n' ' ')
     - 'test -n "$specs" || { echo "fix-proof: this merge request changes no e2e spec, so there is nothing to prove."; exit 1; }'
     - echo "Proving 50 times each:" $specs

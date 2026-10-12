@@ -93,7 +93,7 @@ At the end of this plan a real red pipeline on the booking app's e2e suite is tu
 - **Covers:** R4, R12, R14 · F1, F4, F6
 - **Files:** `.gitlab-ci.yml`
 - **Depends on:** U2, U3
-- **Status:** todo
+- **Status:** done. MR !3 (async, pipeline 2937036659): `fix-proof` 50 passed in 1.8 min, `proof.json` 50/50, `merge-gate` HTTP 200, merged while `e2e` failed on other flaky tests (non-blocking on `fix/`). MR !4 (modal, pipeline 2937045114): 50 passed, merged. MR !5, a duplicate fix the flow opened from a pipeline that failed before !3 merged, ended with an empty diff and a red `fix-proof`, so it never merged.
 - **Tests:**
   - happy: a fixed test passes 50 of 50 → `merge-gate` returns HTTP 200 and the MR is merged into main. Covers AE2.
   - edge: an MR from an `update/` branch → `fix-proof` runs and `merge-gate` does not; the MR stays open for a human.
@@ -179,6 +179,7 @@ At the end of this plan a real red pipeline on the booking app's e2e suite is tu
   - edge: the U4 regression (a server that never confirms) → still the "Real regression" issue and no MR.
   - edge: QA-06, the 4 scenarios run 3 times each → the right cause in at least 11 of 12 runs.
   - error: the commit diff cannot be read → a "Real regression" issue that says the diff was unavailable.
+  - edge: an open flow MR already fixes the same test (seen with MR !5, opened while !3 was still in proof) → the flow opens nothing and says which MR covers it.
 
 ## Cut line
 | Tier | Units | Why |
