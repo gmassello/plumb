@@ -89,14 +89,16 @@ At the end of this plan a real red pipeline on the booking app's e2e suite is tu
   - error: the MR pipeline does not finish within the flow's 900 s timeout → the MR stays open with label `flaky`, which is a documented limit.
 
 ### U6. Fix proof and merge gate
-- **Goal:** in an MR from a `fix/` branch, `fix-proof` runs every changed e2e test 50 times and fails on any failure. `merge-gate`, the last job, merges the MR through the API with `MERGE_BOT_TOKEN` once every earlier job passed.
-- **Covers:** R4 · F1
+- **Goal:** in an MR from a `fix/` or `update/` branch, `fix-proof` runs every e2e spec the MR changes (from `git diff` against the MR base, skipping `@quarantine`) 50 times, fails on any failure, and leaves `proof.json` built with `tools/verdict.mjs`. `merge-gate`, the last job, runs only on `fix/` and merges the MR through the API with `MERGE_BOT_TOKEN` once the proof passed, so an `update/` MR never merges itself. On those branches `e2e` does not block: the flakiness of other tests must not hold back a proven fix.
+- **Covers:** R4, R12, R14 · F1, F4, F6
 - **Files:** `.gitlab-ci.yml`
-- **Depends on:** U2
+- **Depends on:** U2, U3
 - **Status:** todo
 - **Tests:**
   - happy: a fixed test passes 50 of 50 → `merge-gate` returns HTTP 200 and the MR is merged into main. Covers AE2.
-  - edge: an MR from a branch that is not `fix/` → neither `fix-proof` nor `merge-gate` runs.
+  - edge: an MR from an `update/` branch → `fix-proof` runs and `merge-gate` does not; the MR stays open for a human.
+  - edge: an MR from a branch that is neither `fix/` nor `update/` → neither `fix-proof` nor `merge-gate` runs.
+  - edge: a `fix/` MR that changes no e2e spec → `fix-proof` fails and says there is nothing to prove.
   - error: the token is expired or has extra scopes → `merge-gate` fails with the HTTP code in the log and the MR stays open.
 
 ### U7. Deploy to Cloud Run and summary
@@ -118,14 +120,15 @@ At the end of this plan a real red pipeline on the booking app's e2e suite is tu
 - **Status:** todo
 - **Tests:**
   - happy: three recorded pipelines → the table lists each with its pipeline id, test, pass rate and verdict.
+  - edge: the QA-06 classification runs (4 scenarios × 3) → the table lists each run with the expected and the chosen cause, and the total right.
   - edge: a pipeline whose artifacts expired → it is listed as "artifacts expired", not dropped.
   - error: the API token is missing → the script exits non-zero and writes nothing.
 
 ### U9. Demo rehearsal
 - **Goal:** the full loop runs on a real pipeline, from a red push through verdict, MR, proof, merge, deploy and summary, and it is timed. A demo script records which commit to push, how many re-runs it took to get red, and the timestamps of each step, so the video shows the loop in under 3 minutes.
-- **Covers:** R9 · F1, F2, F3
+- **Covers:** R9 · F1, F2, F3, F4
 - **Files:** `docs/DEMO.md`
-- **Depends on:** U4, U5, U6, U7
+- **Depends on:** U4, U5, U6, U7, U12
 - **Status:** todo
 - **Tests:**
   - happy: a push of the demo commit → the loop reaches the live URL and every step's timestamp is recorded in `docs/DEMO.md`.
@@ -143,12 +146,46 @@ At the end of this plan a real red pipeline on the booking app's e2e suite is tu
   - edge: only trailing whitespace differs → the job passes.
   - error: the published flow has a duplicated YAML block (an editor paste mishap) → the job fails and prints the diff.
 
+### U11. Deterministic failure scenarios
+- **Goal:** three reproducible scenario commits make an e2e test fail on every run for a reason that is not a bug, so each deterministic cause occurs naturally:
+  - **app change:** a redesign renames the "Book" button to "Confirm booking";
+  - **environment:** a change to `.gitlab-ci.yml` sets `TZ` for the `e2e` job;
+  - **test data:** a seed change leaves no free slot for the test that assumes one.
+
+  Each lives as a patch in `demo/scenarios/` with a short script that applies it as a normal commit and reverts it.
+- **Covers:** R10 · F4, F5, F6
+- **Files:** `demo/scenarios/app-change.patch`, `demo/scenarios/environment.patch`, `demo/scenarios/test-data.patch`, `demo/scenarios/apply.sh`, `README.md`
+- **Depends on:** U2, U3
+- **Status:** todo
+- **Tests:**
+  - happy: each scenario commit on main → `flake-verdict` writes `verdict.json` with the expected test at 0/10, `real`.
+  - edge: reverting a scenario commit → the next main pipeline has no `real` verdict for that test.
+  - error: a patch no longer applies to main → the script stops before committing and names the patch.
+
+### U12. Flow classifies always-failing tests
+- **Goal:** on a `real` verdict the flow reads the commit message and diff (spike S8 first) and classifies the cause:
+  - **regression** → the "Real regression" issue, as today;
+  - **app change** → an MR on `update/<pipeline>-<slug>` with label `needs-review` that updates the test and quotes the commit message and changed lines;
+  - **environment** → an `environment` issue naming the setting the commit changed;
+  - **test data** → an MR on `fix/` with cause `test-data`, where the test sets up its own data.
+- **Covers:** R11, R12, R13, R14 · F4, F5, F6
+- **Files:** `.gitlab/duo/triage-flow.yml`, `docs/ARCHITECTURE.md` (S8 result)
+- **Depends on:** U4, U6, U11
+- **Status:** todo
+- **Tests:**
+  - happy: the app-change scenario → an `update/` MR with `needs-review` that clicks "Confirm booking", proven by `fix-proof` and not merged. Covers AE5.
+  - happy: the environment scenario → an `environment` issue that names `TZ`, and no MR. Covers AE6.
+  - happy: the test-data scenario → a `fix/` MR with cause `test-data`, merged by `merge-gate` after 50 of 50. Covers AE7.
+  - edge: the U4 regression (a server that never confirms) → still the "Real regression" issue and no MR.
+  - edge: QA-06, the 4 scenarios run 3 times each → the right cause in at least 11 of 12 runs.
+  - error: the commit diff cannot be read → a "Real regression" issue that says the diff was unavailable.
+
 ## Cut line
 | Tier | Units | Why |
 |---|---|---|
-| must | U1, U2, U3, U4, U5, U6, U7, U9 | the full loop from red pipeline to live app is the demo; without any of these there is nothing to film |
+| must | U1, U2, U3, U4, U5, U6, U7, U9, U11, U12 | the full loop from red pipeline to live app is the demo, and telling an outdated test from a regression is the idea's edge (Innovation/Idea); without any of these there is nothing to film |
 | should | U8, U10 | U8 backs every published number (Potential Impact); U10 strengthens the govern stage (Stage One, Technological Implementation) |
-| cut | — | nothing is cut: 398 hours leave room for the must units plus video, submission text and deck |
+| cut | — | nothing is cut: 370 hours at the 2026-10-11 revision leave room for the must units plus video, submission text and deck |
 
 ## Risks
 - The webServer runs once per `playwright test` invocation, so all 10 or 50 repetitions share one in-memory state. This is inferred from Playwright's source, not documented — likelihood: media — mitigation: the first U2 test checks it with a hit counter, and tests that need clean state call the reset endpoint — fallback: restart the server per repetition batch.
@@ -156,6 +193,8 @@ At the end of this plan a real red pipeline on the booking app's e2e suite is tu
 - The model refuses or returns nothing (`content_filter`) — likelihood: media — mitigation: narrow prompts that name exact fields and never ask to dump environment or secrets — fallback: re-run the failed job, which fires the trigger again.
 - The flow times out while polling the MR pipeline — likelihood: baja — mitigation: the 50-run proof measured 88 s against the flow's 900 s timeout — fallback: the MR stays open with a label, documented as a known limit.
 - Duo credits or CI minutes run out before the demo — likelihood: media — mitigation: run the full loop only in U9 and keep other checks to single jobs — fallback: none; the loop needs both.
+- The flow picks the wrong cause for an always-failing test — likelihood: media — mitigation: QA-06 measures it on 12 runs, and an app-change MR never merges itself (`merge-gate` skips `update/`) — fallback: the reviewer closes the MR; a wrong `test-data` merge shows up again on the next red pipeline.
+- Six flows do not fit a video under 3 minutes — likelihood: alta — mitigation: the video shows F1 end to end plus a short cut of F4; F2, F3, F5 and F6 are backed by runs in `docs/RESULTS.md` — fallback: drop the F4 cut.
 - `MERGE_BOT_TOKEN` expires on 2026-11-09 — likelihood: baja — mitigation: the date is after judging — fallback: replace it with a new `api`-only token.
 
 ## Out of scope
