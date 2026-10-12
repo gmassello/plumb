@@ -1,0 +1,13 @@
+diff --git a/src/server.js b/src/server.js
+index 199bae7..c86b5ca 100644
+--- a/src/server.js
++++ b/src/server.js
+@@ -24,7 +24,7 @@ function view(b) {
+     id: b.id,
+     slotId: b.slotId,
+     name: b.name,
+-    status: Date.now() >= b.confirmAt ? 'confirmed' : 'pending',
++    status: b.confirmed ? 'confirmed' : 'pending',
+   };
+ }
+ 

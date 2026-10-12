@@ -26,13 +26,14 @@ python3 cases/small-booking-api/checks.py http://localhost:8080   # contract che
 
 ## Failure scenarios
 
-Three patches in [`demo/scenarios/`](demo/scenarios/) make one e2e test fail on every run for a reason that is not a bug, so the triage flow can be exercised on each cause:
+Four patches in [`demo/scenarios/`](demo/scenarios/) make one e2e test fail on every run, three for a reason that is not a bug and one for a real regression, so the triage flow can be exercised on each cause:
 
 | Scenario | What the commit does | Test that fails |
 |---|---|---|
 | `app-change` | renames the "Book" button to "Confirm booking" | `async confirmation` |
 | `environment` | sets `TZ: America/Argentina/Buenos_Aires` for every CI job | `late slot is listed with its local date and time` |
 | `test-data` | seeds a sample booking on slot s3 that the reset keeps | `a visitor books the last slot of the day` |
+| `regression` | stops bookings from ever reaching "confirmed", under a commit message that does not say so | `async confirmation` |
 
 ```bash
 demo/scenarios/apply.sh app-change     # commits the scenario on a clean tree, then push it
@@ -44,7 +45,7 @@ Undo it after the run with a revert commit; main's history is never rewritten.
 
 Every merge request and every push to `main` runs the pipeline defined in [`.gitlab-ci.yml`](.gitlab-ci.yml). See [CI/CD → Pipelines](https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43144947/showcase/-/pipelines) for the history.
 
-When `e2e` fails on `main`, `flake-verdict` re-runs the failed tests 10 times and writes `verdict.json`. The red pipeline starts the Duo triage flow defined in [`.gitlab/duo/triage-flow.yml`](.gitlab/duo/triage-flow.yml). If a test fails on every re-run, the flow opens a "Real regression" issue. If it passes some of the time, the flow fixes the flaky test on a `fix/<pipeline>-<test>` branch and opens a merge request. In that merge request `fix-proof` runs the changed test 50 times, and `merge-gate` merges it only if all 50 pass. A merge request that adapts a test to an intended app change (`update/` branch) is proven the same way but always waits for a human.
+When `e2e` fails on `main`, `flake-verdict` re-runs the failed tests 10 times and writes `verdict.json`. The red pipeline starts the Duo triage flow defined in [`.gitlab/duo/triage-flow.yml`](.gitlab/duo/triage-flow.yml). If a test fails on every re-run, the flow reads the commit message and diff and picks a cause: a regression gets a "Real regression" issue, an intended app change gets an `update/` merge request labelled `needs-review`, a CI configuration change gets an `environment` issue, and missing test data gets a `fix/` merge request. Before creating anything it looks for an open issue or merge request with the same title, so a re-run never opens a duplicate. If it passes some of the time, the flow fixes the flaky test on a `fix/<pipeline>-<test>` branch and opens a merge request. In that merge request `fix-proof` runs the changed test 50 times, and `merge-gate` merges it only if all 50 pass. A merge request that adapts a test to an intended app change (`update/` branch) is proven the same way but always waits for a human.
 
 ## License
 

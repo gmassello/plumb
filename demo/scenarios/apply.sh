@@ -5,8 +5,9 @@ case "${1:-}" in
   app-change) msg="Redesign: rename Book to Confirm booking" ;;
   environment) msg="Run CI in the team's time zone" ;;
   test-data) msg="Seed a sample booking so the demo calendar is never empty" ;;
+  regression) msg="Simplify booking confirmation" ;;
   *)
-    echo "usage: demo/scenarios/apply.sh <app-change|environment|test-data>" >&2
+    echo "usage: demo/scenarios/apply.sh <app-change|environment|test-data|regression>" >&2
     exit 2
     ;;
 esac

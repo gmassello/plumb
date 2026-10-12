@@ -25,9 +25,10 @@ prompts:
         You triage failed end-to-end test runs of a small appointment-booking web app tested with Playwright.
         CI has already decided whether each failed test is a real regression or flaky; you never second-guess that verdict.
         You never edit application code, CI configuration or any file other than the one failing test file.
+        A test that fails on every re-run may still be a test problem: you classify its cause from the commit, and only a regression means the app is broken.
         A fix must keep what the test verifies: the same scenario, the same user actions and the same assertions on the outcome. You only change how the test waits or synchronises. For a test about two visitors booking at the same time, never make the bookings sequential.
         Every issue, commit and merge request you create names the pipeline id that started you.
-        When the steps you were given are done, or a step says to stop, give a short final answer listing what you did and stop. Do not call any more tools after that.
+        When a step says "Final answer", or a step says to stop, give the short final answer described at the end of the steps and stop. Do not call any more tools after that.
       user: |
         A pipeline failed. Project ID: {{project_id}}.
         Pipeline event payload: {{goal}}
@@ -37,22 +38,51 @@ prompts:
 
         Step 2. gitlab_api_get projects/{{project_id}}/jobs/VID/artifacts/verdict.json. It has runs and tests[] with file, title, passed, failed, verdict, trace, error (the first failure message) and error_at (file:line of the failing step). If it cannot be read, stop without acting.
 
-        Step 3. If any test has verdict "real", create_issue in project {{project_id}}:
-        - title: "Real regression: <title> (pipeline PID)" using the first real test;
+        Step 3. If any test has verdict "real", let T be the first real test and go to Step 4. Otherwise go to Step 9.
+
+        Step 4. Read the commit: gitlab_api_get projects/{{project_id}}/repository/commits/SHA (message) and gitlab_api_get projects/{{project_id}}/repository/commits/SHA/diff (new_path and diff per changed file). Read T's file with get_repository_file at ref SHA.
+        If the diff cannot be read, CAUSE = regression and the issue in Step 6 adds the sentence "The commit diff was unavailable, so the cause was not classified."
+        Otherwise classify CAUSE as exactly one of:
+        - app-change: the diff changes the text, label, route or behaviour that T looks for or asserts, and the commit message presents it as intended (a redesign, a rename, a new flow).
+        - environment: the diff only changes CI configuration, environment variables, tool versions or dependency files, and no application or test code.
+        - test-data: T relies on data it never creates or resets, and the diff changes the seed or shared records that data comes from.
+        - regression: anything else, including any change to application behaviour the commit message does not announce.
+
+        Step 5. Duplicate check. Let TITLE be the title Step 6, 7 or 8 would use for CAUSE without the " (pipeline PID)" suffix. gitlab_api_get projects/{{project_id}}/issues?state=opened&in=title&search=<TITLE url-encoded> and projects/{{project_id}}/merge_requests?state=opened&in=title&search=<TITLE url-encoded>. If any result's title starts with TITLE, create nothing and give the final answer "Cause: <CAUSE> · already covered by <#iid or !iid>".
+        Otherwise go to Step 6 for regression, 7 for app-change, 8 for environment, and 10 for test-data.
+
+        Step 6. regression: create_issue in project {{project_id}}:
+        - title: "Real regression: <T title> (pipeline PID)";
         - labels: "regression";
-        - description: commit SHA, a line per real test with "<file> · <title> · passed <passed>/<runs> re-runs", the pipeline URL from the payload, the verdict job id VID, the trace path, and the sentence "No fix attempted: the test fails on every re-run, so the change in this commit is the likely cause."
-        Then stop. Open no branch, commit or merge request.
+        - description: commit SHA and message title, a line per real test with "<file> · <title> · passed <passed>/<runs> re-runs", the error and error_at of T, the pipeline URL from the payload, the verdict job id VID, the trace path, and the sentence "No fix attempted: the test fails on every re-run, so the change in this commit is the likely cause."
+        Open no branch, commit or merge request. Final answer.
 
-        Step 4. Otherwise every test is flaky. Pick the test with the fewest passes (T). Read its file with get_repository_file at ref SHA, and look at the line in error_at together with the error message.
-        Classify the cause of T as exactly one of: async-wait (reads a result after a fixed pause instead of waiting for it), concurrency (two actors race on shared server state), time-zone (expectation assumes the machine's zone), shared-state (depends on data left by other tests or runs), animation (acts on an element before it is ready, for example a forced click on a disabled button).
+        Step 7. app-change: update T's test file so it follows the new behaviour shown in the diff (for example the new button label), keeping the scenario, the user actions and what the assertions check. Let SLUG be T's title in lowercase with non-alphanumeric runs replaced by "-".
+        create_commit on new branch "update/PID-SLUG" starting from "main", updating only that file with its full new content, commit message "Update test after app change: <T title> (pipeline PID)".
+        create_merge_request from "update/PID-SLUG" into "main", labels "needs-review", remove source branch on merge:
+        - title: "Update test after app change: <T title> (pipeline PID)";
+        - description, first line exactly "Cause: app-change · pass rate <passed>/<runs>", then "A human must confirm the app change was intended before merging; this branch is never merged automatically.", the commit SHA and its full message quoted, the changed diff lines that made you decide quoted in a code block, the error and error_at of T, and what the test update changes.
+        Final answer.
 
-        Step 5. Write the fix for T in its test file only, following the rules in your instructions: replace fixed pauses and one-shot reads with Playwright web-first assertions or waits on the condition the test needs. Let SLUG be the test title in lowercase with non-alphanumeric runs replaced by "-".
-        create_commit on new branch "fix/PID-SLUG" starting from "main", updating only that file with its full new content, commit message "Fix flaky test: <title> (pipeline PID)".
+        Step 8. environment: create_issue in project {{project_id}}:
+        - title: "Environment change broke: <T title> (pipeline PID)";
+        - labels: "environment";
+        - description: commit SHA and message title, the configuration file and the setting the commit changed (quote the diff lines), the failing step (error_at) and the error of T, the pipeline URL, the verdict job id VID, and the sentence "No code was changed: decide whether the setting or the test is wrong."
+        Open no branch, commit or merge request. Final answer.
 
-        Step 6. create_merge_request from "fix/PID-SLUG" into "main", remove source branch on merge:
-        - title: "Fix flaky test: <title> (pipeline PID)";
-        - description, first line exactly "Cause: <cause> · pass rate <passed>/<runs>", then: the evidence (the error message and error_at from verdict.json, verdict job VID, trace path), what the fix changes and why it keeps what the test verifies, and a line "Other flaky tests in this pipeline:" listing the rest with their pass rates, or "none".
-        Then stop.
+        Step 9. Every test is flaky. Pick the test with the fewest passes (T). Read its file with get_repository_file at ref SHA, and look at the line in error_at together with the error message.
+        Classify CAUSE as exactly one of: async-wait (reads a result after a fixed pause instead of waiting for it), concurrency (two actors race on shared server state), time-zone (expectation assumes the machine's zone), shared-state (depends on data left by other tests or runs), animation (acts on an element before it is ready, for example a forced click on a disabled button).
+        Run the duplicate check of Step 5 with TITLE "Fix flaky test: <T title>". Then go to Step 10.
+
+        Step 10. Write the fix for T in its test file only, following the rules in your instructions. For a flaky cause, replace fixed pauses and one-shot reads with Playwright web-first assertions or waits on the condition the test needs. For test-data, make the test reset the app and use data it knows is available after the reset (read the seed in the diff), keeping the user actions and assertions. Let SLUG be T's title in lowercase with non-alphanumeric runs replaced by "-".
+        create_commit on new branch "fix/PID-SLUG" starting from "main", updating only that file with its full new content, commit message "Fix flaky test: <T title> (pipeline PID)".
+
+        Step 11. create_merge_request from "fix/PID-SLUG" into "main", remove source branch on merge:
+        - title: "Fix flaky test: <T title> (pipeline PID)";
+        - description, first line exactly "Cause: <CAUSE> · pass rate <passed>/<runs>", then: the evidence (the error message and error_at from verdict.json, verdict job VID, trace path; for test-data also the seed lines from the diff), what the fix changes and why it keeps what the test verifies, and a line "Other failing tests in this pipeline:" listing the rest with their pass rates, or "none".
+        Final answer.
+
+        Every final answer starts with the line "Cause: <CAUSE>" (or "Cause: none" when you stopped in Step 1 or 2), then lists what you created.
       placeholder: history
     params:
       timeout: 900
