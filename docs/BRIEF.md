@@ -1,7 +1,7 @@
 # <Product> — Brief
 
 ## Summary
-A GitLab Duo flow that wakes up when a pipeline fails on an end-to-end test, proves whether the test is flaky by re-running it, fixes the root cause and merges the fix only when the fix is proven stable. When it cannot prove a fix, it quarantines the test with the evidence so it stops blocking the team. Either way, the change reaches production with no human in the middle.
+A GitLab Duo flow that wakes up when a pipeline fails on an end-to-end test, proves whether the test is flaky by re-running it, fixes the root cause and merges the fix only when the fix is proven stable. When it cannot prove a fix, it quarantines the test with the evidence so it stops blocking the team. When the test fails every time, it reads the commit to tell a real regression from an intended app change, an environment change or missing test data, and acts on each one differently. Either way, the change reaches production with no human in the middle, except where judging intent needs one.
 
 ## Problem frame
 Most red pipelines are not broken code. At Google, "about 84% of the transitions we observe from pass to fail involve a flaky test" ([Google Testing Blog, 2016](https://testing.googleblog.com/2016/05/flaky-tests-at-google-and-how-we.html)). At Atlassian, flaky failures in the Jira backend repo force reruns that "waste over 150,000 hours of developer time each year" ([Atlassian Engineering, 2025](https://www.atlassian.com/blog/atlassian-engineering/taming-test-flakiness-how-we-built-a-scalable-tool-to-detect-and-manage-flaky-tests)). It is a weekly problem for most teams: "40% deal with flaky tests at least weekly" ([Eck et al., FSE 2019](https://arxiv.org/abs/1907.01466)).
@@ -25,18 +25,28 @@ Today the workaround is manual: someone notices the red pipeline, re-runs it, gu
 - R7. The automation is built on GitLab Duo Agent Platform flows triggered by pipeline events, and touches plan, create, verify, release, configure, monitor and govern. [criterion: Stage One: uses GitLab Duo Agent Platform]
 - R8. Every number the project shows (pass rates, runs, time saved) comes from recorded pipeline runs that anyone can reproduce. [criterion: Potential Impact]
 - R9. The demo video shows the full loop on a real pipeline, from red to live in production, in under 3 minutes. [criterion: Presentation]
-- R10. A small appointment-booking web app, with flakiness sources that occur naturally (time zones, concurrent bookings, async confirmation, shared test data, animated modals), is the subject under test. [criterion: Technological Implementation]
+- R10. A small appointment-booking web app, with flakiness sources that occur naturally (time zones, concurrent bookings, async confirmation, shared test data, animated modals), is the subject under test. It also carries one natural case of each deterministic cause: a redesign commit that renames the booking button, a CI setting that changes the job's time zone, and seed data that runs out. [criterion: Technological Implementation]
+- R11. A test that fails on every re-run gets its cause classified from the commit diff and the failure: regression (the app stopped doing what it did), app change (the commit intentionally changed what the test checks), environment (the commit only changed configuration the tests run under) or test data (the test relies on data it does not set up). Only a regression is handled by R2. [criterion: Innovation/Idea]
+- R12. When the app changed on purpose, the flow opens an MR that updates the test to the new behaviour on an `update/` branch, and it is never merged automatically: a human confirms that the change was intended. [criterion: Design]
+- R13. When the cause is the environment, the flow opens an issue labelled `environment` that names the configuration the commit changed and the failing step, and touches no code. [criterion: Potential Impact]
+- R14. When the cause is test data, the flow opens an MR that makes the test create the data it needs; it is proven and merged like a flaky-test fix (R4). [criterion: Technological Implementation]
 
 ## Key flows
 - F1. **Flaky test fixed** — pipeline fails on an e2e test → the test is re-run N times on the same commit and passes sometimes → the cause is classified from traces and code → a fix is opened as an MR → N repeated runs pass → the fix is merged → the app deploys and is verified live → summary posted. (A1, A2; R1, R3, R4, R6)
 - F2. **Real regression** — pipeline fails on an e2e test → the test fails on every re-run → the flow opens an issue with the evidence and stops. (A1, A2; R1, R2)
 - F3. **Fix not proven** — same as F1 until the proof → the repeated runs still fail sometimes → the test moves to quarantine and an issue records the evidence and the expiry date → the pipeline is green again. (A2, A3; R1, R3, R5)
+- F4. **App changed on purpose** — a commit renames the booking button → the test fails on every re-run → the flow reads the diff and the commit message, sees the rename was intended → opens an MR on `update/` that updates the test → the proof passes → the MR waits for a human. (A1, A2, A3; R1, R11, R12)
+- F5. **Environment changed** — a commit only changes the CI time zone → a test fails on every re-run → the flow sees no app or test change in the diff → opens an `environment` issue naming the setting → stops. (A1, A2; R1, R11, R13)
+- F6. **Test data missing** — a test assumes a slot is free but never sets it up, and the seed runs out → it fails on every re-run → the flow classifies it as test data → opens an MR where the test creates its own booking data → N repeated runs pass → merged. (A2; R1, R11, R14, R4)
 
 ## Acceptance examples
 - AE1. **Covers R1, R2.** Given a commit that breaks the booking confirmation, when the pipeline fails and the test fails on all N re-runs, then the flow opens a "Real regression" issue with the run evidence and opens no MR.
 - AE2. **Covers R1, R3, R4.** Given a test that clicks "Book" before the async confirmation arrives and fails about 3 times in 10, when the pipeline fails, then the flow classifies it as async wait, opens an MR that waits for the confirmation, and merges it only after N repeated runs pass.
 - AE3. **Covers R5.** Given a flaky test whose proposed fix still fails at least once in N runs, when the proof ends, then the test runs in a non-blocking job and an issue holds the pass rate, the traces and an expiry date.
 - AE4. **Covers R6.** Given a merged fix, when the deploy job finishes, then the public app URL serves the booking page and the summary links the pipeline, the MR and the URL.
+- AE5. **Covers R11, R12.** Given a commit titled as a redesign that renames the "Book" button to "Confirm booking", when the e2e test that clicks "Book" fails on all N re-runs, then the flow classifies it as an app change, opens an MR on an `update/` branch that clicks "Confirm booking", and the MR is not merged without a human.
+- AE6. **Covers R11, R13.** Given a commit that only sets `TZ` for the e2e job, when the time-zone test fails on all N re-runs, then the flow opens an issue labelled `environment` that names `TZ` and opens no MR.
+- AE7. **Covers R11, R14, R4.** Given a test that books a slot it never frees and a seed with no slot left, when it fails on all N re-runs, then the flow opens an MR where the test resets or creates its own data, and it is merged only after N repeated runs pass.
 
 ## Key decisions
 - Flaky tests as the problem — chosen over a pipeline-efficiency doctor, a feature-flag reaper, a cost canary and migration rehearsal because it was the only open angle in both competitor scans (about 360 projects) that also matches the author's QA background and the CI telemetry already wired in. settled: user-approved
@@ -47,6 +57,7 @@ Today the workaround is manual: someone notices the red pipeline, re-runs it, gu
 - The booking app is only the subject under test: no language, theme or register toggles, and no polish beyond what the flakiness sources need. settled: user-directed
 - Deterministic code decides the verdict and the merge; the model diagnoses and writes the fix. settled: user-approved
 - A real regression is reported in an issue, not a commit comment — the flow toolset has no tool that writes a note on a commit (GitLab `tools_registry.py` only reads commit comments), and an issue keeps the action with Duo instead of a CI token. settled: user-approved (2026-10-11)
+- A test that fails every time is not always a regression: the flow tells regression, intended app change, environment and test data apart from the commit diff, chosen over keeping the two-way flaky/real split because the most common false alarm after a redesign is an outdated test. An app-change MR always waits for a human, because deciding that a behaviour change was intended is judgement, not proof. settled: user-approved (2026-10-11)
 
 ## Scope boundaries
 ### Deferred
@@ -55,7 +66,7 @@ Today the workaround is manual: someone notices the red pipeline, re-runs it, gu
 - Running across several projects or a whole group.
 ### Outside this product
 - Test frameworks other than Playwright (Cypress, Jest, Appium).
-- Infrastructure flakiness (a runner that dies, a registry outage).
+- Infrastructure flakiness (a runner that dies, a registry outage). The environment cause in R13 covers only configuration a commit changes in the repo.
 - A dashboard of its own: the record lives in GitLab merge requests, issues and comments.
 - A polished booking product: the app exists to be tested, so it skips the language, theme and register toggles.
 
