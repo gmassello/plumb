@@ -1,0 +1,50 @@
+diff --git a/src/server.js b/src/server.js
+index 199bae7..7ff3ae8 100644
+--- a/src/server.js
++++ b/src/server.js
+@@ -3,7 +3,7 @@ import { readFile } from 'node:fs/promises';
+ import { randomUUID } from 'node:crypto';
+ import { setTimeout as sleep } from 'node:timers/promises';
+ import { fileURLToPath, pathToFileURL } from 'node:url';
+-import { SEED, listSlots, isValidBooking } from './slots.js';
++import { SEED, SEED_BOOKINGS, listSlots, isValidBooking } from './slots.js';
+ 
+ const CONFIRM_MAX_MS = 800;
+ const BOOKING_GAP_MAX_MS = 20;
+@@ -15,6 +15,15 @@ const PUBLIC = {
+ 
+ const bookings = new Map();
+ 
++function seedBookings() {
++  for (const b of SEED_BOOKINGS) {
++    const id = randomUUID();
++    bookings.set(id, { id, slotId: b.slotId, name: b.name, confirmAt: 0 });
++  }
++}
++
++seedBookings();
++
+ function takenIds() {
+   return new Set([...bookings.values()].map((b) => b.slotId));
+ }
+@@ -66,6 +75,7 @@ async function handle(req, res) {
+   if (req.method === 'GET' && path === '/health') return send(res, 200, { status: 'ok' });
+   if (req.method === 'POST' && path === '/_test/reset') {
+     bookings.clear();
++    seedBookings();
+     return send(res, 204);
+   }
+   if (req.method === 'GET' && path === '/api/slots') {
+diff --git a/src/slots.js b/src/slots.js
+index 9ef843a..1713947 100644
+--- a/src/slots.js
++++ b/src/slots.js
+@@ -4,6 +4,8 @@ export const SEED = [
+   { id: 's3', startUtc: '2026-11-03T01:30:00Z' },
+ ];
+ 
++export const SEED_BOOKINGS = [{ slotId: 's3', name: 'Sample visitor' }];
++
+ export function localParts(startUtc, timeZone) {
+   const parts = Object.fromEntries(
+     new Intl.DateTimeFormat('en-CA', {

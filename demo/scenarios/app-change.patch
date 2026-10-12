@@ -1,0 +1,13 @@
+diff --git a/src/public/index.html b/src/public/index.html
+index bc79a84..7b6695f 100644
+--- a/src/public/index.html
++++ b/src/public/index.html
+@@ -17,7 +17,7 @@
+   </main>
+   <dialog id="confirm" data-testid="confirm-modal">
+     <p>Book <span data-testid="confirm-slot"></span>?</p>
+-    <button type="button" id="confirm-book" data-testid="confirm-book" disabled>Book</button>
++    <button type="button" id="confirm-book" data-testid="confirm-book" disabled>Confirm booking</button>
+     <button type="button" id="confirm-cancel">Cancel</button>
+   </dialog>
+   <script type="module" src="/app.js"></script>

@@ -156,9 +156,9 @@ At the end of this plan a real red pipeline on the booking app's e2e suite is tu
 - **Covers:** R10 · F4, F5, F6
 - **Files:** `demo/scenarios/app-change.patch`, `demo/scenarios/environment.patch`, `demo/scenarios/test-data.patch`, `demo/scenarios/apply.sh`, `README.md`
 - **Depends on:** U2, U3
-- **Status:** todo
+- **Status:** done locally. In the CI image: the base suite passes (its only failures are the flaky concurrency test); `app-change` → `async confirmation` 10/10 failed; `environment` (TZ=America/Argentina/Buenos_Aires) → time-zone test 10/10 failed; `test-data` → `a visitor books the last slot of the day` 10/10 failed and the rest of the suite passes; the small case stays 6/6 with `test-data` applied. `booking.spec.ts` now clicks the modal button by role and name, and `actionTimeout: 5_000` keeps 10 failing re-runs near one minute.
 - **Tests:**
-  - happy: each scenario commit on main → `flake-verdict` writes `verdict.json` with the expected test at 0/10, `real`.
+  - happy: each scenario applied in the CI image → the expected test fails 10 of 10 re-runs (locally); the same 0/10 `real` verdict on a real pipeline is checked in U12, because before U12 the flow would file a wrong "Real regression" issue.
   - edge: reverting a scenario commit → the next main pipeline has no `real` verdict for that test.
   - error: a patch no longer applies to main → the script stops before committing and names the patch.
 

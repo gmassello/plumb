@@ -24,6 +24,22 @@ gcloud run deploy booking --source . --region us-central1         # deploy (wire
 python3 cases/small-booking-api/checks.py http://localhost:8080   # contract checks against a running app
 ```
 
+## Failure scenarios
+
+Three patches in [`demo/scenarios/`](demo/scenarios/) make one e2e test fail on every run for a reason that is not a bug, so the triage flow can be exercised on each cause:
+
+| Scenario | What the commit does | Test that fails |
+|---|---|---|
+| `app-change` | renames the "Book" button to "Confirm booking" | `async confirmation` |
+| `environment` | sets `TZ: America/Argentina/Buenos_Aires` for every CI job | `late slot is listed with its local date and time` |
+| `test-data` | seeds a sample booking on slot s3 that the reset keeps | `a visitor books the last slot of the day` |
+
+```bash
+demo/scenarios/apply.sh app-change     # commits the scenario on a clean tree, then push it
+```
+
+Undo it after the run with a revert commit; main's history is never rewritten.
+
 ## Pipeline
 
 Every merge request and every push to `main` runs the pipeline defined in [`.gitlab-ci.yml`](.gitlab-ci.yml). See [CI/CD → Pipelines](https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43144947/showcase/-/pipelines) for the history.

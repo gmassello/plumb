@@ -93,7 +93,7 @@ Acceptance criteria:
 ## Test cases
 
 ### Small — booking app HTTP contract
-A self-owned, trivial case: the app's API that the e2e suite drives and the deploy job checks live. If it fails, the app, the container or the deploy is broken, not the flakiness logic. Units: U1 (local), U7 (live). Spec and checks: `cases/small-booking-api/`. Run it on main without a U11 scenario commit applied: the test-data scenario changes the seed on purpose and breaks `check_slot_taken` while it is in place.
+A self-owned, trivial case: the app's API that the e2e suite drives and the deploy job checks live. If it fails, the app, the container or the deploy is broken, not the flakiness logic. Units: U1 (local), U7 (live). Spec and checks: `cases/small-booking-api/`. Run it on main without a U11 scenario commit applied. With the test-data scenario in place it still passes 6/6 (measured 2026-10-12): slot s3 starts booked and no check books s3, but the reset then keeps a booking, which bends the spec's "drops every booking" on purpose.
 
 | Layer | Criterion | How it is proven |
 |---|---|---|
