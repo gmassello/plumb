@@ -10,3 +10,4 @@ server.log
 e2e-report.json
 report.json
 verdict.json
+proof.json
