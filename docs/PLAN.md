@@ -106,7 +106,7 @@ At the end of this plan a real red pipeline on the booking app's e2e suite is tu
 - **Covers:** R6 · F1
 - **Files:** `.gitlab-ci.yml`, `deploy/gcp-wif.json`
 - **Depends on:** U1, U6
-- **Status:** todo
+- **Status:** deploy done 2026-10-13; AE4's summary note waits for the next flow merge (U9). Pipeline 2944629161: `deploy` 83 s (Workload Identity Federation, no key), URL https://booking-vic4jyzsha-uc.a.run.app served the booking page, and `cases/small-booking-api/checks.py` passed 6/6 against it; `summary` found no flow merge request and posted nothing, as designed. `SUMMARY_DRY_RUN` against real artifacts built the note for !9 (quarantined, proof 33/50) and !4 (proof 50/50). The federation-rejects-token case was not forced.
 - **Tests:**
   - happy: a merged fix → the job prints the URL, the page contains the booking heading, and the summary note links pipeline, MR and URL. Covers AE4.
   - edge: two merges in a row → the second deploy replaces the first and the URL still serves the page.
