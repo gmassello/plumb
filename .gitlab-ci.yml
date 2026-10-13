@@ -9,6 +9,7 @@ stages:
   - verdict
   - proof
   - gate
+  - deploy
 
 baseline:
   stage: verify
@@ -112,3 +113,34 @@ merge-gate:
     - echo "merge-gate http=$code"
     - head -c 600 merge.json; echo
     - test "$code" = 200
+
+deploy:
+  stage: deploy
+  image: google/cloud-sdk:586.0.0-slim
+  needs: [baseline, e2e]
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  id_tokens:
+    GCP_OIDC:
+      aud: https://iam.googleapis.com/projects/1060283958216/locations/global/workloadIdentityPools/gitlab-pool/providers/gitlab-com
+  script:
+    - printf %s "$GCP_OIDC" > /tmp/gitlab-oidc.jwt
+    - gcloud auth login --cred-file=deploy/gcp-wif.json --quiet
+    - gcloud config set project showcase-flaky
+    - gcloud run deploy booking --source . --region us-central1 --allow-unauthenticated --quiet
+    - url=$(gcloud run services describe booking --region us-central1 --format='value(status.url)')
+    - echo "Deployed to $url"
+    - 'curl -fsS "$url" | grep -q "Book an appointment" || { echo "deploy: $url does not serve the booking page."; exit 1; }'
+    - echo "APP_URL=$url" > deploy.env
+  artifacts:
+    reports:
+      dotenv: deploy.env
+
+summary:
+  stage: deploy
+  image: node:24.14.1-alpine
+  needs: [deploy]
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  script:
+    - node tools/summary.mjs
