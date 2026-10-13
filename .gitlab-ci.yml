@@ -3,9 +3,6 @@ workflow:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
 
-variables:
-  TZ: America/Argentina/Buenos_Aires
-
 stages:
   - verify
   - test
