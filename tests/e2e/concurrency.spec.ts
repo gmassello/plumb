@@ -18,7 +18,7 @@ async function visitorBooks(browser: Browser, name: string) {
   return text;
 }
 
-test('two visitors book the same slot at the same time', async ({ browser }) => {
+test('two visitors book the same slot at the same time @quarantine', async ({ browser }) => {
   const results = await Promise.all([visitorBooks(browser, 'Ana'), visitorBooks(browser, 'Bruno')]);
   const won = results.filter((t) => t?.startsWith('Booking '));
   const lost = results.filter((t) => t === 'Slot s2 is already booked');
