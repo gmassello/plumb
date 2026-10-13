@@ -12,7 +12,7 @@ async function visitorBooks(browser: Browser, name: string) {
   await page.getByTestId('slot-s2').getByRole('button', { name: 'Select' }).click();
   await page.getByTestId('confirm-book').click();
   const status = page.getByTestId('booking-status');
-  await expect(status).not.toBeEmpty();
+  await expect(status).toHaveText(/^(Booking (pending|confirmed)|Slot s2 is already booked)$/);
   const text = await status.textContent();
   await context.close();
   return text;
