@@ -6,8 +6,9 @@ case "${1:-}" in
   environment) msg="Run CI in the team's time zone" ;;
   test-data) msg="Seed a sample booking so the demo calendar is never empty" ;;
   regression) msg="Simplify booking confirmation" ;;
+  quarantine) msg="Write an audit entry before saving each booking" ;;
   *)
-    echo "usage: demo/scenarios/apply.sh <app-change|environment|test-data|regression>" >&2
+    echo "usage: demo/scenarios/apply.sh <app-change|environment|test-data|regression|quarantine>" >&2
     exit 2
     ;;
 esac

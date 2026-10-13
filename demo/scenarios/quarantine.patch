@@ -1,0 +1,30 @@
+diff --git a/src/server.js b/src/server.js
+index 199bae7..df22f6f 100644
+--- a/src/server.js
++++ b/src/server.js
+@@ -7,6 +7,7 @@ import { SEED, listSlots, isValidBooking } from './slots.js';
+ 
+ const CONFIRM_MAX_MS = 800;
+ const BOOKING_GAP_MAX_MS = 20;
++const AUDIT_WRITE_MAX_MS = 80;
+ const PUBLIC = {
+   '/': ['index.html', 'text/html; charset=utf-8'],
+   '/app.js': ['app.js', 'text/javascript; charset=utf-8'],
+@@ -48,11 +49,17 @@ async function readJson(req) {
+   }
+ }
+ 
++async function writeAudit(body) {
++  await sleep(Math.random() * AUDIT_WRITE_MAX_MS);
++  console.log(`audit: booking requested for ${body.slotId}`);
++}
++
+ async function book(req, res) {
+   const body = await readJson(req);
+   if (!isValidBooking(body)) return fail(res, 400, 'validation_error', 'slotId and a non-blank name are required');
+   if (!SEED.some((s) => s.id === body.slotId)) return fail(res, 404, 'slot_not_found', `No slot ${body.slotId}`);
+   if (takenIds().has(body.slotId)) return fail(res, 409, 'slot_taken', `Slot ${body.slotId} is already booked`);
++  await writeAudit(body);
+   await sleep(Math.random() * BOOKING_GAP_MAX_MS);
+   const id = randomUUID();
+   const booking = { id, slotId: body.slotId, name: body.name.trim(), confirmAt: Date.now() + Math.random() * CONFIRM_MAX_MS };
