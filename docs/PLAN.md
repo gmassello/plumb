@@ -171,7 +171,12 @@ At the end of this plan a real red pipeline on the booking app's e2e suite is tu
 - **Covers:** R11, R12, R13, R14 · F4, F5, F6
 - **Files:** `.gitlab/duo/triage-flow.yml`, `docs/ARCHITECTURE.md` (S8 result)
 - **Depends on:** U4, U6, U11
-- **Status:** todo
+- **Status:** done 2026-10-13 (flow v1.2.0, published with `aiCatalogFlowUpdate`). QA-06: 12 of 12 right causes, each scenario run once and retried twice on the same pipeline:
+  - regression, pipeline 2940411157 → issue #7, retries "already covered by #7";
+  - environment, pipeline 2944325042 → issue #8 naming `TZ`, no MR, retries covered by #8 (AE6);
+  - app-change, pipeline 2944391258 → MR !6 on `update/` with `needs-review` clicking "Confirm booking", `fix-proof` 50/50, `merge-gate` skipped, closed by hand (AE5);
+  - test-data, pipeline 2944438629 → MR !7 with cause `test-data`, `fix-proof` 50/50, merged by `merge-gate` (AE7); the second retry ran after the merge and opened duplicate !8, closed by hand (see ARCHITECTURE risks).
+  Each scenario was reverted afterwards. The merged !7 means the test-data scenario no longer fails on main; the demo-baseline commit restores the original test.
 - **Tests:**
   - happy: the app-change scenario → an `update/` MR with `needs-review` that clicks "Confirm booking", proven by `fix-proof` and not merged. Covers AE5.
   - happy: the environment scenario → an `environment` issue that names `TZ`, and no MR. Covers AE6.
