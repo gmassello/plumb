@@ -82,7 +82,7 @@ At the end of this plan a real red pipeline on the booking app's e2e suite is tu
 - **Covers:** R5 · F3
 - **Files:** `.gitlab/duo/triage-flow.yml`
 - **Depends on:** U4, U6
-- **Status:** todo
+- **Status:** done 2026-10-13 (flow v1.3.0). Scenario `quarantine` (an audit write between the slot check and the insert; 27/50 failed in the CI image locally, about 1 in 6 `e2e` runs on the CI runners), pipeline 2944554222: verdict 6/10 `flaky`; MR !9 with label `flaky`, the fix's proof 33/50 (pipeline 2944576807, red); the flow committed the original test with `@quarantine` on the same branch and opened issue #9 with both rates, the trace, the proof job and `Expires: 2026-10-27`, and its note pointed at the audit write as a likely app race. The quarantine commit's proof had nothing to run (pipeline 2944587486, green), `merge-gate` merged it, and the next main pipeline (2944591118) was green with `e2e` running 4 tests and `e2e-quarantine` the quarantined one. The scenario was reverted in b3310b8; the `@quarantine` tag stays until the demo-baseline commit. The green-proof edge was not re-run with v1.3.0.
 - **Tests:**
   - happy: a fix that still fails at least once in 50 runs → the branch gets the quarantine commit, the issue holds the pass rates, traces and expiry, and the pipeline goes green. Covers AE3.
   - edge: the proof is green → the flow stops polling and opens no issue.
