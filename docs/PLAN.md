@@ -115,9 +115,9 @@ At the end of this plan a real red pipeline on the booking app's e2e suite is tu
 ### U8. Reproducible numbers
 - **Goal:** a script reads the verdict and proof artifacts of recorded pipelines through the API and writes a table of pass rates, runs and verdicts into `docs/RESULTS.md`. Every number published in the README, the deck or the video comes from that table.
 - **Covers:** R8
-- **Files:** `tools/results.mjs`, `docs/RESULTS.md`, `tests/unit/results.test.js`
+- **Files:** `tools/results.mjs`, `docs/RESULTS.md`, `tests/unit/results.test.js`, `package.json`
 - **Depends on:** U3, U6
-- **Status:** todo
+- **Status:** done 2026-10-14. `node tools/results.mjs` reads the flow sessions (GraphQL), `verdict.json`, `proof.json` and the issues and MRs named after each pipeline through `glab api`, and writes `docs/RESULTS.md`: 13 pipelines and 23 flow sessions, QA-06 12/12 right, 0 merges from `update/`. The three pipelines from 2026-10-10 show "artifacts expired". The error test checks a missing `glab` instead of a missing token, since the script uses glab's login.
 - **Tests:**
   - happy: three recorded pipelines → the table lists each with its pipeline id, test, pass rate and verdict.
   - edge: the QA-06 classification runs (4 scenarios × 3) → the table lists each run with the expected and the chosen cause, and the total right.

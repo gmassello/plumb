@@ -23,6 +23,7 @@ npm run lint                                                      # syntax check
 gcloud run deploy booking --source . --region us-central1         # deploy (CI runs it on main)
 SUMMARY_DRY_RUN=1 CI_COMMIT_SHA=<merge sha> node tools/summary.mjs   # print the run summary for a merge (needs CI_API_V4_URL, CI_PROJECT_ID, MERGE_BOT_TOKEN, APP_URL)
 python3 cases/small-booking-api/checks.py http://localhost:8080   # contract checks against a running app
+node tools/results.mjs                                            # regenerate docs/RESULTS.md from the GitLab API (uses glab's login)
 ```
 
 ## Failure scenarios
@@ -52,6 +53,8 @@ When `e2e` fails on `main`, `flake-verdict` re-runs the failed tests 10 times an
 On every green `main` pipeline, `deploy` publishes the app to Google Cloud Run (live at https://booking-vic4jyzsha-uc.a.run.app) and checks that the public URL serves the booking page. It authenticates with Workload Identity Federation, so no Google key is stored anywhere. When the commit is the merge of a flow merge request, `summary` then posts one note on the commit whose pipeline failed, linking that pipeline, the verdict, the merge request, the proof result and the live URL.
 
 [`docs/DEMO.md`](docs/DEMO.md) records one full run of this loop, from the red job to the summary note in 9 min 47 s, with the timestamp and link of every step.
+
+[`docs/RESULTS.md`](docs/RESULTS.md) lists every pipeline the flow has triaged, with the verdict, the cause, what it created and the proof, plus the QA-06 cause check (12 of 12 right). It is generated from the GitLab API by `node tools/results.mjs`.
 
 ## License
 
