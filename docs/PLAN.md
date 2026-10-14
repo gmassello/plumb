@@ -106,7 +106,7 @@ At the end of this plan a real red pipeline on the booking app's e2e suite is tu
 - **Covers:** R6 · F1
 - **Files:** `.gitlab-ci.yml`, `deploy/gcp-wif.json`
 - **Depends on:** U1, U6
-- **Status:** deploy done 2026-10-13; AE4's summary note waits for the next flow merge (U9). Pipeline 2944629161: `deploy` 83 s (Workload Identity Federation, no key), URL https://booking-vic4jyzsha-uc.a.run.app served the booking page, and `cases/small-booking-api/checks.py` passed 6/6 against it; `summary` found no flow merge request and posted nothing, as designed. `SUMMARY_DRY_RUN` against real artifacts built the note for !9 (quarantined, proof 33/50) and !4 (proof 50/50). The federation-rejects-token case was not forced.
+- **Status:** done. Deploy 2026-10-13; AE4 closed 2026-10-14 in the U9 rehearsal: after !10 merged, pipeline 2948477539 deployed and `summary` posted the note on commit `57608d9`. Pipeline 2944629161: `deploy` 83 s (Workload Identity Federation, no key), URL https://booking-vic4jyzsha-uc.a.run.app served the booking page, and `cases/small-booking-api/checks.py` passed 6/6 against it; `summary` found no flow merge request and posted nothing, as designed. `SUMMARY_DRY_RUN` against real artifacts built the note for !9 (quarantined, proof 33/50) and !4 (proof 50/50). The federation-rejects-token case was not forced.
 - **Tests:**
   - happy: a merged fix → the job prints the URL, the page contains the booking heading, and the summary note links pipeline, MR and URL. Covers AE4.
   - edge: two merges in a row → the second deploy replaces the first and the URL still serves the page.
@@ -129,7 +129,7 @@ At the end of this plan a real red pipeline on the booking app's e2e suite is tu
 - **Covers:** R9 · F1, F2, F3, F4
 - **Files:** `docs/DEMO.md`
 - **Depends on:** U4, U5, U6, U7, U12
-- **Status:** todo
+- **Status:** done 2026-10-14, recorded in `docs/DEMO.md`. Demo commit `57608d9`; push pipeline 2948453748 passed, one `e2e` retry failed; verdict 3/10 flaky → MR !10 (cause async-wait) → proof 50/50 → merged → deploy and summary in pipeline 2948477539. Red job to summary note: 9 min 47 s, no human action.
 - **Tests:**
   - happy: a push of the demo commit → the loop reaches the live URL and every step's timestamp is recorded in `docs/DEMO.md`.
   - edge: the flaky test passes on the first push → the script's re-run step produces the red pipeline within the documented number of retries.
