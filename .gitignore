@@ -11,3 +11,5 @@ e2e-report.json
 report.json
 verdict.json
 proof.json
+*-junit.xml
+base-report.json

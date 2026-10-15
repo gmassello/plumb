@@ -10,6 +10,10 @@ export function flowMergeRequest(mergeRequests) {
   return null;
 }
 
+export function stateLabel(quarantined) {
+  return quarantined ? 'triage::quarantined' : 'triage::merged';
+}
+
 function testOf(verdict, mrTitle) {
   const tests = verdict?.tests ?? [];
   return tests.find((t) => mrTitle.includes(`: ${t.title} (pipeline`)) ?? tests[0] ?? null;
@@ -100,6 +104,9 @@ async function main() {
   if (process.env.SUMMARY_DRY_RUN) return 0;
   await api(`repository/commits/${original.sha}/comments`, { method: 'POST', body: JSON.stringify({ note }) });
   console.log(`summary: posted on commit ${original.sha}`);
+  const label = stateLabel(quarantined);
+  await api(`merge_requests/${found.mr.iid}`, { method: 'PUT', body: JSON.stringify({ add_labels: label }) });
+  console.log(`summary: labelled !${found.mr.iid} ${label}`);
   return 0;
 }
 

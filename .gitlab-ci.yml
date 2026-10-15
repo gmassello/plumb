@@ -3,6 +3,10 @@ workflow:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
 
+include:
+  - template: Jobs/SAST.gitlab-ci.yml
+  - template: Jobs/Secret-Detection.gitlab-ci.yml
+
 stages:
   - verify
   - test
@@ -17,6 +21,15 @@ baseline:
   script:
     - test -f LICENSE
     - grep -q "MIT License" LICENSE
+
+flow-drift:
+  stage: verify
+  image: node:24.14.1-alpine
+  needs: []
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  script:
+    - node tools/flow-drift.mjs
 
 .playwright:
   stage: test
@@ -38,7 +51,10 @@ e2e:
     paths:
       - test-results/
       - e2e-report.json
+      - e2e-junit.xml
       - server.log
+    reports:
+      junit: e2e-junit.xml
     expire_in: 7 days
 
 e2e-quarantine:
@@ -65,7 +81,16 @@ flake-verdict:
     - failed=$(node tools/verdict.mjs --failed e2e-report.json)
     - echo "Re-running 10 times each:$failed"
     - PLAYWRIGHT_JSON_OUTPUT_FILE=report.json npx playwright test $failed --repeat-each=10 --reporter=json > /dev/null || true
-    - node tools/verdict.mjs report.json verdict.json
+    - node tools/verdict.mjs report.json verdict.json verdict-junit.xml
+    - real=$(node tools/verdict.mjs --real verdict.json)
+    - |
+      if [ -n "$real" ] && base=$(git rev-parse HEAD~1 2>/dev/null); then
+        echo "Running the real tests 3 times on the parent commit $base: $real"
+        git worktree add --detach /tmp/base "$base" > /dev/null
+        ln -s "$CI_PROJECT_DIR/node_modules" /tmp/base/node_modules
+        (cd /tmp/base && PLAYWRIGHT_JSON_OUTPUT_FILE="$CI_PROJECT_DIR/base-report.json" npx playwright test $real --repeat-each=3 --reporter=json > /dev/null) || true
+        BASE_SHA=$base BASE_ROOT=/tmp/base node tools/verdict.mjs --base base-report.json verdict.json || true
+      fi
     - cat verdict.json
     - echo "Verdict written. Failing on purpose so the pipeline stays red and the Pipeline Failed trigger fires."
     - exit 1
@@ -74,8 +99,12 @@ flake-verdict:
     paths:
       - verdict.json
       - report.json
+      - base-report.json
+      - verdict-junit.xml
       - test-results/
       - server.log
+    reports:
+      junit: verdict-junit.xml
     expire_in: 30 days
 
 fix-proof:
@@ -91,14 +120,17 @@ fix-proof:
     - echo "Proving 50 times each:" $specs
     - PLAYWRIGHT_JSON_OUTPUT_FILE=report.json npx playwright test $specs --grep-invert @quarantine --repeat-each=50 --pass-with-no-tests --reporter=dot,json
   after_script:
-    - 'test -f report.json && VERDICT_RUNS=50 node tools/verdict.mjs report.json proof.json && cat proof.json || echo "fix-proof: no tests ran, so no proof.json."'
+    - 'test -f report.json && VERDICT_RUNS=50 node tools/verdict.mjs report.json proof.json proof-junit.xml && cat proof.json || echo "fix-proof: no tests ran, so no proof.json."'
   artifacts:
     when: always
     paths:
       - proof.json
       - report.json
+      - proof-junit.xml
       - test-results/
       - server.log
+    reports:
+      junit: proof-junit.xml
     expire_in: 30 days
 
 merge-gate:

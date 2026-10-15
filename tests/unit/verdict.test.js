@@ -4,7 +4,7 @@ import { mkdtempSync, writeFileSync, existsSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { execFileSync } from 'node:child_process';
-import { buildVerdict, failedLocations } from '../../tools/verdict.mjs';
+import { buildVerdict, failedLocations, realFiles, toJunit, withBase } from '../../tools/verdict.mjs';
 
 const ROOT = '/w';
 const OPTS = { pipelineId: 42, sha: 'abc1234', runs: 10, root: ROOT };
@@ -97,4 +97,29 @@ test('a missing report writes no verdict and exits 1', () => {
   writeFileSync(join(dir, 'empty.json'), '{"suites": []}');
   assert.throws(() => execFileSync('node', ['tools/verdict.mjs', join(dir, 'empty.json'), out], { stdio: 'pipe' }));
   assert.equal(existsSync(out), false);
+});
+
+test('a real test gets the result of its runs on the parent commit, or null when the parent lacks it', () => {
+  const v = buildVerdict(report([
+    ['booking.spec.ts', 'async confirmation', times(10, 'failed')],
+    ['modal.spec.ts', 'booking from the confirmation modal', times(10, 'failed')],
+    ['timezone.spec.ts', 'late slot', [...times(4, 'passed'), ...times(6, 'failed')]],
+  ]), OPTS);
+  assert.deepEqual(realFiles(v), ['tests/e2e/booking.spec.ts', 'tests/e2e/modal.spec.ts']);
+  const parent = report([['booking.spec.ts', 'async confirmation', times(3, 'passed')]]);
+  const out = withBase(v, parent, { sha: 'def5678', root: ROOT });
+  assert.deepEqual(out.tests.map((t) => [t.title, t.base]), [
+    ['async confirmation', { sha: 'def5678', passed: 3, runs: 3 }],
+    ['booking from the confirmation modal', null],
+    ['late slot', undefined],
+  ]);
+});
+
+test('the junit report has one test case per run, so GitLab counts every repetition', () => {
+  const v = buildVerdict(report([['booking.spec.ts', 'async <confirmation>', [...times(3, 'passed'), ...times(2, 'failed')]]]), OPTS);
+  const out = toJunit(v, 'flake-verdict');
+  assert.match(out, /<testsuite name="flake-verdict" tests="5" failures="2">/);
+  assert.equal(out.match(/<testcase /g).length, 5);
+  assert.equal(out.match(/<failure /g).length, 2);
+  assert.match(out, /name="async &lt;confirmation&gt; \[run 5\/5\]"/);
 });

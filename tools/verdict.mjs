@@ -22,7 +22,7 @@ export function failedLocations(report, root) {
   return [...locations];
 }
 
-export function buildVerdict(report, { pipelineId, sha, runs, root }) {
+function countByTest(report, root) {
   if (!report || !Array.isArray(report.suites)) throw new Error('the Playwright JSON report has no suites');
   const testDir = report.config?.rootDir ?? root;
   const byTest = new Map();
@@ -50,11 +50,45 @@ export function buildVerdict(report, { pipelineId, sha, runs, root }) {
       byTest.set(key, entry);
     }
   }
-  const tests = [...byTest.values()]
+  return byTest;
+}
+
+export function buildVerdict(report, { pipelineId, sha, runs, root }) {
+  const tests = [...countByTest(report, root).values()]
     .filter((t) => t.passed + t.failed > 0)
     .map((t) => ({ ...t, verdict: t.passed === 0 ? 'real' : 'flaky' }));
   if (tests.length === 0) throw new Error('the report has no test results, so there is nothing to judge');
   return { pipeline_id: pipelineId, sha, runs, tests };
+}
+
+export function withBase(verdict, baseReport, { sha, root }) {
+  const byTest = countByTest(baseReport, root);
+  const tests = verdict.tests.map((t) => {
+    if (t.verdict !== 'real') return t;
+    const b = byTest.get(`${t.file}\u0000${t.title}`);
+    return { ...t, base: b && b.passed + b.failed > 0 ? { sha, passed: b.passed, runs: b.passed + b.failed } : null };
+  });
+  return { ...verdict, tests };
+}
+
+export function realFiles(verdict) {
+  return [...new Set(verdict.tests.filter((t) => t.verdict === 'real').map((t) => t.file))];
+}
+
+const xml = (text) => String(text).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
+export function toJunit(verdict, suite) {
+  const cases = [];
+  for (const t of verdict.tests) {
+    const total = t.passed + t.failed;
+    for (let i = 1; i <= total; i++) {
+      const name = xml(`${t.title} [run ${i}/${total}]`);
+      const open = `  <testcase classname="${xml(t.file)}" name="${name}"`;
+      cases.push(i <= t.passed ? `${open}/>` : `${open}>\n    <failure message="${xml(t.error ?? 'failed')}"/>\n  </testcase>`);
+    }
+  }
+  const failures = verdict.tests.reduce((n, t) => n + t.failed, 0);
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<testsuite name="${xml(suite)}" tests="${cases.length}" failures="${failures}">\n${cases.join('\n')}\n</testsuite>\n`;
 }
 
 function readReport(path) {
@@ -78,9 +112,28 @@ function main(args) {
       return 1;
     }
   }
-  const [reportPath, outPath] = args;
+  if (args[0] === '--real' && args[1]) {
+    const verdict = readReport(args[1]);
+    if (!verdict) return 1;
+    console.log(realFiles(verdict).join(' '));
+    return 0;
+  }
+  if (args[0] === '--base' && args[1] && args[2]) {
+    const baseReport = readReport(args[1]);
+    const verdict = readReport(args[2]);
+    if (!baseReport || !verdict) return 1;
+    try {
+      const out = withBase(verdict, baseReport, { sha: process.env.BASE_SHA ?? null, root: process.env.BASE_ROOT ?? process.cwd() });
+      writeFileSync(args[2], `${JSON.stringify(out, null, 2)}\n`);
+      return 0;
+    } catch (err) {
+      console.error(`flake-verdict: ${err.message}. verdict.json left without the parent commit result.`);
+      return 1;
+    }
+  }
+  const [reportPath, outPath, junitPath] = args;
   if (!reportPath || !outPath) {
-    console.error('usage: node tools/verdict.mjs --failed <e2e-report.json> | <report.json> <verdict.json>');
+    console.error('usage: node tools/verdict.mjs --failed <e2e-report.json> | --real <verdict.json> | --base <base-report.json> <verdict.json> | <report.json> <verdict.json> [<junit.xml>]');
     return 2;
   }
   const report = readReport(reportPath);
@@ -93,6 +146,7 @@ function main(args) {
       root: process.cwd(),
     });
     writeFileSync(outPath, `${JSON.stringify(verdict, null, 2)}\n`);
+    if (junitPath) writeFileSync(junitPath, toJunit(verdict, process.env.CI_JOB_NAME ?? 'verdict'));
     return 0;
   } catch (err) {
     console.error(`flake-verdict: ${err.message}. No verdict written.`);

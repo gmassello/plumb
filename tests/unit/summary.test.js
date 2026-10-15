@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { buildSummary, flowMergeRequest } from '../../tools/summary.mjs';
+import { buildSummary, flowMergeRequest, stateLabel } from '../../tools/summary.mjs';
 
 const TITLE = 'async confirmation';
 const MR = { iid: 3, state: 'merged', source_branch: 'fix/2936535281-async-confirmation', title: `Fix flaky test: ${TITLE} (pipeline 2936535281)`, web_url: 'https://gitlab.example/mr/3' };
@@ -26,4 +26,9 @@ test('a commit that does not come from a flow merge request has no summary', () 
   assert.equal(flowMergeRequest([{ ...MR, source_branch: 'feature/x' }, { ...MR, state: 'opened' }]), null);
   assert.deepEqual(flowMergeRequest([MR]), { mr: MR, pipelineId: 2936535281 });
   assert.equal(buildSummary({ ...RUN, mr: null }), null);
+});
+
+test('the merged merge request gets the scoped state label of how the loop ended', () => {
+  assert.equal(stateLabel(false), 'triage::merged');
+  assert.equal(stateLabel(true), 'triage::quarantined');
 });

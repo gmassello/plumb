@@ -138,9 +138,9 @@ At the end of this plan a real red pipeline on the booking app's e2e suite is tu
 ### U10. Flow drift check
 - **Goal:** a CI job compares `.gitlab/duo/triage-flow.yml` with the flow definition published in GitLab, read through GraphQL, and fails when they differ. The flow that runs is then always the one reviewed in the repo.
 - **Covers:** R7
-- **Files:** `.gitlab-ci.yml`, `tools/flow-drift.mjs`
+- **Files:** `.gitlab-ci.yml`, `tools/flow-drift.mjs`, `tests/unit/flow-drift.test.js`
 - **Depends on:** U4
-- **Status:** todo
+- **Status:** done 2026-10-15 (flow v1.4.0). The job reads the catalog with `MERGE_BOT_TOKEN`, or anonymously once the item is public. It runs only on main, with `needs: []`, so a failure never starts `flake-verdict`. A schema check was not added: the catalog validates the YAML when it is saved.
 - **Tests:**
   - happy: repo and published definition are identical → the job passes.
   - edge: only trailing whitespace differs → the job passes.
@@ -186,11 +186,26 @@ At the end of this plan a real red pipeline on the booking app's e2e suite is tu
   - error: the commit diff cannot be read → a "Real regression" issue that says the diff was unavailable.
   - edge: an open flow MR already fixes the same test (seen with MR !5, opened while !3 was still in proof) → the flow opens nothing and says which MR covers it.
 
+### U13. Evidence in the pipeline
+- **Goal:** the pipeline shows more of the loop's evidence:
+  - JUnit reports with one case per run on `e2e`, `flake-verdict` and `fix-proof`, so the merge request widget counts the 50 proof runs;
+  - a `real` test also runs 3 times on the parent commit, and the flow quotes that result;
+  - scoped `triage::` state labels: the flow sets them when it creates something, and `summary` sets `triage::merged` or `triage::quarantined`;
+  - the SAST and Secret Detection templates.
+- **Covers:** R1, R7, R8
+- **Files:** `.gitlab-ci.yml`, `playwright.config.ts`, `tools/verdict.mjs`, `tools/summary.mjs`, `.gitlab/duo/triage-flow.yml`, `tests/unit/verdict.test.js`, `tests/unit/summary.test.js`
+- **Depends on:** U3, U4, U6
+- **Status:** in progress
+- **Tests:**
+  - happy: a test that passes 3 of 5 runs → a JUnit report with 5 cases and 2 failures.
+  - happy: a real test present on the parent commit → `base` with the parent's passes; absent → `base: null`.
+  - edge: a quarantined loop → `summary` labels the MR `triage::quarantined`, not `triage::merged`.
+
 ## Cut line
 | Tier | Units | Why |
 |---|---|---|
 | must | U1, U2, U3, U4, U5, U6, U7, U9, U11, U12 | the full loop from red pipeline to live app is the demo, and telling an outdated test from a regression is the idea's edge (Innovation/Idea); without any of these there is nothing to film |
-| should | U8, U10 | U8 backs every published number (Potential Impact); U10 strengthens the govern stage (Stage One, Technological Implementation) |
+| should | U8, U10, U13 | U8 backs every published number (Potential Impact); U10 strengthens the govern stage (Stage One, Technological Implementation) |
 | cut | — | nothing is cut: 370 hours at the 2026-10-11 revision leave room for the must units plus video, submission text and deck |
 
 ## Risks

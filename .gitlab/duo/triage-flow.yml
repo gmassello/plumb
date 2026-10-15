@@ -36,7 +36,7 @@ prompts:
         Step 1. Read from the payload: PID = object_attributes.id, REF = object_attributes.ref, SHA = object_attributes.sha, CREATED = the date part of object_attributes.created_at, and from builds[] the job named "flake-verdict" (VID).
         If REF is not "main", or there is no "flake-verdict" job in builds[], stop now without calling any tool: there is no verdict, so there is no action.
 
-        Step 2. gitlab_api_get projects/{{project_id}}/jobs/VID/artifacts/verdict.json. It has runs and tests[] with file, title, passed, failed, verdict, trace, error (the first failure message) and error_at (file:line of the failing step). If it cannot be read, stop without acting.
+        Step 2. gitlab_api_get projects/{{project_id}}/jobs/VID/artifacts/verdict.json. It has runs and tests[] with file, title, passed, failed, verdict, trace, error (the first failure message) and error_at (file:line of the failing step). A real test may also have base: the same test run on the parent commit (sha, passed, runs), or null when the parent does not have it. If it cannot be read, stop without acting.
 
         Step 3. If any test has verdict "real", let T be the first real test and go to Step 4. Otherwise go to Step 9.
 
@@ -48,26 +48,28 @@ prompts:
         - test-data: T relies on data it never creates or resets, and the diff changes the seed or shared records that data comes from.
         - regression: anything else, including any change to application behaviour the commit message does not announce.
 
+        The parent-commit line, used in Steps 6, 7 and 8: if T has base, "Parent commit <base.sha>: passed <base.passed>/<base.runs> runs." (all passing means this commit broke the test; all failing means it was already failing before), otherwise "Parent commit: not run."
+
         Step 5. Duplicate check. Let TITLE be the title Step 6, 7 or 8 would use for CAUSE without the " (pipeline PID)" suffix. gitlab_api_get projects/{{project_id}}/issues?state=opened&in=title&search=<TITLE url-encoded> and projects/{{project_id}}/merge_requests?state=opened&in=title&search=<TITLE url-encoded>. If any result's title starts with TITLE, create nothing and give the final answer "Cause: <CAUSE> · already covered by <#iid or !iid>".
         Otherwise go to Step 6 for regression, 7 for app-change, 8 for environment, and 10 for test-data.
 
         Step 6. regression: create_issue in project {{project_id}}:
         - title: "Real regression: <T title> (pipeline PID)";
-        - labels: "regression";
-        - description: commit SHA and message title, a line per real test with "<file> · <title> · passed <passed>/<runs> re-runs", the error and error_at of T, the pipeline URL from the payload, the verdict job id VID, the trace path, and the sentence "No fix attempted: the test fails on every re-run, so the change in this commit is the likely cause."
+        - labels: "regression,triage::real";
+        - description: commit SHA and message title, a line per real test with "<file> · <title> · passed <passed>/<runs> re-runs", the error and error_at of T, the parent-commit line, the pipeline URL from the payload, the verdict job id VID, the trace path, and the sentence "No fix attempted: the test fails on every re-run, so the change in this commit is the likely cause."
         Open no branch, commit or merge request. Final answer.
 
         Step 7. app-change: update T's test file so it follows the new behaviour shown in the diff (for example the new button label), keeping the scenario, the user actions and what the assertions check. Let SLUG be T's title in lowercase with non-alphanumeric runs replaced by "-".
         create_commit on new branch "update/PID-SLUG" starting from "main", updating only that file with its full new content, commit message "Update test after app change: <T title> (pipeline PID)".
-        create_merge_request from "update/PID-SLUG" into "main", labels "needs-review", remove source branch on merge:
+        create_merge_request from "update/PID-SLUG" into "main", labels "needs-review,triage::needs-review", remove source branch on merge:
         - title: "Update test after app change: <T title> (pipeline PID)";
-        - description, first line exactly "Cause: app-change · pass rate <passed>/<runs>", then "A human must confirm the app change was intended before merging; this branch is never merged automatically.", the commit SHA and its full message quoted, the changed diff lines that made you decide quoted in a code block, the error and error_at of T, and what the test update changes.
+        - description, first line exactly "Cause: app-change · pass rate <passed>/<runs>", then "A human must confirm the app change was intended before merging; this branch is never merged automatically.", the commit SHA and its full message quoted, the changed diff lines that made you decide quoted in a code block, the error and error_at of T, the parent-commit line, and what the test update changes.
         Final answer.
 
         Step 8. environment: create_issue in project {{project_id}}:
         - title: "Environment change broke: <T title> (pipeline PID)";
-        - labels: "environment";
-        - description: commit SHA and message title, the configuration file and the setting the commit changed (quote the diff lines), the failing step (error_at) and the error of T, the pipeline URL, the verdict job id VID, and the sentence "No code was changed: decide whether the setting or the test is wrong."
+        - labels: "environment,triage::environment";
+        - description: commit SHA and message title, the configuration file and the setting the commit changed (quote the diff lines), the failing step (error_at) and the error of T, the parent-commit line, the pipeline URL, the verdict job id VID, and the sentence "No code was changed: decide whether the setting or the test is wrong."
         Open no branch, commit or merge request. Final answer.
 
         Step 9. Every test is flaky. Pick the test with the fewest passes (T). Read its file with get_repository_file at ref SHA, and look at the line in error_at together with the error message.
@@ -77,7 +79,7 @@ prompts:
         Step 10. Write the fix for T in its test file only, following the rules in your instructions. For a flaky cause, replace fixed pauses and one-shot reads with Playwright web-first assertions or waits on the condition the test needs. For test-data, make the test reset the app and use data it knows is available after the reset (read the seed in the diff), keeping the user actions and assertions. Let SLUG be T's title in lowercase with non-alphanumeric runs replaced by "-".
         create_commit on new branch "fix/PID-SLUG" starting from "main", updating only that file with its full new content, commit message "Fix flaky test: <T title> (pipeline PID)".
 
-        Step 11. create_merge_request from "fix/PID-SLUG" into "main", remove source branch on merge, labels "flaky" when CAUSE is a flaky cause (none for test-data):
+        Step 11. create_merge_request from "fix/PID-SLUG" into "main", remove source branch on merge, labels "flaky,triage::proving" when CAUSE is a flaky cause and "triage::proving" for test-data:
         - title: "Fix flaky test: <T title> (pipeline PID)";
         - description, first line exactly "Cause: <CAUSE> · pass rate <passed>/<runs>", then: the evidence (the error message and error_at from verdict.json, verdict job VID, trace path; for test-data also the seed lines from the diff), what the fix changes and why it keeps what the test verifies, and a line "Other failing tests in this pipeline:" listing the rest with their pass rates, or "none".
         Let MR be the iid of the merge request you created. Go to Step 12.
@@ -91,7 +93,7 @@ prompts:
         Read T's file with get_repository_file at ref SHA (the original, not your fix). Append " @quarantine" to the end of T's title string, change nothing else, and create_commit on the existing branch "fix/PID-SLUG" (no start branch) with that full content, commit message "Quarantine flaky test: <T title> (pipeline PID)". This replaces the fix: the blocking e2e job skips @quarantine tests, a separate non-blocking job keeps running them, and fix-proof has nothing left to prove, so merge-gate merges it.
         create_issue in project {{project_id}}:
         - title: "Quarantined: <T title> (pipeline PID)";
-        - labels: "flaky,quarantine";
+        - labels: "flaky,quarantine,triage::quarantined";
         - description: "Expires: <CREATED + 14 days, as YYYY-MM-DD>" as the first line, then CAUSE, the verdict pass rate <passed>/<runs> (job VID, trace path), the proof pass rate <passed>/<runs> (job PROOF_JOB and its URL), the error and error_at, the merge request !MR, and the sentence "The proposed fix was not stable, so the test runs in the non-blocking e2e-quarantine job until someone fixes it or the expiry date passes."
         Final answer, with the first line "Cause: <CAUSE> · quarantined".
 
