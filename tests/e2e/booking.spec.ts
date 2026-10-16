@@ -9,6 +9,5 @@ test('async confirmation', async ({ page }) => {
   await page.getByTestId('name').fill('Ana');
   await page.getByTestId('slot-s1').getByRole('button', { name: 'Select' }).click();
   await page.getByRole('button', { name: 'Book', exact: true }).click();
-  await page.waitForTimeout(600);
-  expect(await page.getByTestId('booking-status').textContent()).toBe('Booking confirmed');
+  await expect(page.getByTestId('booking-status')).toHaveText('Booking confirmed');
 });
