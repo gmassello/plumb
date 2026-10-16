@@ -195,17 +195,27 @@ At the end of this plan a real red pipeline on the booking app's e2e suite is tu
 - **Covers:** R1, R7, R8
 - **Files:** `.gitlab-ci.yml`, `playwright.config.ts`, `tools/verdict.mjs`, `tools/summary.mjs`, `.gitlab/duo/triage-flow.yml`, `tests/unit/verdict.test.js`, `tests/unit/summary.test.js`
 - **Depends on:** U3, U4, U6
-- **Status:** in progress
+- **Status:** done 2026-10-16 (flow v1.4.0, public in the AI Catalog). Regression scenario, pipeline 2953211821: `flake-verdict` JUnit 10 cases, 10 failed; issue #10 with `triage::real` and "Parent commit 3297613…: passed 3/3 runs". Flaky loop, pipeline 2953221849: 6/10 → !11 with `triage::proving`, the MR pipeline's `fix-proof` JUnit 50/50, merged by `merge-gate`, relabelled `triage::merged` by `summary`. Scoped labels work: `triage::merged` replaced `triage::proving`.
 - **Tests:**
   - happy: a test that passes 3 of 5 runs → a JUnit report with 5 cases and 2 failures.
   - happy: a real test present on the parent commit → `base` with the parent's passes; absent → `base: null`.
   - edge: a quarantined loop → `summary` labels the MR `triage::quarantined`, not `triage::merged`.
 
+### U14. Evidence for the judges
+- **Goal:** a reader checks every claim without running anything: a "See it work" table in the README with one real pipeline per path, a "Limits" section, `docs/CLAIMS.md` mapping each published number to its source, and the flow session transcripts in `docs/sessions/`, exported by `tools/results.mjs`.
+- **Covers:** R8, R9
+- **Files:** `README.md`, `docs/CLAIMS.md`, `docs/sessions/`, `tools/results.mjs`, `tests/unit/results.test.js`
+- **Depends on:** U8, U13
+- **Status:** done 2026-10-16. 25 sessions exported; QA-06 still 12/12.
+- **Tests:**
+  - happy: a chat log with tool steps and a final answer → a transcript with one row per step and the answer quoted, without tool responses.
+  - happy: a pipeline with two sessions → its RESULTS row links both transcripts.
+
 ## Cut line
 | Tier | Units | Why |
 |---|---|---|
 | must | U1, U2, U3, U4, U5, U6, U7, U9, U11, U12 | the full loop from red pipeline to live app is the demo, and telling an outdated test from a regression is the idea's edge (Innovation/Idea); without any of these there is nothing to film |
-| should | U8, U10, U13 | U8 backs every published number (Potential Impact); U10 strengthens the govern stage (Stage One, Technological Implementation) |
+| should | U8, U10, U13, U14 | U8 backs every published number (Potential Impact); U10 strengthens the govern stage (Stage One, Technological Implementation) |
 | cut | — | nothing is cut: 370 hours at the 2026-10-11 revision leave room for the must units plus video, submission text and deck |
 
 ## Risks

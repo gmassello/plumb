@@ -23,7 +23,7 @@ npm run lint                                                      # syntax check
 gcloud run deploy booking --source . --region us-central1         # deploy (CI runs it on main)
 SUMMARY_DRY_RUN=1 CI_COMMIT_SHA=<merge sha> node tools/summary.mjs   # print the run summary for a merge (needs CI_API_V4_URL, CI_PROJECT_ID, MERGE_BOT_TOKEN, APP_URL)
 python3 cases/small-booking-api/checks.py http://localhost:8080   # contract checks against a running app
-node tools/results.mjs                                            # regenerate docs/RESULTS.md from the GitLab API (uses glab's login)
+node tools/results.mjs                                            # regenerate docs/RESULTS.md and docs/sessions/ from the GitLab API (uses glab's login)
 MERGE_BOT_TOKEN=<token> node tools/flow-drift.mjs                 # compare .gitlab/duo/triage-flow.yml with the flow published in the AI Catalog
 ```
 
@@ -57,7 +57,35 @@ On every green `main` pipeline, `deploy` publishes the app to Google Cloud Run (
 
 [`docs/DEMO.md`](docs/DEMO.md) records one full run of this loop, from the red job to the summary note in 9 min 47 s, with the timestamp and link of every step.
 
-[`docs/RESULTS.md`](docs/RESULTS.md) lists every pipeline the flow has triaged, with the verdict, the cause, what it created and the proof, plus the QA-06 cause check (12 of 12 right). It is generated from the GitLab API by `node tools/results.mjs`.
+[`docs/RESULTS.md`](docs/RESULTS.md) lists every pipeline the flow has triaged, with the verdict, the cause, what it created and the proof, plus the QA-06 cause check (12 of 12 right). It is generated from the GitLab API by `node tools/results.mjs`, which also exports each flow session's steps and final answer to [`docs/sessions/`](docs/sessions/).
+
+The flow is public in the AI Catalog as `triage-flow`.
+
+## See it work
+
+Each path of the flow on a real pipeline. All links are public; every number is in [`docs/RESULTS.md`](docs/RESULTS.md), with the flow session transcripts in [`docs/sessions/`](docs/sessions/).
+
+| Path | Pipeline | Verdict | What the flow did | Outcome |
+|---|---|---|---|---|
+| Flaky, fixed | [2948453748](https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43144947/showcase/-/pipelines/2948453748) | 3/10 flaky | [!10](https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43144947/showcase/-/merge_requests/10): a fixed pause becomes a waiting assertion ([session](docs/sessions/9497797.md)) | `fix-proof` 50/50, merged by `merge-gate`, deployed, summary note: 9 min 47 s with no human action ([timeline](docs/DEMO.md)) |
+| Flaky, fixed, with state labels | [2953221849](https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43144947/showcase/-/pipelines/2953221849) | 6/10 flaky | [!11](https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43144947/showcase/-/merge_requests/11) labelled `triage::proving` ([session](docs/sessions/9576719.md)) | 50 runs in the MR's test widget, merged, relabelled `triage::merged` |
+| Flaky, not fixable (negative control) | [2944554222](https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43144947/showcase/-/pipelines/2944554222) | 6/10 flaky | [!9](https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43144947/showcase/-/merge_requests/9) tried a fix ([session](docs/sessions/9411834.md)) | `fix-proof` passed only 33/50, so `merge-gate` never ran; the flow replaced the fix with a quarantine and opened [#9](https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43144947/showcase/-/issues/9) with an expiry date |
+| Real regression | [2953211821](https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43144947/showcase/-/pipelines/2953211821) | 0/10 real | [#10](https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43144947/showcase/-/issues/10) quotes the diff and "Parent commit: passed 3/3 runs" ([session](docs/sessions/9576573.md)) | no code touched |
+| Intended app change | [2944391258](https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43144947/showcase/-/pipelines/2944391258) | 0/10 real | [!6](https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43144947/showcase/-/merge_requests/6) on `update/` updates the test to the new label | proven 50/50, never merged automatically |
+| Environment | [2944325042](https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43144947/showcase/-/pipelines/2944325042) | 0/10 real | [#8](https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43144947/showcase/-/issues/8) names the `TZ` setting the commit added | no code touched |
+| Test data | [2944438629](https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43144947/showcase/-/pipelines/2944438629) | 0/10 real | [!7](https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43144947/showcase/-/merge_requests/7) makes the test reset and use data it knows exists | proven 50/50, merged |
+
+Every claimed number and the command behind it: [`docs/CLAIMS.md`](docs/CLAIMS.md).
+
+## Limits
+
+- The flow handles one test per pipeline: the first real test, or the flaky test with the fewest passes. Other failing tests are listed in the merge request, not fixed.
+- The flow waits at most 8 minutes for the proof. A slower pipeline leaves the merge request open with `triage::proving`.
+- A quarantine's expiry date is written in the issue but not enforced: nothing removes the tag when it passes.
+- The duplicate check looks only at open issues and merge requests, so a test that breaks again after its fix merged gets a new one.
+- The parent-commit run compares with one commit back. A failure that started earlier shows as "already failing", without saying where it started.
+- Cause classification is the language model's call (12 of 12 right in QA-06, four scenarios). The merge is not: only `merge-gate` merges, after 50 of 50.
+- The app keeps bookings in memory, and the deployed demo exposes its test reset endpoint `/_test/reset`.
 
 ## License
 

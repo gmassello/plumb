@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
-import { buildResults, causeOf, pipelineOf } from '../../tools/results.mjs';
+import { buildResults, causeOf, pipelineOf, transcript } from '../../tools/results.mjs';
 
 const verdict = (title, passed, v) => ({ runs: 10, tests: [{ title, passed, verdict: v }] });
 const pipeline = (id, v, extra = {}) => ({ id, verdict: v, causes: ['async-wait'], items: [], proof: null, ...extra });
@@ -57,4 +57,22 @@ test('without glab the script exits non-zero and writes nothing', () => {
   const run = spawnSync(process.execPath, ['tools/results.mjs'], { env: { PATH: '' }, encoding: 'utf8' });
   assert.equal(run.status, 1);
   assert.match(run.stderr, /glab is not installed\. Nothing written\./);
+});
+
+test('a session transcript lists each step and quotes the final answer, without tool responses', () => {
+  const md = transcript({ id: 7, pipeline: 99 }, [
+    { message_type: 'tool', message_sub_type: 'None', timestamp: '2026-10-16T00:33:22.5+00:00', status: 'success', content: 'Starting Flow: {"a": 1}' },
+    { message_type: 'tool', message_sub_type: 'create_issue', timestamp: '2026-10-16T00:34:01.0+00:00', status: 'failure', content: 'Create issue a | b', tool_info: 'SECRET RESPONSE' },
+    { message_type: 'agent', timestamp: '2026-10-16T00:35:00.0+00:00', content: 'Cause: regression\nCreated #10' },
+  ]);
+  assert.match(md, /^# Flow session 7/);
+  assert.match(md, /\| 00:33:22 \| tool \| Starting Flow: \{"a": 1\} \|/);
+  assert.match(md, /\| 00:34:01 \| create_issue \(failure\) \| Create issue a \\\| b \|/);
+  assert.match(md, /> Cause: regression\n> Created #10/);
+  assert.doesNotMatch(md, /SECRET RESPONSE/);
+});
+
+test('each pipeline links the transcripts of its sessions', () => {
+  const md = buildResults({ ...RUN, pipelines: [pipeline(1, null, { sessions: [7, 8] })] });
+  assert.match(md, /\| \[7\]\(sessions\/7\.md\)<br>\[8\]\(sessions\/8\.md\) \|/);
 });

@@ -1,11 +1,12 @@
 import { execFileSync } from 'node:child_process';
-import { writeFileSync } from 'node:fs';
+import { mkdirSync, writeFileSync } from 'node:fs';
 import { pathToFileURL } from 'node:url';
 
 const PROJECT_ID = 87376478;
 const PROJECT_PATH = 'gitlab-ai-hackathon/transcend-october-2026/43144947/showcase';
 const WEB = `https://gitlab.com/${PROJECT_PATH}`;
 const OUT = 'docs/RESULTS.md';
+const SESSIONS = 'docs/sessions';
 
 export const QA06 = {
   2940411157: 'regression',
@@ -22,6 +23,35 @@ export function pipelineOf(goal) {
 export function causeOf(finalAnswer) {
   const match = /^Cause: ([a-z-]+)/m.exec(finalAnswer ?? '');
   return match ? match[1] : null;
+}
+
+const cell = (text, max) => {
+  const flat = String(text ?? '').replace(/\s+/g, ' ').trim().replace(/\|/g, '\\|');
+  return flat.length > max ? `${flat.slice(0, max)}…` : flat;
+};
+
+export function transcript({ id, pipeline }, log) {
+  const lines = [
+    `# Flow session ${id}`,
+    '',
+    `Pipeline [${pipeline}](${WEB}/-/pipelines/${pipeline}). Exported by \`node tools/results.mjs\` from the session's \`ui_chat_log\`; tool responses are left out.`,
+    '',
+    '| UTC | Step | Detail |',
+    '|---|---|---|',
+  ];
+  const answers = [];
+  for (const m of log) {
+    const time = (m.timestamp ?? '').slice(11, 19);
+    if (m.message_type === 'agent') {
+      answers.push(m.content ?? '');
+      lines.push(`| ${time} | final answer | see below |`);
+      continue;
+    }
+    const step = m.message_sub_type && m.message_sub_type !== 'None' ? m.message_sub_type : m.message_type;
+    lines.push(`| ${time} | ${step}${m.status && m.status !== 'success' ? ` (${m.status})` : ''} | ${cell(m.content, 240)} |`);
+  }
+  lines.push('', '## Final answer', '', ...(answers.length ? answers.at(-1).split('\n').map((l) => `> ${l}`) : ['none']), '');
+  return lines.join('\n');
 }
 
 function verdictCell(verdict) {
@@ -47,13 +77,14 @@ export function buildResults({ pipelines, sessions, updateMerges, generatedAt })
     '',
     '## Pipelines',
     '',
-    '| Pipeline | Verdict (re-runs passed) | Flow sessions | Cause | Created | Proof |',
+    '| Pipeline | Verdict (re-runs passed) | Flow sessions (transcripts) | Cause | Created | Proof |',
     '|---|---|---|---|---|---|',
   ];
   for (const p of pipelines) {
     const causes = [...new Set(p.causes.map((c) => c ?? '—'))].join(', ');
+    const runs = p.sessions?.length ? p.sessions.map((id) => `[${id}](sessions/${id}.md)`).join('<br>') : p.causes.length;
     lines.push(
-      `| [${p.id}](${WEB}/-/pipelines/${p.id}) | ${verdictCell(p.verdict)} | ${p.causes.length} | ${causes} | ${createdCell(p.items)} | ${proofCell(p.proof)} |`,
+      `| [${p.id}](${WEB}/-/pipelines/${p.id}) | ${verdictCell(p.verdict)} | ${runs} | ${causes} | ${createdCell(p.items)} | ${proofCell(p.proof)} |`,
     );
   }
   const qa = sessions.filter((s) => QA06[s.pipeline]);
@@ -93,14 +124,12 @@ async function artifact(pipelineId, jobName, file) {
   }
 }
 
-async function finalAnswer(sessionId) {
+async function chatLog(sessionId) {
   const data = await graphql(
     `{ duoWorkflowEvents(workflowId: "gid://gitlab/Ai::DuoWorkflows::Workflow/${sessionId}") { nodes { checkpoint } } }`,
   );
   const node = data.duoWorkflowEvents.nodes[0];
-  if (!node) return null;
-  const log = JSON.parse(node.checkpoint).channel_values?.ui_chat_log ?? [];
-  return log.filter((m) => m.message_type === 'agent').at(-1)?.content ?? null;
+  return node ? JSON.parse(node.checkpoint).channel_values?.ui_chat_log ?? [] : [];
 }
 
 async function main() {
@@ -108,11 +137,14 @@ async function main() {
     `{ duoWorkflowWorkflows(projectPath: "${PROJECT_PATH}", first: 100) { nodes { id goal } } }`,
   );
   const sessions = [];
+  mkdirSync(SESSIONS, { recursive: true });
   for (const node of data.duoWorkflowWorkflows.nodes.reverse()) {
     const pipeline = pipelineOf(node.goal);
     if (!pipeline) continue;
     const id = Number(node.id.split('/').at(-1));
-    sessions.push({ id, pipeline, cause: causeOf(await finalAnswer(id)) });
+    const log = await chatLog(id);
+    writeFileSync(`${SESSIONS}/${id}.md`, transcript({ id, pipeline }, log));
+    sessions.push({ id, pipeline, cause: causeOf(log.filter((m) => m.message_type === 'agent').at(-1)?.content) });
   }
   const pipelines = [];
   for (const id of [...new Set(sessions.map((s) => s.pipeline))]) {
@@ -135,6 +167,7 @@ async function main() {
       id,
       verdict: await artifact(id, 'flake-verdict', 'verdict.json'),
       causes: sessions.filter((s) => s.pipeline === id).map((s) => s.cause),
+      sessions: sessions.filter((s) => s.pipeline === id).map((s) => s.id),
       items,
       proof,
     });
