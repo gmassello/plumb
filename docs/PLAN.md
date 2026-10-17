@@ -263,7 +263,7 @@ At the end of this plan a real red pipeline on the booking app's e2e suite is tu
 - **Covers:** R5, R8
 - **Files:** `src/server.js`, `cases/small-booking-api/checks.py`, `.gitlab-ci.yml`, `tools/quarantine.mjs`, `tools/verdict.mjs`, `tools/summary.mjs`, `tools/results.mjs`, `.gitlab/duo/triage-flow.yml`, `tests/unit/*.test.js`
 - **Depends on:** U18
-- **Status:** done 2026-10-17, flow v1.9.0.
+- **Status:** done 2026-10-17, flow v1.9.0. The CI variable was first named `RESET_TOKEN`, which every job on main received, so the app under test in `unit` closed its reset and main went red (pipeline 2958899914); it is now `LIVE_RESET_TOKEN`.
 - **Tests:**
   - happy: a `describe`, a mid-title tag and a title across lines are listed as quarantined; an infra verdict shows `infra: <pattern>`.
   - edge: skipped and interrupted runs are not counted; three skipped runs give no verdict; with `RESET_TOKEN=x` the reset without the header is `403` and `checks.py` with the token passes 6/6; a 20 KB body is `413`.

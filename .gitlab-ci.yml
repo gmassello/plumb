@@ -239,7 +239,7 @@ deploy:
     - printf %s "$GCP_OIDC" > /tmp/gitlab-oidc.jwt
     - gcloud auth login --cred-file=deploy/gcp-wif.json --quiet
     - gcloud config set project showcase-flaky
-    - gcloud run deploy booking --source . --region us-central1 --allow-unauthenticated --max-instances 1 --set-env-vars RESET_TOKEN=$RESET_TOKEN --quiet
+    - gcloud run deploy booking --source . --region us-central1 --allow-unauthenticated --max-instances 1 --set-env-vars RESET_TOKEN=$LIVE_RESET_TOKEN --quiet
     - url=$(gcloud run services describe booking --region us-central1 --format='value(status.url)')
     - echo "Deployed to $url"
     - 'curl -fsS "$url" | grep -q "Book an appointment" || { echo "deploy: $url does not serve the booking page."; exit 1; }'
@@ -256,7 +256,7 @@ live-checks:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
   script:
     - apk add --no-cache python3 > /dev/null
-    - python3 cases/small-booking-api/checks.py "$APP_URL"
+    - RESET_TOKEN=$LIVE_RESET_TOKEN python3 cases/small-booking-api/checks.py "$APP_URL"
 
 summary:
   stage: deploy
