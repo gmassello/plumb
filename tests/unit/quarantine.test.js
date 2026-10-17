@@ -1,14 +1,22 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { check, quarantinedTitles } from '../../tools/quarantine.mjs';
 
 const RACE = 'two visitors book the same slot at the same time';
 const issue = (title, expires, iid = 9) => ({ iid, title: `Quarantined: ${title} (pipeline 2944554222)`, description: `Expires: ${expires}\n\nCause: concurrency` });
 
-test('the repo quarantines the race test, within its expiry date', () => {
-  const titles = quarantinedTitles();
-  assert.deepEqual(titles, [RACE]);
-  assert.deepEqual(check(titles, [issue(RACE, '2026-10-27')], '2026-10-16', 2), { expired: [], missing: [], over: false });
+test('only tests tagged @quarantine are listed, and one within its expiry date passes', () => {
+  const dir = mkdtempSync(join(tmpdir(), 'quarantine-'));
+  writeFileSync(join(dir, 'a.spec.ts'), `test('${RACE} @quarantine', async () => {});\ntest('late slot', async () => {});\n`);
+  writeFileSync(join(dir, 'b.spec.ts'), "test(\"async confirmation @quarantine\", async () => {});\n");
+  writeFileSync(join(dir, 'notes.txt'), `test('ignored @quarantine', async () => {});\n`);
+  const titles = quarantinedTitles(dir);
+  rmSync(dir, { recursive: true });
+  assert.deepEqual(titles, [RACE, 'async confirmation']);
+  assert.deepEqual(check([RACE], [issue(RACE, '2026-10-27')], '2026-10-16', 2), { expired: [], missing: [], over: false });
 });
 
 test('a quarantine is expired on its expiry date and after it', () => {
