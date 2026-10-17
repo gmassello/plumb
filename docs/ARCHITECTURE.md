@@ -63,6 +63,9 @@ graph TB
     gate[merge-gate: merges fix/ MRs only via API]
     quar[e2e-quarantine: @quarantine tests, allow_failure]
     qcheck[quarantine-check: cap of 2, issue and expiry]
+    unit[unit: lint + node:test]
+    api[api-checks: checks.py against the app in the job]
+    live[live-checks: checks.py against the Cloud Run URL]
     drift[flow-drift: repo flow vs AI Catalog, main only]
     deploy[deploy: Cloud Run + live check]
     summary[summary: note on the failed commit, MR label]
@@ -77,6 +80,11 @@ graph TB
   gate -->|merge to main| deploy
   deploy --> app
   deploy -->|APP_URL| summary
+  deploy -->|APP_URL| live
+  unit -->|blocks| gate
+  api -->|blocks| gate
+  unit -->|blocks| deploy
+  api -->|blocks| deploy
   e2e --> app
 ```
 

@@ -97,8 +97,8 @@ A self-owned, trivial case: the app's API that the e2e suite drives and the depl
 
 | Layer | Criterion | How it is proven |
 |---|---|---|
-| Product | Health, time-zone listing, booking that confirms within 2 s, slot taken, unknown ids and validation all behave as the spec says | `python3 cases/small-booking-api/checks.py http://localhost:8080` exits 0 with "6 passed" |
-| Product | The same contract holds on the deployed app | `python3 cases/small-booking-api/checks.py <Cloud Run URL>` exits 0 |
+| Product | Health, time-zone listing, booking that confirms within 2 s, slot taken, unknown ids and validation all behave as the spec says | `python3 cases/small-booking-api/checks.py http://localhost:8080` exits 0 with "6 passed"; CI job `api-checks` runs it on every pipeline |
+| Product | The same contract holds on the deployed app | `python3 cases/small-booking-api/checks.py <Cloud Run URL>` exits 0; CI job `live-checks` runs it after every deploy on main |
 | System | The checks were written from the spec and catch a broken server | Validated 2026-10-10: a reference server passed 6/6, and a mutant accepting a taken slot failed `check_slot_taken` |
 
 ### Medium — the paths beyond the flaky fix
