@@ -4,7 +4,7 @@ import { mkdtempSync, writeFileSync, existsSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { execFileSync } from 'node:child_process';
-import { buildVerdict, failedLocations, realFiles, toJunit, withBase } from '../../tools/verdict.mjs';
+import { buildVerdict, failedLocations, infraMatch, infraOf, realFiles, toJunit, unreproduced, withBase, withSuite } from '../../tools/verdict.mjs';
 
 const ROOT = '/w';
 const OPTS = { pipelineId: 42, sha: 'abc1234', runs: 10, root: ROOT };
@@ -51,6 +51,7 @@ test('a test that passes 7 of 10 re-runs is flaky', () => {
     error: 'Error: expect(received).toBe(expected)\n\nExpected: "Booking confirmed"\nReceived: "Booking pending"',
     error_at: 'tests/e2e/booking.spec.ts:13',
     verdict: 'flaky',
+    order: null,
   }]);
 });
 
@@ -122,4 +123,41 @@ test('the junit report has one test case per run, so GitLab counts every repetit
   assert.equal(out.match(/<testcase /g).length, 5);
   assert.equal(out.match(/<failure /g).length, 2);
   assert.match(out, /name="async &lt;confirmation&gt; \[run 5\/5\]"/);
+});
+
+const seq = (pattern) => [...pattern].map((c) => (c === 'P' ? 'passed' : 'failed'));
+const orderOf = (pattern) => buildVerdict(report([['modal.spec.ts', 'booking from the confirmation modal', seq(pattern)]]), OPTS).tests[0];
+
+test('passing the first runs and failing every later one is a state leak; a scattered flaky run is not', () => {
+  assert.equal(orderOf('PPFFFFFFFF').order, 'state-leak');
+  assert.equal(orderOf('PFFFFFFFFF').order, 'state-leak');
+  assert.equal(orderOf('PFFFFPPPPP').order, null);
+  assert.equal(orderOf('PPPPPPPPFF').order, null);
+  const real = orderOf('FFFFFFFFFF');
+  assert.deepEqual([real.verdict, real.order], ['real', null]);
+});
+
+test('a test that passes every isolated run is suite-only, and gets the result of its full-suite runs', () => {
+  const v = buildVerdict(report([['modal.spec.ts', 'booking from the confirmation modal', seq('PPPPPPPPPP')]]), OPTS);
+  assert.equal(v.tests[0].order, 'suite-only');
+  assert.equal(unreproduced(v), true);
+  const suites = ['F', 'P', 'F'].map((s) => report([
+    ['booking.spec.ts', 'async confirmation', ['passed']],
+    ['modal.spec.ts', 'booking from the confirmation modal', seq(s)],
+  ]));
+  assert.deepEqual(withSuite(v, suites, { root: ROOT }).tests[0].suite, { passed: 1, runs: 3 });
+  assert.equal(unreproduced(buildVerdict(report([['modal.spec.ts', 'x', seq('PFPFPFPFPF')]]), OPTS)), false);
+});
+
+test('infrastructure errors are recognised, an app that refuses connections is not', () => {
+  assert.equal(infraMatch('Error: ENOSPC: no space left on device, write').pattern, 'no space left');
+  assert.equal(infraMatch('Error: Timed out waiting 30000ms from config.webServer.').pattern, 'web server did not start');
+  assert.equal(infraMatch('browserType.launch: Executable does not exist').pattern, 'browser launch failed');
+  assert.equal(infraMatch('Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:8080/'), null);
+  assert.equal(infraMatch('connect ECONNREFUSED 127.0.0.1:8080'), null);
+  assert.deepEqual(infraOf({ errors: [{ message: 'Error: Timed out waiting 30000ms from config.webServer.' }], suites: [] }), {
+    pattern: 'web server did not start',
+    message: 'Error: Timed out waiting 30000ms from config.webServer.',
+  });
+  assert.equal(infraOf(report([['booking.spec.ts', 'async confirmation', ['failed']]])), null);
 });

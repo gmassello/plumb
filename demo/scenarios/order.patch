@@ -1,0 +1,14 @@
+diff --git a/tests/e2e/modal.spec.ts b/tests/e2e/modal.spec.ts
+index 1a99100..76d88b5 100644
+--- a/tests/e2e/modal.spec.ts
++++ b/tests/e2e/modal.spec.ts
+@@ -1,9 +1,5 @@
+ import { test, expect } from '@playwright/test';
+ 
+-test.beforeEach(async ({ request }) => {
+-  await request.post('/_test/reset');
+-});
+-
+ test('booking from the confirmation modal', async ({ page }) => {
+   await page.goto('/');
+   await page.getByTestId('name').fill('Ana');

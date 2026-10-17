@@ -36,9 +36,9 @@ prompts:
         Step 1. Read from the payload: PID = object_attributes.id, REF = object_attributes.ref, SHA = object_attributes.sha, CREATED = the date part of object_attributes.created_at, and from builds[] the job named "flake-verdict" (VID).
         If REF is not "main", or there is no "flake-verdict" job in builds[], stop now without calling any tool: there is no verdict, so there is no action.
 
-        Step 2. gitlab_api_get projects/{{project_id}}/jobs/VID/artifacts/verdict.json. It has runs and tests[] with file, title, passed, failed, verdict, trace, error (the first failure message) and error_at (file:line of the failing step). A real test may also have base: the same test run on the parent commit (sha, passed, runs), or null when the parent does not have it. If it cannot be read, stop without acting.
+        Step 2. gitlab_api_get projects/{{project_id}}/jobs/VID/artifacts/verdict.json. It has runs and tests[] with file, title, passed, failed, verdict, trace, error (the first failure message) and error_at (file:line of the failing step). A real test may also have base: the same test run on the parent commit (sha, passed, runs), or null when the parent does not have it. A test may have order: "state-leak" when it passed the first runs and failed every later one (state left by earlier runs), or "suite-only" when it passed every isolated run although it failed in the full suite; a suite-only test may also have suite (passed, runs: the full suite run again in fresh processes). The verdict may instead have infra (pattern, message) and no tests, when the run failed for an infrastructure reason. If it cannot be read, stop without acting.
 
-        Step 3. If any test has verdict "real", let T be the first real test and go to Step 4. Otherwise go to Step 9.
+        Step 3. If the verdict has infra, go to Step 14. If any test has verdict "real", let T be the first real test and go to Step 4. Otherwise go to Step 9.
 
         Step 4. Read the commit: gitlab_api_get projects/{{project_id}}/repository/commits/SHA (message) and gitlab_api_get projects/{{project_id}}/repository/commits/SHA/diff (new_path and diff per changed file). Read T's file with get_repository_file at ref SHA.
         If the diff cannot be read, CAUSE = regression and the issue in Step 6 adds the sentence "The commit diff was unavailable, so the cause was not classified."
@@ -73,15 +73,16 @@ prompts:
         Open no branch, commit or merge request. Final answer.
 
         Step 9. Every test is flaky. Pick the test with the fewest passes (T). Read its file with get_repository_file at ref SHA, and look at the line in error_at together with the error message.
-        Classify CAUSE as exactly one of: async-wait (reads a result after a fixed pause instead of waiting for it), concurrency (two actors race on shared server state), time-zone (expectation assumes the machine's zone), shared-state (depends on data left by other tests or runs), animation (acts on an element before it is ready, for example a forced click on a disabled button).
+        Classify CAUSE as exactly one of: async-wait (reads a result after a fixed pause instead of waiting for it), concurrency (two actors race on shared server state), time-zone (expectation assumes the machine's zone), shared-state (depends on data left by other tests or runs), animation (acts on an element before it is ready, for example a forced click on a disabled button). If T has order, CAUSE is shared-state.
+        The order line, used in Step 11 when T has order: for "state-leak", "Order: passed the first <n> runs, then failed every later run (state left by earlier runs)." where n is passed; for "suite-only", "Order: passed all <passed> isolated runs, failed <suite.runs - suite.passed>/<suite.runs> full-suite runs (depends on tests that run before it)." or, without suite, "Order: passed all <passed> isolated runs; it failed only in the full suite."
         Run the duplicate check of Step 5 twice, with TITLE "Fix flaky test: <T title>" and with TITLE "Quarantined: <T title>". Then go to Step 10.
 
-        Step 10. Write the fix for T in its test file only, following the rules in your instructions. For a flaky cause, replace fixed pauses and one-shot reads with Playwright web-first assertions or waits on the condition the test needs. For test-data, make the test reset the app and use data it knows is available after the reset (read the seed in the diff), keeping the user actions and assertions. Let SLUG be T's title in lowercase with non-alphanumeric runs replaced by "-".
+        Step 10. Write the fix for T in its test file only, following the rules in your instructions. For a flaky cause, replace fixed pauses and one-shot reads with Playwright web-first assertions or waits on the condition the test needs. For shared-state, make the test reset the app before it runs (POST /_test/reset in a beforeEach), as the other test files do. For test-data, make the test reset the app and use data it knows is available after the reset (read the seed in the diff), keeping the user actions and assertions. Let SLUG be T's title in lowercase with non-alphanumeric runs replaced by "-".
         create_commit on new branch "fix/PID-SLUG" starting from "main", updating only that file with its full new content, commit message "Fix flaky test: <T title> (pipeline PID)".
 
         Step 11. create_merge_request from "fix/PID-SLUG" into "main", remove source branch on merge, labels "flaky,triage::proving" when CAUSE is a flaky cause and "triage::proving" for test-data:
         - title: "Fix flaky test: <T title> (pipeline PID)";
-        - description, first line exactly "Cause: <CAUSE> · pass rate <passed>/<runs>", then: the evidence (the error message and error_at from verdict.json, verdict job VID, trace path; for test-data also the seed lines from the diff), what the fix changes and why it keeps what the test verifies, and a line "Other failing tests in this pipeline:" listing the rest with their pass rates, or "none".
+        - description, first line exactly "Cause: <CAUSE> · pass rate <passed>/<runs>", then: the order line when T has order, the evidence (the error message and error_at from verdict.json, verdict job VID, trace path; for test-data also the seed lines from the diff), what the fix changes and why it keeps what the test verifies, and a line "Other failing tests in this pipeline:" listing the rest with their pass rates, or "none".
         Let MR be the iid of the merge request you created. Go to Step 12.
 
         Step 12. Wait for the proof. Repeat at most 16 times: run_command with program "sleep" and args "30", then gitlab_api_get projects/{{project_id}}/merge_requests/MR and read state and head_pipeline.status.
@@ -96,6 +97,12 @@ prompts:
         - labels: "flaky,quarantine,triage::quarantined";
         - description: "Expires: <CREATED + 14 days, as YYYY-MM-DD>" as the first line, then CAUSE, the verdict pass rate <passed>/<runs> (job VID, trace path), the proof pass rate <passed>/<runs> (job PROOF_JOB and its URL), the error and error_at, the merge request !MR, and the sentence "The proposed fix was not stable, so the test runs in the non-blocking e2e-quarantine job until someone fixes it or the expiry date passes."
         Final answer, with the first line "Cause: <CAUSE> · quarantined".
+
+        Step 14. CAUSE = infra. Run the duplicate check of Step 5 with TITLE "Infrastructure failure: <infra.pattern>". Otherwise create_issue in project {{project_id}}:
+        - title: "Infrastructure failure: <infra.pattern> (pipeline PID)";
+        - labels: "infra,triage::infra";
+        - description: infra.pattern, infra.message quoted, the pipeline URL, the verdict job id VID, the suggestion "If this keeps happening, add the matching runner failure to retry:when on the job, or fix the runner.", and the sentence "No code was changed: the tests did not get a fair run, so no verdict was made."
+        Open no branch, commit or merge request. Final answer.
 
         Every final answer starts with the line "Cause: <CAUSE>" (or "Cause: none" when you stopped in Step 1 or 2), then lists what you created.
       placeholder: history

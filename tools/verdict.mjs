@@ -30,9 +30,10 @@ function countByTest(report, root) {
     for (const spec of specsOf(suite)) {
       const file = relative(root, join(testDir, spec.file));
       const key = `${file}\u0000${spec.title}`;
-      const entry = byTest.get(key) ?? { file, title: spec.title, passed: 0, failed: 0, trace: null, error: null, error_at: null };
+      const entry = byTest.get(key) ?? { file, title: spec.title, passed: 0, failed: 0, trace: null, error: null, error_at: null, seq: [] };
       for (const test of spec.tests) {
         for (const result of test.results) {
+          entry.seq.push(result.status === 'passed');
           if (result.status === 'passed') {
             entry.passed += 1;
             continue;
@@ -53,10 +54,16 @@ function countByTest(report, root) {
   return byTest;
 }
 
+export function orderOf({ seq, passed, failed }) {
+  if (failed === 0) return 'suite-only';
+  const firstFail = seq.indexOf(false);
+  return firstFail > 0 && failed > passed && seq.slice(firstFail).every((ok) => !ok) ? 'state-leak' : null;
+}
+
 export function buildVerdict(report, { pipelineId, sha, runs, root }) {
   const tests = [...countByTest(report, root).values()]
     .filter((t) => t.passed + t.failed > 0)
-    .map((t) => ({ ...t, verdict: t.passed === 0 ? 'real' : 'flaky' }));
+    .map(({ seq, ...t }) => ({ ...t, verdict: t.passed === 0 ? 'real' : 'flaky', order: orderOf({ seq, ...t }) }));
   if (tests.length === 0) throw new Error('the report has no test results, so there is nothing to judge');
   return { pipeline_id: pipelineId, sha, runs, tests };
 }
@@ -69,6 +76,50 @@ export function withBase(verdict, baseReport, { sha, root }) {
     return { ...t, base: b && b.passed + b.failed > 0 ? { sha, passed: b.passed, runs: b.passed + b.failed } : null };
   });
   return { ...verdict, tests };
+}
+
+export function withSuite(verdict, suiteReports, { root }) {
+  const counts = suiteReports.map((r) => countByTest(r, root));
+  const tests = verdict.tests.map((t) => {
+    if (t.order !== 'suite-only') return t;
+    const runs = counts.map((c) => c.get(`${t.file}\u0000${t.title}`)).filter((c) => c && c.passed + c.failed > 0);
+    return { ...t, suite: { passed: runs.filter((c) => c.failed === 0).length, runs: runs.length } };
+  });
+  return { ...verdict, tests };
+}
+
+export function unreproduced(verdict) {
+  return verdict.tests.some((t) => t.order === 'suite-only');
+}
+
+const INFRA = [
+  ['no space left', /ENOSPC|no space left on device/i],
+  ['out of memory', /ENOMEM|heap out of memory|Cannot allocate memory/i],
+  ['DNS failure', /EAI_AGAIN|getaddrinfo/],
+  ['browser launch failed', /browserType\.launch/],
+  ['web server did not start', /from config\.webServer/],
+  ['network down', /net::ERR_INTERNET_DISCONNECTED|net::ERR_NETWORK_CHANGED/],
+];
+
+export function infraMatch(text) {
+  const hit = INFRA.find(([, re]) => re.test(text));
+  if (!hit) return null;
+  const line = text.split('\n').find((l) => hit[1].test(l)) ?? text;
+  return { pattern: hit[0], message: line.replace(/\u001b\[[0-9;]*m/g, '').trim().slice(0, 300) };
+}
+
+export function infraOf(report) {
+  const messages = (report?.errors ?? []).map((e) => e.message ?? '');
+  for (const suite of report?.suites ?? []) {
+    for (const spec of specsOf(suite)) {
+      for (const test of spec.tests) for (const r of test.results) if (r.status !== 'passed') messages.push(r.error?.message ?? '');
+    }
+  }
+  for (const m of messages) {
+    const hit = infraMatch(m);
+    if (hit) return hit;
+  }
+  return null;
 }
 
 export function realFiles(verdict) {
@@ -112,6 +163,35 @@ function main(args) {
       return 1;
     }
   }
+  if (args[0] === '--infra' && args[1] && args[2]) {
+    const report = readReport(args[1]);
+    if (!report) return 1;
+    const infra = infraOf(report);
+    if (infra) {
+      const verdict = { pipeline_id: Number(process.env.CI_PIPELINE_ID) || null, sha: process.env.CI_COMMIT_SHA ?? null, runs: 0, infra, tests: [] };
+      writeFileSync(args[2], `${JSON.stringify(verdict, null, 2)}\n`);
+      console.log(infra.pattern);
+    }
+    return 0;
+  }
+  if (args[0] === '--unreproduced' && args[1]) {
+    const verdict = readReport(args[1]);
+    if (!verdict) return 1;
+    if (unreproduced(verdict)) console.log('suite-only');
+    return 0;
+  }
+  if (args[0] === '--suite' && args[1] && args[2]) {
+    const verdict = readReport(args[1]);
+    if (!verdict) return 1;
+    const reports = args.slice(2).map(readReport).filter(Boolean);
+    try {
+      writeFileSync(args[1], `${JSON.stringify(withSuite(verdict, reports, { root: process.cwd() }), null, 2)}\n`);
+      return 0;
+    } catch (err) {
+      console.error(`flake-verdict: ${err.message}. verdict.json left without the full-suite result.`);
+      return 1;
+    }
+  }
   if (args[0] === '--real' && args[1]) {
     const verdict = readReport(args[1]);
     if (!verdict) return 1;
@@ -133,7 +213,7 @@ function main(args) {
   }
   const [reportPath, outPath, junitPath] = args;
   if (!reportPath || !outPath) {
-    console.error('usage: node tools/verdict.mjs --failed <e2e-report.json> | --real <verdict.json> | --base <base-report.json> <verdict.json> | <report.json> <verdict.json> [<junit.xml>]');
+    console.error('usage: node tools/verdict.mjs --failed <e2e-report.json> | --infra <e2e-report.json> <verdict.json> | --real <verdict.json> | --unreproduced <verdict.json> | --suite <verdict.json> <suite-report.json>... | --base <base-report.json> <verdict.json> | <report.json> <verdict.json> [<junit.xml>]');
     return 2;
   }
   const report = readReport(reportPath);

@@ -31,9 +31,21 @@ flow-drift:
   script:
     - node tools/flow-drift.mjs
 
+quarantine-check:
+  stage: verify
+  image: node:24.14.1-alpine
+  needs: []
+  allow_failure:
+    exit_codes: [3]
+  script:
+    - node tools/quarantine.mjs
+
 .playwright:
   stage: test
   image: mcr.microsoft.com/playwright:v1.63.0-noble
+  retry:
+    max: 1
+    when: [runner_system_failure, stuck_or_timeout_failure, scheduler_failure]
   before_script:
     - npm ci --no-audit --no-fund
 
@@ -78,6 +90,13 @@ flake-verdict:
       when: on_failure
   script:
     - 'test -f e2e-report.json || { echo "flake-verdict: e2e-report.json is missing from the e2e artifact, so the failed tests are unknown. No verdict written."; exit 1; }'
+    - infra=$(node tools/verdict.mjs --infra e2e-report.json verdict.json)
+    - |
+      if [ -n "$infra" ]; then
+        echo "Infrastructure failure ($infra): nothing to re-run."
+        cat verdict.json
+        exit 1
+      fi
     - failed=$(node tools/verdict.mjs --failed e2e-report.json)
     - echo "Re-running 10 times each:$failed"
     - PLAYWRIGHT_JSON_OUTPUT_FILE=report.json npx playwright test $failed --repeat-each=10 --reporter=json > /dev/null || true
@@ -91,6 +110,14 @@ flake-verdict:
         (cd /tmp/base && PLAYWRIGHT_JSON_OUTPUT_FILE="$CI_PROJECT_DIR/base-report.json" npx playwright test $real --repeat-each=3 --reporter=json > /dev/null) || true
         BASE_SHA=$base BASE_ROOT=/tmp/base node tools/verdict.mjs --base base-report.json verdict.json || true
       fi
+    - |
+      if [ -n "$(node tools/verdict.mjs --unreproduced verdict.json)" ]; then
+        echo "A test passed every isolated run; running the full suite 3 times."
+        for i in 1 2 3; do
+          PLAYWRIGHT_JSON_OUTPUT_FILE=suite-$i.json npx playwright test --grep-invert @quarantine --reporter=json > /dev/null || true
+        done
+        node tools/verdict.mjs --suite verdict.json suite-1.json suite-2.json suite-3.json || true
+      fi
     - cat verdict.json
     - echo "Verdict written. Failing on purpose so the pipeline stays red and the Pipeline Failed trigger fires."
     - exit 1
@@ -100,6 +127,7 @@ flake-verdict:
       - verdict.json
       - report.json
       - base-report.json
+      - suite-*.json
       - verdict-junit.xml
       - test-results/
       - server.log
@@ -136,7 +164,7 @@ fix-proof:
 merge-gate:
   stage: gate
   image: curlimages/curl:8.10.1
-  needs: [baseline, fix-proof]
+  needs: [baseline, quarantine-check, fix-proof]
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME =~ /^fix\//
   script:
