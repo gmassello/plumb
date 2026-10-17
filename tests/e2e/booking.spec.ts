@@ -8,6 +8,6 @@ test('async confirmation', async ({ page }) => {
   await page.goto('/');
   await page.getByTestId('name').fill('Ana');
   await page.getByTestId('slot-s1').getByRole('button', { name: 'Select' }).click();
-  await page.getByRole('button', { name: 'Book', exact: true }).click();
+  await page.getByRole('button', { name: 'Confirm booking', exact: true }).click();
   await expect(page.getByTestId('booking-status')).toHaveText('Booking confirmed');
 });
