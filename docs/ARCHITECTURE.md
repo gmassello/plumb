@@ -69,6 +69,7 @@ graph TB
     drift[flow-drift: repo flow vs AI Catalog, main only]
     deploy[deploy: Cloud Run + live check]
     summary[summary: note on the failed commit, MR label]
+    pages[pages: copies site/ to GitLab Pages, main only]
   end
   flow[triage-flow: Duo flow, one agent]
   app[booking-app: web app under test]
@@ -84,6 +85,7 @@ graph TB
   unit -->|blocks| gate
   api -->|blocks| gate
   unit -->|blocks| deploy
+  unit -->|blocks| pages
   api -->|blocks| deploy
   e2e --> app
 ```
@@ -99,6 +101,7 @@ graph TB
 | `merge-gate` | Last job of a `fix/` MR's pipeline (never `update/`); when the proof passed, asks GitLab to merge the MR once its pipeline succeeds | CI job with `MERGE_BOT_TOKEN` (the author's personal access token, scope `api` only, masked, expires 2026-11-09) | R4 |
 | `quarantine` | Keeps quarantined tests running without blocking: the blocking job skips `@quarantine`, a separate job runs them with `allow_failure: true` | Playwright `--grep-invert @quarantine` / `--grep @quarantine`; the `quarantine-check` job (`tools/quarantine.mjs`) exits 3, an allowed failure, when a quarantine's issue expired or is missing, and 1 when more than 2 tests are quarantined, which blocks `merge-gate` | R5 |
 | `deploy` | On a green main pipeline, deploys the app to Cloud Run, checks that the URL serves the booking page, and hands the URL to the `summary` job, which posts the run summary | CI job, `google/cloud-sdk:586.0.0-slim`, `gcloud run deploy --source`, `curl` content check; authenticates with Workload Identity Federation (GitLab `id_tokens` → pool `gitlab-pool`, restricted to this GitLab project → service account `gitlab-deploy`), so no Google key is stored anywhere | R6, R8 |
+| `pages` | On every main pipeline whose `unit` job passes, publishes the project page `site/` (what Plumb does, in plain English and Spanish, with real screenshots and the numbers from `docs/CLAIMS.md`) | CI job, `alpine:3.20`, `cp -r site public`; GitLab Pages; no build step and no dependency | R6 |
 
 R7's stages map to: plan (issues), create (fix commit), verify (verdict, proof), release (merge-gate), configure (CI and flow YAML in the repo), monitor (live check, GitLab Observability traces of CI), govern (service account identity, token scope, quarantine expiry).
 

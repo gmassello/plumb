@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Plumb</title>
+<meta name="description" content="Plumb is a GitLab Duo flow that triages a red main pipeline: CI decides whether the test is flaky or real, Duo fixes it, and the fix merges only after 50 of 50 runs pass.">
+<script>
+try {
+  var t = localStorage.getItem('plumb-theme');
+  if (!t) t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  document.documentElement.setAttribute('data-theme', t);
+  var l = localStorage.getItem('plumb-lang');
+  if (!l) l = (navigator.language || 'en').slice(0, 2) === 'es' ? 'es' : 'en';
+  document.documentElement.lang = l;
+} catch (e) {}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<script type="module" src="app.js"></script>
+</head>
+<body>
+<a class="skip" href="#main" data-t="skip"></a>
+<header class="bar">
+  <span class="brand">plumb</span>
+  <div class="bar-actions">
+    <button class="btn btn-secondary" id="lang" type="button" data-t="toggle_lang"></button>
+    <button class="btn btn-secondary" id="theme" type="button"></button>
+  </div>
+</header>
+
+<main id="main">
+  <section class="hero">
+    <p class="eyebrow" data-t="hero_eyebrow"></p>
+    <h1 class="display">Plumb</h1>
+    <p class="lead" data-t="hero_lead"></p>
+    <div class="row">
+      <a class="btn btn-primary" href="https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43144947/showcase" data-t="hero_cta"></a>
+      <a class="btn btn-secondary" href="#how" data-t="hero_cta2"></a>
+    </div>
+    <div class="term" role="img" data-t-label="term_label">
+      <div class="term-bar"><span></span><span></span><span></span></div>
+      <pre id="term" aria-hidden="true"></pre>
+    </div>
+  </section>
+
+  <section>
+    <p class="eyebrow" data-t="problem_eyebrow"></p>
+    <h2 data-t="problem_title"></h2>
+    <p class="body" data-t="problem_body"></p>
+    <div class="card plumb"><p class="fact" data-t="problem_fact"></p></div>
+  </section>
+
+  <section id="how">
+    <p class="eyebrow" data-t="how_eyebrow"></p>
+    <h2 data-t="how_title"></h2>
+    <p class="body" data-t="how_body"></p>
+    <ol class="steps">
+      <li class="card"><span class="step-n">1</span><h3 data-t="step1_title"></h3><p data-t="step1_body"></p></li>
+      <li class="card"><span class="step-n">2</span><h3 data-t="step2_title"></h3><p data-t="step2_body"></p></li>
+      <li class="card plumb"><span class="step-n">3</span><h3 data-t="step3_title"></h3><p data-t="step3_body"></p></li>
+      <li class="card"><span class="step-n">4</span><h3 data-t="step4_title"></h3><p data-t="step4_body"></p></li>
+      <li class="card"><span class="step-n">5</span><h3 data-t="step5_title"></h3><p data-t="step5_body"></p></li>
+    </ol>
+  </section>
+
+  <section>
+    <p class="eyebrow" data-t="demo_eyebrow"></p>
+    <h2 data-t="demo_title"></h2>
+    <!-- src: docs/DEMO.md § Timeline -->
+    <div class="shots">
+      <figure class="shot"><a href="https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43144947/showcase/-/pipelines/2948453748"><img src="img/pipeline-red.png" width="1568" height="661" loading="lazy" data-t-alt="shot1_alt"></a><figcaption data-t="shot1_caption"></figcaption></figure>
+      <figure class="shot"><a href="https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43144947/showcase/-/merge_requests/10"><img src="img/mr-fix.png" width="1352" height="896" loading="lazy" data-t-alt="shot2_alt"></a><figcaption data-t="shot2_caption"></figcaption></figure>
+      <figure class="shot"><a href="https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43144947/showcase/-/pipelines/2953230799/test_report"><img src="img/proof-50.png" width="1568" height="726" loading="lazy" data-t-alt="shot3_alt"></a><figcaption data-t="shot3_caption"></figcaption></figure>
+      <figure class="shot"><a href="https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43144947/showcase/-/commit/57608d9d"><img src="img/summary-note.png" width="1568" height="587" loading="lazy" data-t-alt="shot4_alt"></a><figcaption data-t="shot4_caption"></figcaption></figure>
+    </div>
+  </section>
+
+  <section>
+    <p class="eyebrow" data-t="paths_eyebrow"></p>
+    <h2 data-t="paths_title"></h2>
+    <p class="body" data-t="paths_body"></p>
+    <!-- src: README.md § See it work, docs/RESULTS.md -->
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th data-t="col_case"></th><th data-t="col_what"></th><th data-t="col_end"></th><th data-t="col_pipeline"></th></tr></thead>
+        <tbody>
+          <tr><td data-t="path1_case"></td><td><a href="https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43144947/showcase/-/merge_requests/10" data-t="path1_what"></a></td><td data-t="path1_end"></td><td><a class="mono" href="https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43144947/showcase/-/pipelines/2948453748">2948453748</a></td></tr>
+          <tr><td data-t="path2_case"></td><td><a href="https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43144947/showcase/-/merge_requests/9" data-t="path2_what"></a></td><td data-t="path2_end"></td><td><a class="mono" href="https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43144947/showcase/-/pipelines/2944554222">2944554222</a></td></tr>
+          <tr><td data-t="path3_case"></td><td><a href="https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43144947/showcase/-/merge_requests/12" data-t="path3_what"></a></td><td data-t="path3_end"></td><td><a class="mono" href="https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43144947/showcase/-/pipelines/2957810765">2957810765</a></td></tr>
+          <tr><td data-t="path4_case"></td><td><a href="https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43144947/showcase/-/issues/10" data-t="path4_what"></a></td><td data-t="path4_end"></td><td><a class="mono" href="https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43144947/showcase/-/pipelines/2953211821">2953211821</a></td></tr>
+          <tr><td data-t="path5_case"></td><td><a href="https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43144947/showcase/-/merge_requests/6" data-t="path5_what"></a></td><td data-t="path5_end"></td><td><a class="mono" href="https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43144947/showcase/-/pipelines/2944391258">2944391258</a></td></tr>
+          <tr><td data-t="path6_case"></td><td><a href="https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43144947/showcase/-/issues/8" data-t="path6_what"></a></td><td data-t="path6_end"></td><td><a class="mono" href="https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43144947/showcase/-/pipelines/2944325042">2944325042</a></td></tr>
+          <tr><td data-t="path7_case"></td><td><a href="https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43144947/showcase/-/merge_requests/7" data-t="path7_what"></a></td><td data-t="path7_end"></td><td><a class="mono" href="https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43144947/showcase/-/pipelines/2944438629">2944438629</a></td></tr>
+          <tr><td data-t="path8_case"></td><td><a href="https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43144947/showcase/-/merge_requests/13" data-t="path8_what"></a></td><td data-t="path8_end"></td><td><a class="mono" href="https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43144947/showcase/-/pipelines/2957860653">2957860653</a></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <p class="eyebrow" data-t="results_eyebrow"></p>
+    <h2 data-t="results_title"></h2>
+    <div class="stats">
+      <a class="card plumb stat-card" href="https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43144947/showcase/-/blob/main/docs/DEMO.md"><span class="stat">9m 47s</span><span class="stat-label" data-t="stat1_label"></span></a><!-- src: docs/DEMO.md § Timeline -->
+      <a class="card stat-card" href="https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43144947/showcase/-/blob/main/.gitlab-ci.yml"><span class="stat">50/50</span><span class="stat-label" data-t="stat2_label"></span></a><!-- src: grep -n "repeat-each=50" .gitlab-ci.yml -->
+      <a class="card stat-card" href="https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43144947/showcase/-/merge_requests/9"><span class="stat">33/50</span><span class="stat-label" data-t="stat3_label"></span></a><!-- src: docs/RESULTS.md, row 2944554222 -->
+      <a class="card stat-card" href="https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43144947/showcase/-/blob/main/docs/RESULTS.md"><span class="stat">12/12</span><span class="stat-label" data-t="stat4_label"></span></a><!-- src: docs/RESULTS.md § QA-06 -->
+    </div>
+    <p class="small" data-t="results_note"></p>
+  </section>
+
+  <section>
+    <p class="eyebrow" data-t="limits_eyebrow"></p>
+    <h2 data-t="limits_title"></h2>
+    <ul class="limits">
+      <li data-t="limit1"></li>
+      <li data-t="limit2"></li>
+      <li data-t="limit3"></li>
+      <li data-t="limit4"></li>
+      <li data-t="limit5"></li>
+    </ul>
+  </section>
+
+  <section>
+    <p class="eyebrow" data-t="links_eyebrow"></p>
+    <h2 data-t="links_title"></h2>
+    <ul class="links">
+      <li><a href="https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43144947/showcase" data-t="link_repo"></a></li>
+      <li><a href="https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43144947/showcase/-/pipelines" data-t="link_pipelines"></a></li>
+      <li><a href="https://booking-vic4jyzsha-uc.a.run.app" data-t="link_app"></a></li>
+      <li><a href="https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43144947/showcase/-/blob/main/docs/RESULTS.md" data-t="link_results"></a></li>
+      <li><span class="muted" data-t="link_video"></span></li>
+    </ul>
+  </section>
+</main>
+
+<footer class="foot"><p class="small" data-t="footer"></p></footer>
+</body>
+</html>

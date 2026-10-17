@@ -17,7 +17,7 @@ The code is the source of truth. These documents describe the system as it is bu
 - [`docs/adr/`](docs/adr/) — decisions that are hard to reverse, starting with why CI decides and Duo fixes.
 - [`docs/STACK.md`](docs/STACK.md) — runtimes, versions, images, services and where each is pinned.
 - [`docs/BACKEND.md`](docs/BACKEND.md) — the booking server, its flakiness knobs, and the `tools/` scripts that CI runs.
-- [`docs/FRONTEND.md`](docs/FRONTEND.md) — the single booking page, its state and what the e2e tests rely on.
+- [`docs/FRONTEND.md`](docs/FRONTEND.md) — the booking page the e2e tests rely on, and Plumb's project page in `site/` with its language and theme toggles.
 - [`docs/DESIGN.md`](docs/DESIGN.md) — Plumb's design system (tokens, type, components, effects) for the deck and graphics; [`docs/design-preview.html`](docs/design-preview.html) shows it.
 - [`cases/small-booking-api/SPEC.md`](cases/small-booking-api/SPEC.md) — the booking app's HTTP contract; `checks.py` next to it checks a running app against it.
 - [`.gitlab/duo/triage-flow.yml`](.gitlab/duo/triage-flow.yml) — the Duo flow: trigger inputs, tools and the full prompt.
@@ -43,6 +43,7 @@ Plans and historical evidence (not a description of the current system):
 - `.gitlab/duo/` — agent and flow definitions (YAML)
 - `skills/<name>/SKILL.md` — project-level Duo skills (name + description frontmatter required)
 - `src/` — application code
+- `site/` — Plumb's project page, published by the `pages` job to GitLab Pages
 - `tests/` — tests
 
 ## Gate

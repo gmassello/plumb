@@ -2,7 +2,7 @@
 
 Entry for the [GitLab Transcend "Life After Code" hackathon](https://gitlab-transcend.devpost.com/): agents that automate the DevSecOps lifecycle after code is written, built on GitLab Duo Agent Platform.
 
-**Status:** work in progress.
+**Status:** work in progress. Plumb's project page, in plain English and Spanish, is in [`site/`](site/) and is published to GitLab Pages by the `pages` job.
 
 ## Commands
 
@@ -59,7 +59,7 @@ Every pipeline also runs `unit` (`npm run lint` and `npm test`) and `api-checks`
 
 `e2e`, `flake-verdict` and `fix-proof` publish JUnit reports, so the pipeline's Tests tab and the merge request show how many of the 10 or 50 runs passed. GitLab's SAST and Secret Detection templates scan every pipeline. On `main`, `flow-drift` fails if the flow published in the AI Catalog differs from `.gitlab/duo/triage-flow.yml`, so the flow that runs is always the one reviewed in the repo.
 
-On every green `main` pipeline, `deploy` publishes the app to Google Cloud Run (live at https://booking-vic4jyzsha-uc.a.run.app) and checks that the public URL serves the booking page. It authenticates with Workload Identity Federation, so no Google key is stored anywhere. When the commit is the merge of a flow merge request, `summary` then posts one note on the commit whose pipeline failed, linking that pipeline, the verdict, the merge request, the proof result and the live URL.
+On every `main` pipeline whose `unit` job passes, `pages` publishes the project page in `site/` to GitLab Pages. On every green `main` pipeline, `deploy` publishes the app to Google Cloud Run (live at https://booking-vic4jyzsha-uc.a.run.app) and checks that the public URL serves the booking page. It authenticates with Workload Identity Federation, so no Google key is stored anywhere. When the commit is the merge of a flow merge request, `summary` then posts one note on the commit whose pipeline failed, linking that pipeline, the verdict, the merge request, the proof result and the live URL.
 
 [`docs/DEMO.md`](docs/DEMO.md) records one full run of this loop, from the red job to the summary note in 9 min 47 s, with the timestamp and link of every step.
 
