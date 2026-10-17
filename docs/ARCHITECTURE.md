@@ -1,6 +1,6 @@
-# <Product> — Architecture
+# Showcase — Architecture
 
-**Status:** planned (describes the intended design; the README describes what is built) · **Date:** 2026-10-10, revised 2026-10-11 for R11–R14
+**Status:** built (describes the system as implemented; Options considered and Spikes record how it was chosen) · **Date:** 2026-10-10, revised 2026-10-11 for R11–R14 and 2026-10-17 for U15
 
 ## Summary
 CI jobs decide (verdict, proof, merge, deploy) and the Duo flow diagnoses and writes the change; the trade-off is that the merge needs the author's personal access token held by CI, because the flow has no tool that merges and the author's Developer role cannot create a project access token.
@@ -62,7 +62,10 @@ graph TB
     proof[fix-proof: changed test --repeat-each=50, fix/ and update/]
     gate[merge-gate: merges fix/ MRs only via API]
     quar[e2e-quarantine: @quarantine tests, allow_failure]
+    qcheck[quarantine-check: cap of 2, issue and expiry]
+    drift[flow-drift: repo flow vs AI Catalog, main only]
     deploy[deploy: Cloud Run + live check]
+    summary[summary: note on the failed commit, MR label]
   end
   flow[triage-flow: Duo flow, one agent]
   app[booking-app: web app under test]
@@ -70,8 +73,10 @@ graph TB
   verdict -.->|pipeline failed fires trigger| flow
   flow -->|create_commit + create_merge_request| proof
   proof --> gate
+  qcheck -->|more than 2 blocks| gate
   gate -->|merge to main| deploy
   deploy --> app
+  deploy -->|APP_URL| summary
   e2e --> app
 ```
 
@@ -99,6 +104,12 @@ R7's stages map to: plan (issues), create (fix commit), verify (verdict, proof),
               "error": "Expected: \"Booking confirmed\" Received: \"Booking pending\"",
               "error_at": "tests/e2e/booking.spec.ts:13"}]}
   ```
+  Optional fields, added by `tools/verdict.mjs`:
+  - `order` on a test: `"state-leak"` when it passed the first runs, failed every later one and failed more than it passed, `"suite-only"` when it passed every re-run, otherwise `null`.
+  - `suite` on a `suite-only` test: `{ "passed", "runs" }` from 3 full-suite runs.
+  - `base` on a `real` test: `{ "sha", "passed", "runs" }` from 3 runs on the parent commit, or `null` when the parent does not have the test.
+  - `infra` on the verdict: `{ "pattern", "message" }` when an e2e error matches a known infrastructure failure. Then `runs` is 0 and `tests` is empty, because nothing was re-run.
+
   `verdict` is `real` when `passed == 0` and `flaky` otherwise. A test that passes all `runs` re-runs is still `flaky`, because it already failed in `e2e`. `error` is the first failure message without ANSI codes, cut to 500 characters, and `error_at` is its `file:line`: the flow classifies from them because `gitlab_api_get` cannot read a job log, which is plain text and comes back empty (U4 run, MR !3). Read by the flow with `gitlab_api_get projects/:id/jobs/:job_id/artifacts/verdict.json` (spike S7).
 - **`proof.json`** (artifact of `fix-proof`, `expire_in: 30 days`): the same shape as `verdict.json`, built by `tools/verdict.mjs` with `runs: 50`; readers use `passed` and `failed` and ignore `verdict`. It is missing when every changed test is tagged `@quarantine`, because then no test runs.
 - **`e2e` on `fix/` and `update/` MRs** has `allow_failure: true`: the flakiness of other tests must not hold back a proven fix; there the gate is `fix-proof`. On `main` and other MRs `e2e` blocks.
@@ -129,6 +140,9 @@ Nothing persistent of its own. Evidence lives in GitLab: CI artifacts (`verdict.
 | A retried old pipeline runs after its fix MR merged | The duplicate check looks only at open issues and MRs, so the flow opens a second MR for the same test | Seen once in QA-06 (!8 after !7 merged) | Closed by hand; a new pipeline on `main` already includes the fix, so it only happens when an old pipeline is retried |
 | A regression or environment change is classified as test data | A `fix/` MR changes how the test sets up data; the proof may pass and it merges | QA-06 runs; the MR description names `test-data` and the data it creates | The next red pipeline shows the regression again; documented as the residual risk of R14 |
 | The commit diff cannot be read | The flow cannot classify a `real` failure | S8 | Falls back to a "Real regression" issue that says the diff was unavailable |
+| An infrastructure failure on the pattern list (disk, memory, DNS, browser launch, web server start, network) | `flake-verdict` writes `infra` and re-runs nothing; the flow opens a `triage::infra` issue and changes no code | `verdict.json` has `infra` | Fix or retry the runner by hand; the issue suggests adding the failure to `retry:when` |
+| An infrastructure failure off the list (for example `ECONNREFUSED`, which a broken app also causes) | The failed tests are re-run and judged `real` or `flaky` like any other | Not detected | Documented in README § Limits |
+| A flaky test that happens to pass first and then fail most later runs | Marked `state-leak`, so the flow classifies it `shared-state` and adds a reset | The MR quotes the order line | `fix-proof` still has to pass 50/50; otherwise it is quarantined |
 
 ## Spikes
 | ID | Assumption | Experiment | Success criterion | Result | Plan B |
@@ -149,4 +163,4 @@ Nothing persistent of its own. Evidence lives in GitLab: CI artifacts (`verdict.
 ## Out of this design
 - R9 (demo video under 3 min) is presentation work, covered by the record-video step, not by a component.
 - Releasing a test from quarantine automatically, prediction of flakiness, multi-project runs: deferred in the BRIEF.
-- Infrastructure flakiness (runner or registry outages): outside the product. The environment cause (R13) covers only configuration a commit changes in the repo.
+- Repairing infrastructure: `flake-verdict` recognises a fixed list of infrastructure error patterns and the flow reports a match in a `triage::infra` issue, but nothing retries or fixes the runner beyond the Playwright jobs' single `retry` on runner, stuck and scheduler failures. The environment cause (R13) covers only configuration a commit changes in the repo.

@@ -1,5 +1,7 @@
 # <Product> — Plan
 
+> This is the work plan, with each unit's status as of when it was done. The built system is described in the [README](../README.md) and [ARCHITECTURE](ARCHITECTURE.md).
+
 Source: `docs/BRIEF.md`, `docs/ARCHITECTURE.md` · Deadline: 2026-10-27 13:00 UTC (10:00 ART) · Hours left at writing: 398
 
 ## Summary

@@ -1,6 +1,6 @@
 # Small case — booking app HTTP contract
 
-The trivial, self-owned case: the booking app's HTTP API, the surface the e2e suite drives, the deploy job checks live, and every later case builds on. It is the contract U1 implements. The intended race on concurrent bookings (BRIEF R10) is deliberately **not** checked here: it is a flakiness source, not a defect of this contract.
+The trivial, self-owned case: the booking app's HTTP API, the surface the e2e suite drives and every later case builds on. `checks.py` checks it against a running app; the deploy job only checks that the live page loads. It is the contract U1 implements. The intended race on concurrent bookings (BRIEF R10) is deliberately **not** checked here: it is a flakiness source, not a defect of this contract.
 
 ## Actors
 - A1. Visitor — lists slots in their own time zone and books one.

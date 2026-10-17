@@ -1,5 +1,7 @@
 # Demo rehearsal
 
+> **Historical snapshot (2026-10-14).** This records one run of the loop as the pipeline was then. It predates `quarantine-check` and the order and infrastructure checks in `flake-verdict`; the current pipeline is described in the [README](../README.md#pipeline) and [ARCHITECTURE](ARCHITECTURE.md).
+
 The full loop on a real pipeline, run on 2026-10-14 (U9). Every time below comes from the GitLab API (`created_at`, `started_at`, `finished_at`, `merged_at` and the note's `created_at`), not from a stopwatch.
 
 ## Setup
