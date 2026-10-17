@@ -1,9 +1,5 @@
 import { test, expect } from '@playwright/test';
 
-test.beforeEach(async ({ request }) => {
-  await request.post('/_test/reset');
-});
-
 test('booking from the confirmation modal', async ({ page }) => {
   await page.goto('/');
   await page.getByTestId('name').fill('Ana');
