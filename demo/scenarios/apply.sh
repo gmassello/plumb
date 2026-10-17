@@ -7,7 +7,7 @@ case "${1:-}" in
   test-data) msg="Seed a sample booking so the demo calendar is never empty" ;;
   regression) msg="Simplify booking confirmation" ;;
   quarantine) msg="Write an audit entry before saving each booking" ;;
-  order) msg="Drop the redundant reset from the modal test" ;;
+  order) msg="Book the late slot in the modal test and drop the redundant reset from the last-slot test" ;;
   recurring) msg="Read the booking status after the confirmation delay" ;;
   *)
     echo "usage: demo/scenarios/apply.sh <app-change|environment|test-data|regression|quarantine|order|recurring>" >&2

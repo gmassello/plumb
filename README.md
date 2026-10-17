@@ -40,7 +40,7 @@ Seven patches in [`demo/scenarios/`](demo/scenarios/) exercise each path of the 
 | `test-data` | seeds a sample booking on slot s3 that the reset keeps | `a visitor books the last slot of the day` |
 | `regression` | stops bookings from ever reaching "confirmed", under a commit message that does not say so | `async confirmation` |
 | `quarantine` | adds an audit write between the slot check and the insert, which widens a server race to about half of the runs; no change to the test can fix it | `two visitors book the same slot at the same time` (flaky, not always failing) |
-| `order` | removes the modal test's reset, so it finds the slot an earlier test booked | `booking from the confirmation modal` (fails in the suite; alone it passes the first run, then fails every later one) |
+| `order` | makes the modal test book slot s3 and removes the last-slot test's reset, so that test finds s3 already booked | `a visitor books the last slot of the day` (fails in the suite; alone it passes the first run, then fails every later one) |
 | `recurring` | brings back the fixed 600 ms pause in the async confirmation test | `async confirmation` (flaky; already fixed in !3, !10 and !11) |
 
 ```bash
