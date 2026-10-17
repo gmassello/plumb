@@ -6,6 +6,6 @@ diff --git a/tests/e2e/booking.spec.ts b/tests/e2e/booking.spec.ts
    await page.getByTestId('slot-s1').getByRole('button', { name: 'Select' }).click();
    await page.getByRole('button', { name: 'Book', exact: true }).click();
 -  await expect(page.getByTestId('booking-status')).toHaveText('Booking confirmed');
-+  await page.waitForTimeout(600);
++  await page.waitForTimeout(300);
 +  expect(await page.getByTestId('booking-status').textContent()).toBe('Booking confirmed');
  });
