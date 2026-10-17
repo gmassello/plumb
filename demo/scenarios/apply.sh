@@ -2,7 +2,7 @@
 set -eu
 
 case "${1:-}" in
-  app-change) msg="Redesign: rename Book to Confirm booking" ;;
+  app-change) msg="Redesign: rename Confirm booking to Reserve" ;;
   environment) msg="Run CI in the team's time zone" ;;
   test-data) msg="Seed a sample booking so the demo calendar is never empty" ;;
   regression) msg="Simplify booking confirmation" ;;

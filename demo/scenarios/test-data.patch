@@ -1,5 +1,5 @@
 diff --git a/src/server.js b/src/server.js
-index 199bae7..7ff3ae8 100644
+index e6b111a..9b8a90c 100644
 --- a/src/server.js
 +++ b/src/server.js
 @@ -3,7 +3,7 @@ import { readFile } from 'node:fs/promises';
@@ -11,7 +11,7 @@ index 199bae7..7ff3ae8 100644
  
  const CONFIRM_MAX_MS = 800;
  const BOOKING_GAP_MAX_MS = 20;
-@@ -15,6 +15,15 @@ const PUBLIC = {
+@@ -16,6 +16,15 @@ const PUBLIC = {
  
  const bookings = new Map();
  
@@ -27,9 +27,9 @@ index 199bae7..7ff3ae8 100644
  function takenIds() {
    return new Set([...bookings.values()].map((b) => b.slotId));
  }
-@@ -66,6 +75,7 @@ async function handle(req, res) {
-   if (req.method === 'GET' && path === '/health') return send(res, 200, { status: 'ok' });
-   if (req.method === 'POST' && path === '/_test/reset') {
+@@ -75,6 +84,7 @@ async function handle(req, res) {
+     const token = process.env.RESET_TOKEN;
+     if (token && req.headers['x-reset-token'] !== token) return fail(res, 403, 'forbidden', 'The reset needs the X-Reset-Token header');
      bookings.clear();
 +    seedBookings();
      return send(res, 204);

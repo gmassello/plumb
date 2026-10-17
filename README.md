@@ -35,11 +35,11 @@ Seven patches in [`demo/scenarios/`](demo/scenarios/) exercise each path of the 
 
 | Scenario | What the commit does | Test that fails |
 |---|---|---|
-| `app-change` | renames the "Book" button to "Confirm booking" | `async confirmation` |
+| `app-change` | renames the "Confirm booking" button to "Reserve" (the run of 2026-10-17 already renamed "Book" to "Confirm booking", merged by a human in !15) | `async confirmation` |
 | `environment` | sets `TZ: America/Argentina/Buenos_Aires` for every CI job | `late slot is listed with its local date and time` |
 | `test-data` | seeds a sample booking on slot s3 that the reset keeps | `a visitor books the last slot of the day` |
 | `regression` | stops bookings from ever reaching "confirmed", under a commit message that does not say so | `async confirmation` |
-| `quarantine` | adds an audit write between the slot check and the insert, which widens a server race to about half of the runs; no change to the test can fix it | `two visitors book the same slot at the same time` (flaky, not always failing) |
+| `quarantine` | adds an audit write between the slot check and the insert, which widens a server race to about half of the runs; no change to the test can fix it | `two visitors book the same slot at the same time` (flaky, not always failing). While that test stays quarantined (#9), the blocking `e2e` job skips it and this scenario changes nothing |
 | `order` | makes the modal test book slot s3 and removes the last-slot test's reset, so that test finds s3 already booked | `a visitor books the last slot of the day` (fails in the suite; alone it passes the first run, then fails every later one) |
 | `recurring` | brings back a fixed pause, 300 ms, in the async confirmation test (it fails in about 8 of 10 runs, so `e2e` almost always goes red and the verdict stays flaky) | `async confirmation` (flaky; already fixed in !3, !10 and !11) |
 

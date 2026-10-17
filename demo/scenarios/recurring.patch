@@ -1,10 +1,11 @@
 diff --git a/tests/e2e/booking.spec.ts b/tests/e2e/booking.spec.ts
+index 221bcfd..1b4d1d2 100644
 --- a/tests/e2e/booking.spec.ts
 +++ b/tests/e2e/booking.spec.ts
 @@ -9,5 +9,6 @@ test('async confirmation', async ({ page }) => {
    await page.getByTestId('name').fill('Ana');
    await page.getByTestId('slot-s1').getByRole('button', { name: 'Select' }).click();
-   await page.getByRole('button', { name: 'Book', exact: true }).click();
+   await page.getByRole('button', { name: 'Confirm booking', exact: true }).click();
 -  await expect(page.getByTestId('booking-status')).toHaveText('Booking confirmed');
 +  await page.waitForTimeout(300);
 +  expect(await page.getByTestId('booking-status').textContent()).toBe('Booking confirmed');
