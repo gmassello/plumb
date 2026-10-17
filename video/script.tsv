@@ -1,0 +1,33 @@
+beat	en	es
+0:00 open	I'm Germán Massello, and I built Plumb.	I'm Germán Massello, and I built Plumb.
+0:00 open	A red pipeline is your code, or your test.	A red pipeline is either your code, or your test.
+0:00 open	Plumb tells them apart, and acts on each.	Plumb tells them apart, and acts on each one.
+0:15 landing	Flaky tests turn every red pipeline into a guess.	Flaky tests turn every red pipeline into a guess.
+0:15 landing	Teams re-run them, mute them, or delete them.	Teams re-run them, mute them, or delete them.
+0:15 landing	Plumb runs on GitLab Duo Agent Platform.	Plumb runs on GitLab Duo Agent Platform.
+0:15 landing	CI measures the verdict. A Duo flow acts on it.	C I measures the verdict, and a Duo flow acts on it.
+0:15 landing	This page explains it in plain English and Spanish.	This page explains it in plain English, and in Spanish.
+0:40 red	I push a commit that breaks one test by order.	I push a commit that breaks one test by order.
+0:40 red	The e2e job fails, and main turns red.	The end to end job fails, and main turns red.
+0:40 red	First it rules out disk, memory and network failures.	First it rules out disk, memory and network failures.
+0:40 red	flake-verdict re-runs that test 10 times.	Flake verdict re-runs that test ten times.
+0:40 red	It passes once, then fails: state leaks between runs.	It passes once, then fails every time, because state leaks between runs.
+1:05 fix	The red pipeline starts the Duo triage flow.	The red pipeline starts the Duo triage flow.
+1:05 fix	It reads the verdict and names the cause: shared state.	It reads the verdict and names the cause: shared state.
+1:05 fix	It edits only the test, and opens a merge request.	It edits only the test file, and opens a merge request.
+1:05 fix	The description quotes the evidence and the history.	The description quotes the evidence, and the test's history.
+1:05 fix	The fix puts back the reset the test was missing.	The fix puts back the reset the test was missing.
+1:05 fix	It never touches application code or CI.	It never touches application code, or C I.
+1:30 proof	fix-proof runs the changed test 50 times.	Fix proof runs the changed test fifty times.
+1:30 proof	A skipped or deleted test fails the proof.	A skipped or deleted test fails the proof.
+1:30 proof	50 of 50 pass, so merge-gate merges it.	Fifty out of fifty pass, so merge gate merges it.
+1:30 proof	No human touched it. Main is green again.	No human touched it, and main is green again.
+1:30 proof	Then main deploys to Google Cloud Run.	Then main deploys to Google Cloud Run.
+1:50 human	Plumb also knows when not to act.	Plumb also knows when not to act.
+1:50 human	A real regression gets an issue, and no code change.	A real regression gets an issue, and no code change.
+1:50 human	An intended redesign waits for a human to approve.	An intended redesign gets a test update, that waits for a human to approve it.
+1:50 human	A test already fixed twice is quarantined, not fixed again.	A test already fixed twice is quarantined, not fixed again.
+2:10 close	It picked the right cause in 12 of 12 runs.	It picked the right cause in twelve out of twelve runs.
+2:10 close	Every pipeline and flow session is public in the repo.	Every pipeline and flow session is public, in the repo.
+2:10 close	This presenter is my AI avatar, made with HeyGen.	This presenter is my AI avatar and cloned voice, made with HeyGen.
+2:10 close	Plumb is open source on GitLab. Thanks for watching.	Plumb is open source on GitLab, thanks for watching.

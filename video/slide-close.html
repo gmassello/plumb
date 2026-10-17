@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+  :root {
+    --bg: #08090a;
+    --surface: #0f1011;
+    --fg: #f7f8f8;
+    --muted: #8a8f98;
+    --border: #23252a;
+    --accent: #2fe0a6;
+    --font-sans: "Inter", system-ui, sans-serif;
+    --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  }
+  html, body { margin: 0; width: 1920px; height: 1080px; background: var(--bg); color: var(--fg); font-family: var(--font-sans); }
+  main { box-sizing: border-box; height: 100%; padding: 120px 160px; display: flex; flex-direction: column; justify-content: center; border-left: 2px solid var(--accent); }
+  h1 { font-size: 132px; font-weight: 700; margin: 0; letter-spacing: -0.03em; }
+  .claim { font-family: var(--font-mono); font-size: 40px; color: var(--accent); margin: 16px 0 72px; }
+  dl { display: grid; grid-template-columns: 220px 1fr; gap: 22px 32px; margin: 0; font-size: 34px; }
+  dt { color: var(--muted); font-family: var(--font-mono); font-size: 30px; padding-top: 4px; }
+  dd { margin: 0; white-space: nowrap; }
+  .note { margin-top: 80px; padding-top: 28px; border-top: 1px solid var(--border); color: var(--muted); font-size: 28px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Plumb</h1>
+  <p class="claim">it knows which one.</p>
+  <dl>
+    <dt>code</dt><dd>gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43144947/showcase</dd>
+    <dt>page</dt><dd>showcase-8b103c.gitlab.io</dd>
+    <dt>flow</dt><dd>triage-flow, public in the GitLab AI Catalog</dd>
+    <dt>built by</dt><dd>Germán Massello</dd>
+  </dl>
+  <p class="note">Presenter: AI avatar and cloned voice of the author, made with HeyGen.<br>Built on GitLab Duo Agent Platform. MIT licensed.</p>
+</main>
+</body>
+</html>
