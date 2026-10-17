@@ -6,12 +6,12 @@ Copy for the Devpost entry, one section per form field. The limit is in each hea
 Plumb
 
 ## Elevator pitch (20-200)
-A GitLab Duo flow that triages a red main pipeline: CI re-runs the failed test to decide flaky or real, Duo fixes it, and the fix merges only after 50 of 50 runs pass. <!-- src: grep -n "repeat-each=50" .gitlab-ci.yml -->
+A hands-off GitLab Duo flow that triages a red main pipeline: CI re-runs the failed test to decide flaky or real, Duo fixes it, and the fix merges only after 50 of 50 runs pass. <!-- src: grep -n "repeat-each=50" .gitlab-ci.yml -->
 
 ## About the project (-)
 
 ### What it does
-Plumb is a GitLab Duo Agent Platform flow that takes over when a `main` pipeline goes red, and walks away only when `main` is green again or a person has a precise issue to read. A Pipeline events trigger starts the flow on the failed pipeline; nobody mentions it or clicks anything.
+Plumb is a GitLab Duo Agent Platform flow that takes over when a `main` pipeline goes red, and walks away only when `main` is green again or a person has a precise issue to read. A Pipeline events trigger starts the flow on the failed pipeline; nobody mentions it or clicks anything. It is a Path A project at the Hands-off autonomy level: a person sets the rules in CI and walks away.
 
 Before the flow starts, CI decides what kind of failure it is. `flake-verdict` re-runs each failed test 10 times on the same commit and writes `verdict.json`. <!-- src: grep -n "repeat-each=10" .gitlab-ci.yml --> Any pass makes the test flaky. A test file that fails to load counts as a real failure without re-runs. A test that fails all 10 also runs 3 times on the parent commit, so the verdict says whether this commit broke it or it was already broken. <!-- src: grep -n "repeat-each=3" .gitlab-ci.yml --> The verdict also records order effects (state left by earlier runs, or a test that only fails inside the full suite), infrastructure failures that need no code change, and the test's history in the project.
 
@@ -24,12 +24,16 @@ The flow then acts on that verdict:
 After the merge, `deploy` ships the app to Google Cloud Run, `live-checks` runs the API contract against the live URL, and `summary` posts one note on the commit that failed, linking the verdict, the MR, the proof and the live app.
 
 ### Inspiration
-A red `main` pipeline caused by a flaky test costs a team twice: someone stops to read the log, and everyone learns to press retry. Retrying hides the flake; skipping it hides the bug. We wanted an agent that does the boring part end to end, without trusting a language model to decide what is safe to merge.
+At Google, about 84% of the transitions from pass to fail involve a flaky test, not a real regression. <!-- src: https://testing.googleblog.com/2016/05/flaky-tests-at-google-and-how-we.html (Google Testing Blog, 2016-05-27) --> So the developer on CI duty who opens a red `main` pipeline is usually chasing noise, and pays twice: the time to read the log, and the habit everyone learns of pressing retry. Retrying hides the flake; skipping it hides the bug.
+
+The usual answers are to retry the failed test, or to quarantine it and file an issue for someone to fix later; GitLab's own testing guide does both. <!-- src: https://docs.gitlab.com/development/testing_guide/unhealthy_tests/ --> Plumb writes the fix, proves it with 50 runs, and quarantines only when the proof fails. We wanted an agent that does the boring part end to end, without trusting a language model to decide what is safe to merge.
 
 ### How we built it
 The design rule is "CI decides, Duo fixes" (ADR 0001). Everything that decides is deterministic: the re-run counts, the 50-run proof, the merge, the quarantine cap and the recurrence threshold live in `.gitlab-ci.yml` and small Node scripts with unit tests. The Duo flow (`.gitlab/duo/triage-flow.yml`, public in the AI Catalog as `triage-flow`) reads `verdict.json`, picks the cause, writes the fix and opens the MR or issue. `flow-drift` fails the pipeline if the published flow differs from the one in the repo, so the flow that runs is the one that was reviewed.
 
 The subject under test is a small booking app (Node, no framework) with a Playwright suite whose flakiness is natural, not injected: a random confirmation delay, a gap between checking and booking a slot, an animated modal, time zones. It deploys to Cloud Run through Workload Identity Federation, so no Google key is stored anywhere.
+
+Plumb touches all 9 DevSecOps lifecycle stages: plan (the issues it opens), create (the fix commit), verify (`flake-verdict`, `fix-proof`), package (Cloud Run builds the container image from the `Dockerfile`), secure (SAST and Secret Detection on every pipeline), release (`merge-gate`), configure (the CI and the flow are YAML in the repo), monitor (`live-checks` after each deploy, and a health check every 6 hours) and govern (scoped bot token, quarantine expiry, at most 2 quarantined tests). <!-- src: docs/ARCHITECTURE.md, line "R7's stages map to"; grep -n "template:\|--source\|live-health" .gitlab-ci.yml -->
 
 ### Challenges we ran into
 A flaky test does not fail on demand, so every scenario had to be measured before it could be demoed. A fix that looks right can still be flaky: the concurrency fix in [!9](https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43144947/showcase/-/merge_requests/9) passed only 33 of 50 runs, so it was never merged and the flow quarantined the test instead. <!-- src: docs/RESULTS.md, row 2944554222 --> That negative control is why the proof exists.
@@ -70,7 +74,9 @@ GitLab Duo Agent Platform, GitLab CI/CD, Google Cloud Run, Workload Identity Fed
 | Stage One: uses GitLab Duo Agent Platform | pass/fail | What it does (Pipeline events trigger, flow acts); How we built it (custom flow in the AI Catalog) |
 | Technological Implementation | 20% | How we built it (deterministic CI gates, flow-drift, WIF); What it does (verdict, proof, merge-gate) |
 | Design | 20% | What it does (full loop from red pipeline to deploy and summary note); Accomplishments (every path on a real pipeline) |
-| Potential Impact | 20% | Inspiration (cost of red main and retries); Accomplishments (9 min 47 s, no human) |
-| Innovation/Idea | 20% | How we built it ("CI decides, Duo fixes"); What it does (recurring tests go to quarantine); Challenges (negative control) |
+| Potential Impact | 20% | Inspiration (84% of pass-to-fail transitions are flaky at Google; the developer on CI duty); Accomplishments (9 min 47 s, no human) |
+| Innovation/Idea | 20% | Inspiration (retry or quarantine vs. fix and prove); How we built it ("CI decides, Duo fixes"); What it does (recurring tests go to quarantine); Challenges (negative control) |
 | Presentation | 20% | weak: no video link yet; add the YouTube URL to Try it out when it exists |
+| Most Stages Covered (special prize) | — | How we built it (all 9 stages, each with its job or file) |
+| Hands-off agent (Path A prize) | — | What it does (Hands-off autonomy level); Elevator pitch |
 | Google Cloud bonus | +0.2 | What it does (deploy to Cloud Run, live-checks); Try it out (live URL) |

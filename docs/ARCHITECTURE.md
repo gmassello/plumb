@@ -104,7 +104,7 @@ graph TB
 | `pages` | On every main pipeline whose `unit` job passes, publishes the project page `site/` (what Plumb does, in plain English and Spanish, with real screenshots and the numbers from `docs/CLAIMS.md`) | CI job, `alpine:3.20`, `cp -r site public`; GitLab Pages; no build step and no dependency | R6 |
 | `live-health` | Only in the pipeline schedule on main, every 6 hours: runs the API contract checks against the Cloud Run URL and checks that the project page serves `<title>Plumb</title>`. Every other job except `flow-drift` and `quarantine-check` is skipped in that pipeline, so no test runs, nothing deploys and the flow finds no verdict | CI job, `node:24.14.1-alpine`, `cases/small-booking-api/checks.py`, `wget`; pipeline schedule | R7 |
 
-R7's stages map to: plan (issues), create (fix commit), verify (verdict, proof), release (merge-gate), configure (CI and flow YAML in the repo), monitor (live check, GitLab Observability traces of CI), govern (service account identity, token scope, quarantine expiry).
+R7's stages map to: plan (issues), create (fix commit), verify (verdict, proof), package (Cloud Run builds the image from the `Dockerfile` in `deploy`), secure (GitLab's SAST and Secret Detection templates on every pipeline), release (merge-gate), configure (CI and flow YAML in the repo), monitor (live check, the scheduled `live-health`, GitLab Observability traces of CI), govern (service account identity, token scope, quarantine expiry).
 
 ### Contracts
 - **Trigger:** project trigger "Pipeline events → Failed" on `triage-flow`. `context:goal` is the pipeline webhook JSON (`object_attributes.id`, `ref`, `sha`, `status`, `user`, `builds[]`); `context:project_id` is the project id.
