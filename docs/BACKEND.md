@@ -36,7 +36,7 @@ Plain Node scripts in `tools/`, each with its unit test in `tests/unit/`. Export
 
 | Script | Job | What it does |
 |---|---|---|
-| `verdict.mjs` | `flake-verdict`, `fix-proof` | Reads Playwright JSON reports and writes `verdict.json` / `proof.json` and a JUnit file with one case per run. Modes: `--failed` (the failed tests as `file:line`), `--infra` (infrastructure failure patterns), `--real`, `--base` (parent-commit result), `--unreproduced`, `--suite` (full-suite re-runs) |
+| `verdict.mjs` | `flake-verdict`, `fix-proof` | Reads Playwright JSON reports and writes `verdict.json` / `proof.json` and a JUnit file with one case per run. Modes: `--failed` (the failed tests as `file:line`), `--infra` (infrastructure failure patterns), `--real`, `--proven` (every run of every test passed), `--base` (parent-commit result), `--unreproduced`, `--suite` (full-suite re-runs) |
 | `quarantine.mjs` | `quarantine-check` | Lists tests tagged `@quarantine` and matches each with an open-or-closed `Quarantined:` issue. Exit 1 when more than `QUARANTINE_MAX` (default 2) are quarantined; exit 3, a non-blocking warning, when one has no issue or its `Expires:` date has passed |
 | `history.mjs` | `flake-verdict` | Adds `history` to each test in `verdict.json`: the merged fix and update MRs and the quarantine, regression and environment issues whose title names the test, read anonymously from the GitLab API. `recurring` at `RECURRING_FIXES` (2) fixes. Always exits 0: without the API the verdict just has no history |
 | `flow-drift.mjs` | `flow-drift` | Compares `.gitlab/duo/triage-flow.yml` with the latest version published in the AI Catalog (GraphQL) and fails on any difference |
@@ -51,7 +51,7 @@ Plain Node scripts in `tools/`, each with its unit test in `tests/unit/`. Export
 - `order: "state-leak"` when it passed the first runs and failed every later one (state left by earlier runs).
 - `order: "suite-only"` when it passed every isolated run. CI then runs the full suite 3 times and records the result as `suite`.
 - A `real` test also runs 3 times on the parent commit, recorded as `base`.
-- `infraMatch` checks failure messages for six patterns (disk full, out of memory, DNS, browser launch, web server start, network down). On a match, nothing is re-run and `verdict.json` carries `infra` instead of tests.
+- `infraMatch` checks failure messages for four patterns (disk full, out of memory, a temporary DNS failure, network down). A web server that does not start, a browser that does not launch and an unknown host are left out, because a commit can cause them. On a match, nothing is re-run and `verdict.json` carries `infra` instead of tests.
 
 **Errors:** every script prints a line that starts with its own name and says what is missing, then exits non-zero. `flake-verdict` always exits 1 on purpose, so the pipeline stays red and the Duo trigger fires.
 

@@ -95,9 +95,7 @@ export function unreproduced(verdict) {
 const INFRA = [
   ['no space left', /ENOSPC|no space left on device/i],
   ['out of memory', /ENOMEM|heap out of memory|Cannot allocate memory/i],
-  ['DNS failure', /EAI_AGAIN|getaddrinfo/],
-  ['browser launch failed', /browserType\.launch/],
-  ['web server did not start', /from config\.webServer/],
+  ['DNS failure', /EAI_AGAIN/],
   ['network down', /net::ERR_INTERNET_DISCONNECTED|net::ERR_NETWORK_CHANGED/],
 ];
 
@@ -120,6 +118,10 @@ export function infraOf(report) {
     if (hit) return hit;
   }
   return null;
+}
+
+export function proven(verdict) {
+  return verdict.tests.length > 0 && verdict.tests.every((t) => t.failed === 0 && t.passed === verdict.runs);
 }
 
 export function realFiles(verdict) {
@@ -192,6 +194,10 @@ function main(args) {
       return 1;
     }
   }
+  if (args[0] === '--proven' && args[1]) {
+    const verdict = readReport(args[1]);
+    return verdict && proven(verdict) ? 0 : 1;
+  }
   if (args[0] === '--real' && args[1]) {
     const verdict = readReport(args[1]);
     if (!verdict) return 1;
@@ -213,7 +219,7 @@ function main(args) {
   }
   const [reportPath, outPath, junitPath] = args;
   if (!reportPath || !outPath) {
-    console.error('usage: node tools/verdict.mjs --failed <e2e-report.json> | --infra <e2e-report.json> <verdict.json> | --real <verdict.json> | --unreproduced <verdict.json> | --suite <verdict.json> <suite-report.json>... | --base <base-report.json> <verdict.json> | <report.json> <verdict.json> [<junit.xml>]');
+    console.error('usage: node tools/verdict.mjs --failed <e2e-report.json> | --infra <e2e-report.json> <verdict.json> | --real <verdict.json> | --proven <proof.json> | --unreproduced <verdict.json> | --suite <verdict.json> <suite-report.json>... | --base <base-report.json> <verdict.json> | <report.json> <verdict.json> [<junit.xml>]');
     return 2;
   }
   const report = readReport(reportPath);

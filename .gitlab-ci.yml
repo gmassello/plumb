@@ -171,6 +171,13 @@ fix-proof:
     - 'test -n "$specs" || { echo "fix-proof: this merge request changes no e2e spec, so there is nothing to prove."; exit 1; }'
     - echo "Proving 50 times each:" $specs
     - PLAYWRIGHT_JSON_OUTPUT_FILE=report.json npx playwright test $specs --grep-invert @quarantine --repeat-each=50 --pass-with-no-tests --reporter=dot,json
+    - |
+      if VERDICT_RUNS=50 node tools/verdict.mjs report.json proof.json proof-junit.xml; then
+        node tools/verdict.mjs --proven proof.json || { cat proof.json; echo "fix-proof: not every run passed; a skipped run counts as a failure."; exit 1; }
+      else
+        git diff "$CI_MERGE_REQUEST_DIFF_BASE_SHA" HEAD -- $specs | grep -q '^+.*@quarantine' || { echo "fix-proof: no test ran and nothing was quarantined, so a test was removed or skipped."; exit 1; }
+        echo "fix-proof: every changed test is quarantined, so there is nothing to prove."
+      fi
   after_script:
     - 'test -f report.json && VERDICT_RUNS=50 node tools/verdict.mjs report.json proof.json proof-junit.xml && cat proof.json || echo "fix-proof: no tests ran, so no proof.json."'
   artifacts:
@@ -187,11 +194,14 @@ fix-proof:
 
 merge-gate:
   stage: gate
-  image: curlimages/curl:8.10.1
+  image: alpine:3.20
   needs: [baseline, unit, api-checks, quarantine-check, fix-proof]
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME =~ /^fix\//
   script:
+    - apk add --no-cache git curl > /dev/null
+    - other=$(git diff --name-only "$CI_MERGE_REQUEST_DIFF_BASE_SHA" HEAD | grep -v '^tests/e2e/[^/]*\.spec\.ts$' || true)
+    - 'test -z "$other" || { echo "merge-gate: this merge request also changes" $other; echo "Only merge requests that change nothing but e2e specs merge without a human."; exit 1; }'
     - 'test -n "$MERGE_BOT_TOKEN" || { echo "merge-gate: MERGE_BOT_TOKEN is not set."; exit 1; }'
     - 'code=$(curl -s -o merge.json -w "%{http_code}" -X PUT -H "PRIVATE-TOKEN: $MERGE_BOT_TOKEN" "$CI_API_V4_URL/projects/$CI_PROJECT_ID/merge_requests/$CI_MERGE_REQUEST_IID/merge?auto_merge=true")'
     - echo "merge-gate http=$code"

@@ -4,7 +4,7 @@ import { mkdtempSync, writeFileSync, existsSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { execFileSync } from 'node:child_process';
-import { buildVerdict, failedLocations, infraMatch, infraOf, realFiles, toJunit, unreproduced, withBase, withSuite } from '../../tools/verdict.mjs';
+import { buildVerdict, failedLocations, infraMatch, infraOf, proven, realFiles, toJunit, unreproduced, withBase, withSuite } from '../../tools/verdict.mjs';
 
 const ROOT = '/w';
 const OPTS = { pipelineId: 42, sha: 'abc1234', runs: 10, root: ROOT };
@@ -149,15 +149,26 @@ test('a test that passes every isolated run is suite-only, and gets the result o
   assert.equal(unreproduced(buildVerdict(report([['modal.spec.ts', 'x', seq('PFPFPFPFPF')]]), OPTS)), false);
 });
 
-test('infrastructure errors are recognised, an app that refuses connections is not', () => {
+test('infrastructure errors are recognised; errors a commit can cause, like a refused connection or a server that does not start, are not', () => {
   assert.equal(infraMatch('Error: ENOSPC: no space left on device, write').pattern, 'no space left');
-  assert.equal(infraMatch('Error: Timed out waiting 30000ms from config.webServer.').pattern, 'web server did not start');
-  assert.equal(infraMatch('browserType.launch: Executable does not exist').pattern, 'browser launch failed');
+  assert.equal(infraMatch('Error: getaddrinfo EAI_AGAIN registry.npmjs.org').pattern, 'DNS failure');
+  assert.equal(infraMatch('Error: getaddrinfo ENOTFOUND bookng.local'), null);
+  assert.equal(infraMatch('Error: Timed out waiting 30000ms from config.webServer.'), null);
+  assert.equal(infraMatch('browserType.launch: Executable does not exist'), null);
   assert.equal(infraMatch('Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:8080/'), null);
   assert.equal(infraMatch('connect ECONNREFUSED 127.0.0.1:8080'), null);
-  assert.deepEqual(infraOf({ errors: [{ message: 'Error: Timed out waiting 30000ms from config.webServer.' }], suites: [] }), {
-    pattern: 'web server did not start',
-    message: 'Error: Timed out waiting 30000ms from config.webServer.',
+  assert.deepEqual(infraOf({ errors: [{ message: 'Error: ENOSPC: no space left on device, write' }], suites: [] }), {
+    pattern: 'no space left',
+    message: 'Error: ENOSPC: no space left on device, write',
   });
   assert.equal(infraOf(report([['booking.spec.ts', 'async confirmation', ['failed']]])), null);
+});
+
+test('a proof holds only when every test passed every run; a skipped run or one failure breaks it', () => {
+  const P = { ...OPTS, runs: 3 };
+  assert.equal(proven(buildVerdict(report([['booking.spec.ts', 'async confirmation', ['passed', 'passed', 'passed']]]), P)), true);
+  assert.equal(proven(buildVerdict(report([['booking.spec.ts', 'async confirmation', ['passed', 'failed', 'passed']]]), P)), false);
+  assert.equal(proven(buildVerdict(report([['booking.spec.ts', 'async confirmation', ['skipped', 'skipped', 'skipped']]]), P)), false);
+  assert.equal(proven(buildVerdict(report([['booking.spec.ts', 'async confirmation', ['passed', 'passed']]]), P)), false);
+  assert.equal(proven({ runs: 3, tests: [] }), false);
 });

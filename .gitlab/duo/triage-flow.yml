@@ -88,7 +88,7 @@ prompts:
 
         Step 12. Wait for the proof. Repeat at most 16 times: run_command with program "sleep" and args "30", then gitlab_api_get projects/{{project_id}}/merge_requests/MR and read state and head_pipeline.status.
         - state "merged", or head_pipeline.status "success": the fix is proven. Final answer, adding "proof passed, merge requested by merge-gate".
-        - head_pipeline.status "failed": go to Step 13.
+        - head_pipeline.status "failed": gitlab_api_get projects/{{project_id}}/pipelines/<head_pipeline.id>/jobs and find the job named "fix-proof". If its status is "failed", go to Step 13. Otherwise the proof passed and another job failed: Final answer, adding "proof passed, but <names of the failed jobs> failed; MR !MR stays open for a human".
         - head_pipeline.status "canceled", or the 16 checks end with the pipeline still running: Final answer, adding "proof did not finish; MR !MR stays open with label flaky".
 
         Step 13. The fix is not proven. gitlab_api_get projects/{{project_id}}/pipelines/<head_pipeline.id>/jobs, find the job named "fix-proof" (PROOF_JOB), and gitlab_api_get projects/{{project_id}}/jobs/PROOF_JOB/artifacts/proof.json for the proof's runs, passed and failed of T. If it cannot be read, say "proof.json unavailable" in the issue.

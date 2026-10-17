@@ -237,11 +237,22 @@ At the end of this plan a real red pipeline on the booking app's e2e suite is tu
   - happy: 1 fix → not recurring; 2 → recurring; update MRs and closed fixes do not count.
   - happy: an MR titled `Quarantine …` is reported as quarantined, and the summary names the earlier fixes.
 
+### U17. Review fixes: proof, merge scope, infra list, quarantine trigger
+- **Goal:** only a test-only merge request whose 50 runs all passed merges by itself; only failures a commit cannot cause count as infrastructure; a fix is quarantined only when `fix-proof` failed.
+- **Covers:** R4, R5
+- **Files:** `tools/verdict.mjs`, `tests/unit/verdict.test.js`, `.gitlab-ci.yml`, `.gitlab/duo/triage-flow.yml`
+- **Depends on:** U4, U15
+- **Status:** done 2026-10-17, flow v1.7.0. Replaces the U15 test that called a `config.webServer` timeout infrastructure.
+- **Tests:**
+  - happy: 3/3 passed → proven; 2/3, three skipped runs or fewer runs than expected → not proven.
+  - edge: `config.webServer` timeout, `browserType.launch` and `getaddrinfo ENOTFOUND` → not infrastructure; `getaddrinfo EAI_AGAIN` → DNS failure.
+  - happy (CI image, local): a `test.skip` fix fails `fix-proof`; a quarantine passes it; a fix that also touches `src/public/app.js` fails `merge-gate`.
+
 ## Cut line
 | Tier | Units | Why |
 |---|---|---|
 | must | U1, U2, U3, U4, U5, U6, U7, U9, U11, U12 | the full loop from red pipeline to live app is the demo, and telling an outdated test from a regression is the idea's edge (Innovation/Idea); without any of these there is nothing to film |
-| should | U8, U10, U13, U14, U15, U16 | U8 backs every published number (Potential Impact); U10 strengthens the govern stage (Stage One, Technological Implementation) |
+| should | U8, U10, U13, U14, U15, U16, U17 | U8 backs every published number (Potential Impact); U10 strengthens the govern stage (Stage One, Technological Implementation) |
 | cut | — | nothing is cut: 370 hours at the 2026-10-11 revision leave room for the must units plus video, submission text and deck |
 
 ## Risks
