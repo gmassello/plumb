@@ -57,6 +57,7 @@ A language model is good at reading a diff and writing a three-line fix, and the
 GitLab Duo Agent Platform, GitLab CI/CD, Google Cloud Run, Workload Identity Federation, Node.js, Playwright, Python
 
 ## Try it out (-)
+- Project page: https://showcase-8b103c.gitlab.io/
 - Repository: https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43144947/showcase
 - Live app: https://booking-vic4jyzsha-uc.a.run.app
 - Pipelines: https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43144947/showcase/-/pipelines
