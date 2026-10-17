@@ -1,4 +1,4 @@
-# Showcase — Architecture
+# Plumb — Architecture
 
 **Status:** built (describes the system as implemented; Options considered and Spikes record how it was chosen) · **Date:** 2026-10-10, revised 2026-10-11 for R11–R14 and 2026-10-17 for U15
 

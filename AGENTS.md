@@ -1,4 +1,4 @@
-# Project: Showcase — GitLab Transcend "Life After Code" hackathon
+# Project: Plumb — GitLab Transcend "Life After Code" hackathon
 
 ## Hard constraints (the submission is disqualified otherwise)
 - Everything in this repo is MIT-licensed. Only add dependencies with OSI-approved licenses compatible with MIT.

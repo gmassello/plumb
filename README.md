@@ -1,4 +1,4 @@
-# Showcase
+# Plumb
 
 Entry for the [GitLab Transcend "Life After Code" hackathon](https://gitlab-transcend.devpost.com/): agents that automate the DevSecOps lifecycle after code is written, built on GitLab Duo Agent Platform.
 

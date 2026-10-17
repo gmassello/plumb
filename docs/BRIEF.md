@@ -76,7 +76,7 @@ Today the workaround is manual: someone notices the red pipeline, re-runs it, gu
 - The group's Duo credits cover development and the demo runs.
 
 ## Outstanding questions
-- Product name (chosen by the author; the event FAQ asks not to let AI name it) — blocks: none | resolve before planning: no
+- ~~Product name (chosen by the author; the event FAQ asks not to let AI name it)~~ Resolved 2026-10-17: Plumb. The project path stays `showcase`, which the event assigns.
 - Opt in to Most Environmentally Impactful? — blocks: R8 | resolve before planning: no
 - ~~Does the booking app carry the language, theme and register toggles, or is it only a test subject?~~ Resolved 2026-10-09: test subject only, no toggles (see Key decisions).
 - Google Cloud account for the deploy — blocks: R6 | resolve before planning: no
