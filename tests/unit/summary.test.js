@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { buildSummary, flowMergeRequest, stateLabel } from '../../tools/summary.mjs';
+import { buildSummary, flowMergeRequest, quarantinedBy, stateLabel } from '../../tools/summary.mjs';
 
 const TITLE = 'async confirmation';
 const MR = { iid: 3, state: 'merged', source_branch: 'fix/2936535281-async-confirmation', title: `Fix flaky test: ${TITLE} (pipeline 2936535281)`, web_url: 'https://gitlab.example/mr/3' };
@@ -31,4 +31,18 @@ test('a commit that does not come from a flow merge request has no summary', () 
 test('the merged merge request gets the scoped state label of how the loop ended', () => {
   assert.equal(stateLabel(false), 'triage::merged');
   assert.equal(stateLabel(true), 'triage::quarantined');
+});
+
+test('a merge request is quarantined when its proof came from a later pipeline or its title says so', () => {
+  assert.equal(quarantinedBy(MR, 0), false);
+  assert.equal(quarantinedBy(MR, -1), false);
+  assert.equal(quarantinedBy(MR, 1), true);
+  assert.equal(quarantinedBy({ ...MR, title: `Quarantine recurring flaky test: ${TITLE} (pipeline 2936535281)` }, -1), true);
+});
+
+test('a recurring test quarantined without a fix names its earlier fixes', () => {
+  const history = { fixes: ['!3', '!10', '!11'], recurring: true };
+  const verdict = { runs: 10, tests: [{ title: TITLE, passed: 4, verdict: 'flaky', history }] };
+  const note = buildSummary({ ...RUN, verdict, proof: null, quarantined: true });
+  assert.match(note, /Proof: none, the test was fixed 3 times before \(!3, !10, !11\), so it was quarantined without another fix/);
 });

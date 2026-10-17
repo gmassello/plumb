@@ -225,11 +225,23 @@ At the end of this plan a real red pipeline on the booking app's e2e suite is tu
   - happy: "ENOSPC" and a `config.webServer` timeout are infrastructure; "ECONNREFUSED" is not.
   - happy: an expired quarantine → exit 3; a tagged test with no issue → exit 3; 3 tests over a cap of 2 → exit 1.
 
+### U16. Test history as the flow's memory
+- **Goal:** the flow knows what already happened to a failing test (earlier fixes, quarantines, issues), quotes it, and stops fixing a test whose fixes did not hold.
+- **Covers:** R3, R5, R8
+- **Files:** `tools/history.mjs`, `tests/unit/history.test.js`, `tools/summary.mjs`, `tests/unit/summary.test.js`, `.gitlab-ci.yml`, `.gitlab/duo/triage-flow.yml`, `demo/scenarios/recurring.patch`, `demo/scenarios/apply.sh`, `package.json`
+- **Depends on:** U3, U5, U7
+- **Status:** built 2026-10-17, flow v1.6.0; the `recurring` scenario has not run on a pipeline yet. A local run against the API gave `async confirmation` fixes `!3, !10, !11` and `booking from the confirmation modal` `!4, !12`, both recurring.
+- **Tests:**
+  - happy: merged fixes and earlier issues are listed in iid order.
+  - edge: a title that only contains the test's title is not counted.
+  - happy: 1 fix → not recurring; 2 → recurring; update MRs and closed fixes do not count.
+  - happy: an MR titled `Quarantine …` is reported as quarantined, and the summary names the earlier fixes.
+
 ## Cut line
 | Tier | Units | Why |
 |---|---|---|
 | must | U1, U2, U3, U4, U5, U6, U7, U9, U11, U12 | the full loop from red pipeline to live app is the demo, and telling an outdated test from a regression is the idea's edge (Innovation/Idea); without any of these there is nothing to film |
-| should | U8, U10, U13, U14, U15 | U8 backs every published number (Potential Impact); U10 strengthens the govern stage (Stage One, Technological Implementation) |
+| should | U8, U10, U13, U14, U15, U16 | U8 backs every published number (Potential Impact); U10 strengthens the govern stage (Stage One, Technological Implementation) |
 | cut | — | nothing is cut: 370 hours at the 2026-10-11 revision leave room for the must units plus video, submission text and deck |
 
 ## Risks

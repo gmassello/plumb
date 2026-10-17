@@ -141,6 +141,7 @@ flake-verdict:
         done
         node tools/verdict.mjs --suite verdict.json suite-1.json suite-2.json suite-3.json || true
       fi
+    - node tools/history.mjs verdict.json || true
     - cat verdict.json
     - echo "Verdict written. Failing on purpose so the pipeline stays red and the Pipeline Failed trigger fires."
     - exit 1

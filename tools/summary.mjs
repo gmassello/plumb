@@ -10,6 +10,10 @@ export function flowMergeRequest(mergeRequests) {
   return null;
 }
 
+export function quarantinedBy(mr, proofIndex) {
+  return proofIndex > 0 || mr.title.startsWith('Quarantine ');
+}
+
 export function stateLabel(quarantined) {
   return quarantined ? 'triage::quarantined' : 'triage::merged';
 }
@@ -34,7 +38,9 @@ export function buildSummary({ mr, original, verdict, proof, quarantined, url, d
       : '- Failed test: verdict.json unavailable',
   );
   lines.push(`- Merge request: [!${mr.iid}](${mr.web_url}) ${mr.title}`);
-  if (quarantined) {
+  if (quarantined && test?.history?.recurring) {
+    lines.push(`- Proof: none, the test was fixed ${test.history.fixes.length} times before (${test.history.fixes.join(', ')}), so it was quarantined without another fix`);
+  } else if (quarantined) {
     lines.push(
       proofTest
         ? `- Proof: the fix passed ${rate(proofTest, proof.runs)} runs, so the test was quarantined instead`
@@ -83,14 +89,15 @@ async function main() {
   const verdict = await artifact(found.pipelineId, 'flake-verdict', 'verdict.json');
   const mrPipelines = await api(`merge_requests/${found.mr.iid}/pipelines`);
   let proof = null;
-  let quarantined = false;
+  let proofIndex = -1;
   for (const [i, pipeline] of mrPipelines.entries()) {
     proof = await artifact(pipeline.id, 'fix-proof', 'proof.json');
     if (proof) {
-      quarantined = i > 0;
+      proofIndex = i;
       break;
     }
   }
+  const quarantined = quarantinedBy(found.mr, proofIndex);
   const note = buildSummary({
     mr: found.mr,
     original,

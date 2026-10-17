@@ -9,8 +9,8 @@
   },
   "scripts": {
     "start": "node src/server.js",
-    "test": "node --test tests/unit/slots.test.js tests/unit/verdict.test.js tests/unit/summary.test.js tests/unit/results.test.js tests/unit/flow-drift.test.js tests/unit/quarantine.test.js",
-    "lint": "node --check src/server.js && node --check src/slots.js && node --check src/public/app.js && node --check tests/unit/slots.test.js && node --check tools/verdict.mjs && node --check tests/unit/verdict.test.js && node --check tools/summary.mjs && node --check tests/unit/summary.test.js && node --check tools/results.mjs && node --check tests/unit/results.test.js && node --check tools/flow-drift.mjs && node --check tests/unit/flow-drift.test.js && node --check tools/quarantine.mjs && node --check tests/unit/quarantine.test.js",
+    "test": "node --test tests/unit/slots.test.js tests/unit/verdict.test.js tests/unit/summary.test.js tests/unit/results.test.js tests/unit/flow-drift.test.js tests/unit/quarantine.test.js tests/unit/history.test.js",
+    "lint": "node --check src/server.js && node --check src/slots.js && node --check src/public/app.js && node --check tests/unit/slots.test.js && node --check tools/verdict.mjs && node --check tests/unit/verdict.test.js && node --check tools/summary.mjs && node --check tests/unit/summary.test.js && node --check tools/results.mjs && node --check tests/unit/results.test.js && node --check tools/flow-drift.mjs && node --check tests/unit/flow-drift.test.js && node --check tools/quarantine.mjs && node --check tests/unit/quarantine.test.js && node --check tools/history.mjs && node --check tests/unit/history.test.js",
     "e2e": "playwright test --grep-invert @quarantine"
   },
   "devDependencies": {
