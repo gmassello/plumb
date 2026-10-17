@@ -1,4 +1,5 @@
 import json
+import os
 import sys
 import time
 import urllib.error
@@ -13,6 +14,8 @@ def call(base, method, path, body=None, headers=None, raw=None):
     req = urllib.request.Request(base + path, data=data, method=method, headers=headers or {})
     if data is not None:
         req.add_header("Content-Type", "application/json")
+    if os.environ.get("RESET_TOKEN"):
+        req.add_header("X-Reset-Token", os.environ["RESET_TOKEN"])
     try:
         with urllib.request.urlopen(req, timeout=TIMEOUT) as resp:
             status, payload = resp.status, resp.read()

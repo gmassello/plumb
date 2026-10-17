@@ -33,6 +33,7 @@ function countByTest(report, root) {
       const entry = byTest.get(key) ?? { file, title: spec.title, passed: 0, failed: 0, trace: null, error: null, error_at: null, seq: [] };
       for (const test of spec.tests) {
         for (const result of test.results) {
+          if (result.status === 'skipped' || result.status === 'interrupted') continue;
           entry.seq.push(result.status === 'passed');
           if (result.status === 'passed') {
             entry.passed += 1;

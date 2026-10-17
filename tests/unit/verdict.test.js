@@ -179,11 +179,17 @@ test('a spec that fails to load becomes one real test named after the file; a re
   assert.equal(loadErrorVerdict(report([['booking.spec.ts', 'async confirmation', ['failed']]]), OPTS), null);
 });
 
+test('skipped and interrupted runs are not counted as runs', () => {
+  const v = buildVerdict(report([['booking.spec.ts', 'async confirmation', ['passed', 'failed', 'skipped', 'interrupted']]]), OPTS);
+  assert.deepEqual([v.tests[0].passed, v.tests[0].failed, v.tests[0].verdict], [1, 1, 'flaky']);
+});
+
 test('a proof holds only when every test passed every run; a skipped run or one failure breaks it', () => {
   const P = { ...OPTS, runs: 3 };
   assert.equal(proven(buildVerdict(report([['booking.spec.ts', 'async confirmation', ['passed', 'passed', 'passed']]]), P)), true);
   assert.equal(proven(buildVerdict(report([['booking.spec.ts', 'async confirmation', ['passed', 'failed', 'passed']]]), P)), false);
-  assert.equal(proven(buildVerdict(report([['booking.spec.ts', 'async confirmation', ['skipped', 'skipped', 'skipped']]]), P)), false);
+  assert.throws(() => buildVerdict(report([['booking.spec.ts', 'async confirmation', ['skipped', 'skipped', 'skipped']]]), P), /nothing to judge/);
+  assert.equal(proven(buildVerdict(report([['booking.spec.ts', 'async confirmation', ['passed', 'skipped', 'passed']]]), P)), false);
   assert.equal(proven(buildVerdict(report([['booking.spec.ts', 'async confirmation', ['passed', 'passed']]]), P)), false);
   assert.equal(proven({ runs: 3, tests: [] }), false);
 });

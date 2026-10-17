@@ -258,11 +258,21 @@ At the end of this plan a real red pipeline on the booking app's e2e suite is tu
   - happy: a fix MR and a `Quarantined:` issue of the same pipeline → not a fix; one more real fix → `recurring` false.
   - edge: a report with only `errors[]` → one real test `<file> failed to load`; a report with failed tests → no load-error verdict.
 
+### U19. Review fixes: reset token, error log, quarantine tags, real run counts, body limit, infra cell
+- **Goal:** the live reset needs a token; a 500 leaves its stack in the log; every `@quarantine` tag counts; pass rates use the runs that ran; the server refuses bodies over 10 000 bytes; `RESULTS.md` shows infra verdicts.
+- **Covers:** R5, R8
+- **Files:** `src/server.js`, `cases/small-booking-api/checks.py`, `.gitlab-ci.yml`, `tools/quarantine.mjs`, `tools/verdict.mjs`, `tools/summary.mjs`, `tools/results.mjs`, `.gitlab/duo/triage-flow.yml`, `tests/unit/*.test.js`
+- **Depends on:** U18
+- **Status:** done 2026-10-17, flow v1.9.0.
+- **Tests:**
+  - happy: a `describe`, a mid-title tag and a title across lines are listed as quarantined; an infra verdict shows `infra: <pattern>`.
+  - edge: skipped and interrupted runs are not counted; three skipped runs give no verdict; with `RESET_TOKEN=x` the reset without the header is `403` and `checks.py` with the token passes 6/6; a 20 KB body is `413`.
+
 ## Cut line
 | Tier | Units | Why |
 |---|---|---|
 | must | U1, U2, U3, U4, U5, U6, U7, U9, U11, U12 | the full loop from red pipeline to live app is the demo, and telling an outdated test from a regression is the idea's edge (Innovation/Idea); without any of these there is nothing to film |
-| should | U8, U10, U13, U14, U15, U16, U17, U18 | U8 backs every published number (Potential Impact); U10 strengthens the govern stage (Stage One, Technological Implementation) |
+| should | U8, U10, U13, U14, U15, U16, U17, U18, U19 | U8 backs every published number (Potential Impact); U10 strengthens the govern stage (Stage One, Technological Implementation) |
 | cut | — | nothing is cut: 370 hours at the 2026-10-11 revision leave room for the must units plus video, submission text and deck |
 
 ## Risks

@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
 import { buildResults, causeOf, pipelineOf, transcript } from '../../tools/results.mjs';
 
-const verdict = (title, passed, v) => ({ runs: 10, tests: [{ title, passed, verdict: v }] });
+const verdict = (title, passed, v) => ({ runs: 10, tests: [{ title, passed, failed: 10 - passed, verdict: v }] });
 const pipeline = (id, v, extra = {}) => ({ id, verdict: v, causes: ['async-wait'], items: [], proof: null, ...extra });
 const RUN = { sessions: [], updateMerges: 0, generatedAt: '2026-10-14' };
 
@@ -13,7 +13,7 @@ test('three recorded pipelines are listed with id, test, pass rate and verdict',
     pipelines: [
       pipeline(1, verdict('async confirmation', 3, 'flaky'), {
         items: [{ ref: '!10', web_url: 'u', state: 'merged' }],
-        proof: { runs: 50, tests: [{ passed: 50 }] },
+        proof: { runs: 50, tests: [{ passed: 50, failed: 0 }] },
       }),
       pipeline(2, verdict('two visitors', 6, 'flaky')),
       pipeline(3, verdict('late slot', 0, 'real')),
@@ -22,6 +22,18 @@ test('three recorded pipelines are listed with id, test, pass rate and verdict',
   assert.match(md, /\[1\]\(.*\/pipelines\/1\) \| `async confirmation` 3\/10 flaky \| 1 \| async-wait \| \[!10\]\(u\) merged \| 50\/50 \|/);
   assert.match(md, /`two visitors` 6\/10 flaky/);
   assert.match(md, /`late slot` 0\/10 real/);
+});
+
+test('an infrastructure verdict shows its pattern, and a rate counts only the runs that ran', () => {
+  const md = buildResults({
+    ...RUN,
+    pipelines: [
+      pipeline(4, { runs: 0, infra: { pattern: 'no space left', message: 'ENOSPC' }, tests: [] }),
+      pipeline(5, { runs: 10, tests: [{ title: 'cut short', passed: 2, failed: 5, verdict: 'flaky' }] }),
+    ],
+  });
+  assert.match(md, /\| infra: no space left \|/);
+  assert.match(md, /`cut short` 2\/7 flaky/);
 });
 
 test('QA-06 lists each run with the expected and chosen cause and the right total', () => {

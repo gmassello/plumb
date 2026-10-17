@@ -239,7 +239,7 @@ deploy:
     - printf %s "$GCP_OIDC" > /tmp/gitlab-oidc.jwt
     - gcloud auth login --cred-file=deploy/gcp-wif.json --quiet
     - gcloud config set project showcase-flaky
-    - gcloud run deploy booking --source . --region us-central1 --allow-unauthenticated --max-instances 1 --quiet
+    - gcloud run deploy booking --source . --region us-central1 --allow-unauthenticated --max-instances 1 --set-env-vars RESET_TOKEN=$RESET_TOKEN --quiet
     - url=$(gcloud run services describe booking --region us-central1 --format='value(status.url)')
     - echo "Deployed to $url"
     - 'curl -fsS "$url" | grep -q "Book an appointment" || { echo "deploy: $url does not serve the booking page."; exit 1; }'

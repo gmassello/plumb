@@ -30,7 +30,7 @@ What the project runs on, and the file that pins each version. Change the versio
 | Hosting | Google Cloud Run, service `booking`, project `showcase-flaky`, region `us-central1` | `.gitlab-ci.yml` job `deploy` |
 | Project page | GitLab Pages, static `site/` copied to `public/`; fonts from Google Fonts | `.gitlab-ci.yml` job `pages` |
 | Cloud auth | Workload Identity Federation: GitLab `id_tokens` → pool `gitlab-pool`, provider `gitlab-com` → service account `gitlab-deploy`; no key file | `deploy/gcp-wif.json`, `.gitlab-ci.yml` |
-| CI variables | `MERGE_BOT_TOKEN` (masked, scope `api`), `GITLAB_OBSERVABILITY_EXPORT`; project level only | GitLab project settings |
+| CI variables | `MERGE_BOT_TOKEN` (masked, scope `api`), `RESET_TOKEN` (masked, protected; passed to Cloud Run and to `live-checks`), `GITLAB_OBSERVABILITY_EXPORT`; project level only | GitLab project settings |
 
 ## Agent
 

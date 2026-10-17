@@ -7,6 +7,7 @@ import { SEED, listSlots, isValidBooking } from './slots.js';
 
 const CONFIRM_MAX_MS = 800;
 const BOOKING_GAP_MAX_MS = 20;
+const BODY_MAX_BYTES = 10_000;
 const PUBLIC = {
   '/': ['index.html', 'text/html; charset=utf-8'],
   '/app.js': ['app.js', 'text/javascript; charset=utf-8'],
@@ -39,10 +40,15 @@ function fail(res, status, code, message) {
 }
 
 async function readJson(req) {
-  let raw = '';
-  for await (const chunk of req) raw += chunk;
+  const chunks = [];
+  let size = 0;
+  for await (const chunk of req) {
+    size += chunk.length;
+    if (size <= BODY_MAX_BYTES) chunks.push(chunk);
+  }
+  if (size > BODY_MAX_BYTES) return undefined;
   try {
-    return JSON.parse(raw || 'null');
+    return JSON.parse(Buffer.concat(chunks).toString('utf8') || 'null');
   } catch {
     return null;
   }
@@ -50,6 +56,7 @@ async function readJson(req) {
 
 async function book(req, res) {
   const body = await readJson(req);
+  if (body === undefined) return fail(res, 413, 'payload_too_large', `The request body is over ${BODY_MAX_BYTES} bytes`);
   if (!isValidBooking(body)) return fail(res, 400, 'validation_error', 'slotId and a non-blank name are required');
   if (!SEED.some((s) => s.id === body.slotId)) return fail(res, 404, 'slot_not_found', `No slot ${body.slotId}`);
   if (takenIds().has(body.slotId)) return fail(res, 409, 'slot_taken', `Slot ${body.slotId} is already booked`);
@@ -65,6 +72,8 @@ async function handle(req, res) {
   const path = url.pathname;
   if (req.method === 'GET' && path === '/health') return send(res, 200, { status: 'ok' });
   if (req.method === 'POST' && path === '/_test/reset') {
+    const token = process.env.RESET_TOKEN;
+    if (token && req.headers['x-reset-token'] !== token) return fail(res, 403, 'forbidden', 'The reset needs the X-Reset-Token header');
     bookings.clear();
     return send(res, 204);
   }
@@ -92,7 +101,10 @@ async function handle(req, res) {
 
 export function createApp() {
   return createServer((req, res) =>
-    handle(req, res).catch(() => fail(res, 500, 'internal_error', 'Unexpected error')),
+    handle(req, res).catch((err) => {
+      console.error(err);
+      fail(res, 500, 'internal_error', 'Unexpected error');
+    }),
   );
 }
 

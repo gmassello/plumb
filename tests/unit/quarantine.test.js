@@ -19,6 +19,14 @@ test('only tests tagged @quarantine are listed, and one within its expiry date p
   assert.deepEqual(check([RACE], [issue(RACE, '2026-10-27')], '2026-10-16', 2), { expired: [], missing: [], over: false });
 });
 
+test('a tag anywhere in a test or describe title is found, also across lines', () => {
+  const dir = mkdtempSync(join(tmpdir(), 'quarantine-'));
+  writeFileSync(join(dir, 'c.spec.ts'), "test.describe('booking @quarantine', () => {});\ntest('slow @quarantine reload', async () => {});\ntest(`long\n  title @quarantine`, async () => {});\n");
+  const titles = quarantinedTitles(dir);
+  rmSync(dir, { recursive: true });
+  assert.deepEqual(titles, ['booking', 'slow reload', 'long title']);
+});
+
 test('a quarantine is expired on its expiry date and after it', () => {
   assert.deepEqual(check([RACE], [issue(RACE, '2026-10-27')], '2026-10-27', 2).expired, [{ title: RACE, iid: 9, expires: '2026-10-27' }]);
   assert.equal(check([RACE], [issue(RACE, '2026-10-27')], '2026-10-28', 2).expired.length, 1);

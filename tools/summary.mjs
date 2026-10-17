@@ -23,8 +23,8 @@ function testOf(verdict, mrTitle) {
   return tests.find((t) => mrTitle.includes(`: ${t.title} (pipeline`)) ?? tests[0] ?? null;
 }
 
-function rate(test, runs) {
-  return `${test.passed}/${runs}`;
+export function rate(test) {
+  return `${test.passed}/${test.passed + test.failed}`;
 }
 
 export function buildSummary({ mr, original, verdict, proof, quarantined, url, deployPipelineUrl }) {
@@ -34,7 +34,7 @@ export function buildSummary({ mr, original, verdict, proof, quarantined, url, d
   const lines = [`**Flaky-test loop summary** for pipeline [${original.id}](${original.web_url})`, ''];
   lines.push(
     test
-      ? `- Failed test: \`${test.title}\` · ${rate(test, verdict.runs)} re-runs passed · verdict \`${test.verdict}\``
+      ? `- Failed test: \`${test.title}\` · ${rate(test)} re-runs passed · verdict \`${test.verdict}\``
       : '- Failed test: verdict.json unavailable',
   );
   lines.push(`- Merge request: [!${mr.iid}](${mr.web_url}) ${mr.title}`);
@@ -43,11 +43,11 @@ export function buildSummary({ mr, original, verdict, proof, quarantined, url, d
   } else if (quarantined) {
     lines.push(
       proofTest
-        ? `- Proof: the fix passed ${rate(proofTest, proof.runs)} runs, so the test was quarantined instead`
+        ? `- Proof: the fix passed ${rate(proofTest)} runs, so the test was quarantined instead`
         : '- Proof: the fix was not proven, so the test was quarantined instead',
     );
   } else {
-    lines.push(proofTest ? `- Proof: ${rate(proofTest, proof.runs)} runs passed` : '- Proof: proof.json unavailable');
+    lines.push(proofTest ? `- Proof: ${rate(proofTest)} runs passed` : '- Proof: proof.json unavailable');
   }
   lines.push(`- Deployed: ${url} ([deploy pipeline](${deployPipelineUrl}))`);
   return `${lines.join('\n')}\n`;

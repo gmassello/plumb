@@ -7,7 +7,9 @@ const DIR = 'tests/e2e';
 export function quarantinedTitles(dir = DIR) {
   const titles = [];
   for (const file of readdirSync(dir).filter((f) => f.endsWith('.spec.ts')).sort()) {
-    for (const m of readFileSync(join(dir, file), 'utf8').matchAll(/test\(\s*(['"`])(.+?) @quarantine\1/g)) titles.push(m[2]);
+    for (const m of readFileSync(join(dir, file), 'utf8').matchAll(/\b(?:test|describe)(?:\.\w+)*\(\s*(['"`])([\s\S]*?)\1/g)) {
+      if (m[2].includes('@quarantine')) titles.push(m[2].replace(/\s*@quarantine\b/g, '').replace(/\s+/g, ' ').trim());
+    }
   }
   return titles;
 }

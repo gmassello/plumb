@@ -57,14 +57,14 @@ prompts:
         Step 6. regression: create_issue in project {{project_id}}:
         - title: "Real regression: <T title> (pipeline PID)";
         - labels: "regression,triage::real";
-        - description: commit SHA and message title, a line per real test with "<file> · <title> · passed <passed>/<runs> re-runs", the error and error_at of T, the parent-commit line, the history line, the pipeline URL from the payload, the verdict job id VID, the trace path, and the sentence "No fix attempted: the test fails on every re-run, so the change in this commit is the likely cause."
+        - description: commit SHA and message title, a line per real test with "<file> · <title> · passed <passed>/<passed + failed> re-runs", the error and error_at of T, the parent-commit line, the history line, the pipeline URL from the payload, the verdict job id VID, the trace path, and the sentence "No fix attempted: the test fails on every re-run, so the change in this commit is the likely cause."
         Open no branch, commit or merge request. Final answer.
 
         Step 7. app-change: read T's file with get_repository_file at ref main, the content you change and commit, so changes merged since SHA are kept. If that content no longer has T's title, Final answer, adding "T changed on main after pipeline PID; nothing committed". Update that content so it follows the new behaviour shown in the diff (for example the new button label), keeping the scenario, the user actions and what the assertions check. Let SLUG be T's title in lowercase with non-alphanumeric runs replaced by "-".
         create_commit on new branch "update/PID-SLUG" starting from "main", updating only that file with its full new content, commit message "Update test after app change: <T title> (pipeline PID)".
         create_merge_request from "update/PID-SLUG" into "main", labels "needs-review,triage::needs-review", remove source branch on merge:
         - title: "Update test after app change: <T title> (pipeline PID)";
-        - description, first line exactly "Cause: app-change · pass rate <passed>/<runs>", then "A human must confirm the app change was intended before merging; this branch is never merged automatically.", the commit SHA and its full message quoted, the changed diff lines that made you decide quoted in a code block, the error and error_at of T, the parent-commit line, the history line, and what the test update changes.
+        - description, first line exactly "Cause: app-change · pass rate <passed>/<passed + failed>", then "A human must confirm the app change was intended before merging; this branch is never merged automatically.", the commit SHA and its full message quoted, the changed diff lines that made you decide quoted in a code block, the error and error_at of T, the parent-commit line, the history line, and what the test update changes.
         Final answer.
 
         Step 8. environment: create_issue in project {{project_id}}:
@@ -83,7 +83,7 @@ prompts:
 
         Step 11. create_merge_request from "fix/PID-SLUG" into "main", remove source branch on merge, labels "flaky,triage::proving" when CAUSE is a flaky cause and "triage::proving" for test-data:
         - title: "Fix flaky test: <T title> (pipeline PID)";
-        - description, first line exactly "Cause: <CAUSE> · pass rate <passed>/<runs>", then: the order line when T has order, the history line, the evidence (the error message and error_at from verdict.json, verdict job VID, trace path; for test-data also the seed lines from the diff), what the fix changes and why it keeps what the test verifies, and a line "Other failing tests in this pipeline:" listing the rest with their pass rates, or "none".
+        - description, first line exactly "Cause: <CAUSE> · pass rate <passed>/<passed + failed>", then: the order line when T has order, the history line, the evidence (the error message and error_at from verdict.json, verdict job VID, trace path; for test-data also the seed lines from the diff), what the fix changes and why it keeps what the test verifies, and a line "Other failing tests in this pipeline:" listing the rest with their pass rates, or "none".
         Let MR be the iid of the merge request you created. Go to Step 12.
 
         Step 12. Wait for the proof. Repeat at most 16 times: run_command with program "sleep" and args "30", then gitlab_api_get projects/{{project_id}}/merge_requests/MR and read state and head_pipeline.status.
@@ -96,7 +96,7 @@ prompts:
         create_issue in project {{project_id}}:
         - title: "Quarantined: <T title> (pipeline PID)";
         - labels: "flaky,quarantine,triage::quarantined";
-        - description: "Expires: <CREATED + 14 days, as YYYY-MM-DD>" as the first line, then CAUSE, the verdict pass rate <passed>/<runs> (job VID, trace path), the proof pass rate <passed>/<runs> (job PROOF_JOB and its URL), the error and error_at, the history line, the merge request !MR, and the sentence "The proposed fix was not stable, so the test runs in the non-blocking e2e-quarantine job until someone fixes it or the expiry date passes."
+        - description: "Expires: <CREATED + 14 days, as YYYY-MM-DD>" as the first line, then CAUSE, the verdict pass rate <passed>/<passed + failed> (job VID, trace path), the proof pass rate <passed>/<passed + failed> (job PROOF_JOB and its URL), the error and error_at, the history line, the merge request !MR, and the sentence "The proposed fix was not stable, so the test runs in the non-blocking e2e-quarantine job until someone fixes it or the expiry date passes."
         Final answer, with the first line "Cause: <CAUSE> · quarantined".
 
         Step 14. CAUSE = infra. Run the duplicate check of Step 5 with TITLE "Infrastructure failure: <infra.pattern>". Otherwise create_issue in project {{project_id}}:
@@ -109,12 +109,12 @@ prompts:
         Read T's file with get_repository_file at ref main, so changes merged since SHA are kept. If that content no longer has T's title, Final answer, adding "T changed on main after pipeline PID; nothing committed". Append " @quarantine" to the end of T's title string, change nothing else, and create_commit on new branch "fix/PID-SLUG" starting from "main" with that full content, commit message "Quarantine recurring flaky test: <T title> (pipeline PID)".
         create_merge_request from "fix/PID-SLUG" into "main", labels "flaky,triage::quarantined", remove source branch on merge:
         - title: "Quarantine recurring flaky test: <T title> (pipeline PID)";
-        - description, first line exactly "Cause: <CAUSE> · pass rate <passed>/<runs> · recurring", then the history line, the order line when T has order, the error and error_at, and the sentence "Earlier fixes did not hold, so this merge request quarantines the test instead of fixing it again; fix-proof has nothing to prove and merge-gate merges it."
+        - description, first line exactly "Cause: <CAUSE> · pass rate <passed>/<passed + failed> · recurring", then the history line, the order line when T has order, the error and error_at, and the sentence "Earlier fixes did not hold, so this merge request quarantines the test instead of fixing it again; fix-proof has nothing to prove and merge-gate merges it."
         Let MR be the iid of the merge request you created.
         create_issue in project {{project_id}}:
         - title: "Quarantined: <T title> (pipeline PID)";
         - labels: "flaky,quarantine,triage::quarantined";
-        - description: "Expires: <CREATED + 14 days, as YYYY-MM-DD>" as the first line, then CAUSE, the verdict pass rate <passed>/<runs> (job VID, trace path), the history line, the error and error_at, the merge request !MR, and the sentence "Fixed <number of fixes> times before; the fixes did not hold, so the test runs in the non-blocking e2e-quarantine job until someone finds the root cause or the expiry date passes."
+        - description: "Expires: <CREATED + 14 days, as YYYY-MM-DD>" as the first line, then CAUSE, the verdict pass rate <passed>/<passed + failed> (job VID, trace path), the history line, the error and error_at, the merge request !MR, and the sentence "Fixed <number of fixes> times before; the fixes did not hold, so the test runs in the non-blocking e2e-quarantine job until someone finds the root cause or the expiry date passes."
         Final answer, with the first line "Cause: <CAUSE> · quarantined (recurring)".
 
         Every final answer starts with the line "Cause: <CAUSE>" (or "Cause: none" when you stopped in Step 1 or 2), then lists what you created.

@@ -1,6 +1,7 @@
 import { execFileSync } from 'node:child_process';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { pathToFileURL } from 'node:url';
+import { rate } from './summary.mjs';
 
 const PROJECT_ID = 87376478;
 const PROJECT_PATH = 'gitlab-ai-hackathon/transcend-october-2026/43144947/showcase';
@@ -56,12 +57,13 @@ export function transcript({ id, pipeline }, log) {
 
 function verdictCell(verdict) {
   if (!verdict) return 'artifacts expired';
-  return verdict.tests.map((t) => `\`${t.title}\` ${t.passed}/${verdict.runs} ${t.verdict}`).join('<br>');
+  if (verdict.infra) return `infra: ${verdict.infra.pattern}`;
+  return verdict.tests.map((t) => `\`${t.title}\` ${rate(t)} ${t.verdict}`).join('<br>');
 }
 
 function proofCell(proof) {
   if (!proof) return '—';
-  return proof.tests.map((t) => `${t.passed}/${proof.runs}`).join(', ');
+  return proof.tests.map(rate).join(', ');
 }
 
 function createdCell(items) {

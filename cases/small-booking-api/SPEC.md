@@ -9,7 +9,7 @@ The trivial, self-owned case: the booking app's HTTP API, the surface the e2e su
 ## Runtime contract
 - Port: `PORT` environment variable, default `8080`.
 - `GET /health` → `200 {"status": "ok"}`.
-- `POST /_test/reset` → `204`; restores the seed slots and drops every booking.
+- `POST /_test/reset` → `204`; restores the seed slots and drops every booking. When the app runs with `RESET_TOKEN` set, the request needs the header `X-Reset-Token: <RESET_TOKEN>`, and without it the answer is `403 forbidden`.
 - Every error is `{"error": {"code": "<code>", "message": "<text>"}}` with a non-empty message.
 - JSON in and out (`Content-Type: application/json`).
 
@@ -26,7 +26,7 @@ The trivial, self-owned case: the booking app's HTTP API, the surface the e2e su
 - R3. `GET /api/bookings/<id>` → `200` with the same booking. `status` becomes `"confirmed"` within 800 ms of creation and stays `"confirmed"`.
 - R4. Booking a slot that already has a booking → `409 slot_taken`.
 - R5. Booking a slot id that does not exist → `404 slot_not_found`; reading a booking id that does not exist → `404 booking_not_found`.
-- R6. A missing or blank `name`, or a missing `slotId` → `400 validation_error`, and nothing is stored.
+- R6. A missing or blank `name`, or a missing `slotId` → `400 validation_error`, and nothing is stored. A body over 10 000 bytes → `413 payload_too_large`.
 
 ## Acceptance examples
 - AE1. **Covers R1.** Given a reset app, when the visitor lists slots with `tz=America/Argentina/Buenos_Aires`, then `s3` shows `localDate` `2026-11-02` and `localTime` `22:30`.
