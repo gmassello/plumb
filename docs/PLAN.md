@@ -248,11 +248,21 @@ At the end of this plan a real red pipeline on the booking app's e2e suite is tu
   - edge: `config.webServer` timeout, `browserType.launch` and `getaddrinfo ENOTFOUND` → not infrastructure; `getaddrinfo EAI_AGAIN` → DNS failure.
   - happy (CI image, local): a `test.skip` fix fails `fix-proof`; a quarantine passes it; a fix that also touches `src/public/app.js` fails `merge-gate`.
 
+### U18. Review fixes: history, load errors, commits on main, last slot, front errors
+- **Goal:** a fix that ended in quarantine is not history; a spec that fails to load still gets a verdict; the flow commits on the current `main` content; `shared-state.spec.ts` books the last slot again; the booking page stops on HTTP errors.
+- **Covers:** R2, R5
+- **Files:** `tools/history.mjs`, `tools/verdict.mjs`, `tests/unit/history.test.js`, `tests/unit/verdict.test.js`, `.gitlab-ci.yml`, `.gitlab/duo/triage-flow.yml`, `tests/e2e/shared-state.spec.ts`, `src/public/app.js`
+- **Depends on:** U17
+- **Status:** done 2026-10-17, flow v1.8.0.
+- **Tests:**
+  - happy: a fix MR and a `Quarantined:` issue of the same pipeline → not a fix; one more real fix → `recurring` false.
+  - edge: a report with only `errors[]` → one real test `<file> failed to load`; a report with failed tests → no load-error verdict.
+
 ## Cut line
 | Tier | Units | Why |
 |---|---|---|
 | must | U1, U2, U3, U4, U5, U6, U7, U9, U11, U12 | the full loop from red pipeline to live app is the demo, and telling an outdated test from a regression is the idea's edge (Innovation/Idea); without any of these there is nothing to film |
-| should | U8, U10, U13, U14, U15, U16, U17 | U8 backs every published number (Potential Impact); U10 strengthens the govern stage (Stage One, Technological Implementation) |
+| should | U8, U10, U13, U14, U15, U16, U17, U18 | U8 backs every published number (Potential Impact); U10 strengthens the govern stage (Stage One, Technological Implementation) |
 | cut | — | nothing is cut: 370 hours at the 2026-10-11 revision leave room for the must units plus video, submission text and deck |
 
 ## Risks

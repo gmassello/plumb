@@ -26,6 +26,15 @@ test(`a test becomes recurring at ${RECURRING_FIXES} merged fixes`, () => {
   assert.equal(historyOf(TITLE, fixes(RECURRING_FIXES), []).recurring, true);
 });
 
+test('a fix merge request that ended in quarantine does not count as a fix', () => {
+  const h = historyOf(
+    TITLE,
+    [mr(9, `Fix flaky test: ${TITLE} (pipeline 4)`), mr(20, `Fix flaky test: ${TITLE} (pipeline 7)`)],
+    [issue(9, `Quarantined: ${TITLE} (pipeline 4)`)],
+  );
+  assert.deepEqual([h.fixes, h.quarantines, h.recurring], [['!20'], ['#9'], false]);
+});
+
 test('update merge requests and unmerged fixes do not count as fixes', () => {
   const h = historyOf(
     TITLE,

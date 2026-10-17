@@ -120,6 +120,13 @@ flake-verdict:
         cat verdict.json
         exit 1
       fi
+    - loaderr=$(node tools/verdict.mjs --load-error e2e-report.json verdict.json)
+    - |
+      if [ -n "$loaderr" ]; then
+        echo "A spec failed to load ($loaderr): nothing to re-run. Verdict written as a real failure."
+        cat verdict.json
+        exit 1
+      fi
     - failed=$(node tools/verdict.mjs --failed e2e-report.json)
     - echo "Re-running 10 times each:$failed"
     - PLAYWRIGHT_JSON_OUTPUT_FILE=report.json npx playwright test $failed --repeat-each=10 --reporter=json > /dev/null || true

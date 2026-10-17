@@ -20,9 +20,13 @@ function refs(items, prefix, title, mark) {
     .map((i) => `${mark}${i.iid}`);
 }
 
+const pipelineOf = (i) => /\(pipeline (\d+)\)$/.exec(i.title)?.[1];
+
 export function historyOf(title, mergeRequests, issues) {
+  const quarantined = new Set(issues.filter((i) => i.title.startsWith(`Quarantined: ${title} (pipeline`)).map(pipelineOf));
+  const merged = mergeRequests.filter((m) => m.state === 'merged' && !(m.title.startsWith('Fix flaky test: ') && quarantined.has(pipelineOf(m))));
   const history = {};
-  for (const [key, prefix] of MR_KINDS) history[key] = refs(mergeRequests.filter((m) => m.state === 'merged'), prefix, title, '!');
+  for (const [key, prefix] of MR_KINDS) history[key] = refs(merged, prefix, title, '!');
   for (const [key, prefix] of ISSUE_KINDS) history[key] = refs(issues, prefix, title, '#');
   return { ...history, recurring: history.fixes.length >= RECURRING_FIXES };
 }

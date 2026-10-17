@@ -4,7 +4,7 @@ import { mkdtempSync, writeFileSync, existsSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { execFileSync } from 'node:child_process';
-import { buildVerdict, failedLocations, infraMatch, infraOf, proven, realFiles, toJunit, unreproduced, withBase, withSuite } from '../../tools/verdict.mjs';
+import { buildVerdict, failedLocations, infraMatch, infraOf, loadErrorVerdict, proven, realFiles, toJunit, unreproduced, withBase, withSuite } from '../../tools/verdict.mjs';
 
 const ROOT = '/w';
 const OPTS = { pipelineId: 42, sha: 'abc1234', runs: 10, root: ROOT };
@@ -162,6 +162,21 @@ test('infrastructure errors are recognised; errors a commit can cause, like a re
     message: 'Error: ENOSPC: no space left on device, write',
   });
   assert.equal(infraOf(report([['booking.spec.ts', 'async confirmation', ['failed']]])), null);
+});
+
+test('a spec that fails to load becomes one real test named after the file; a report with failed tests does not', () => {
+  const broken = { errors: [{ message: "Error: Cannot find module './missing'", location: { file: `${ROOT}/tests/e2e/modal.spec.ts`, line: 2, column: 1 } }], suites: [] };
+  assert.deepEqual(loadErrorVerdict(broken, OPTS), {
+    pipeline_id: 42,
+    sha: 'abc1234',
+    runs: 1,
+    tests: [{ file: 'tests/e2e/modal.spec.ts', title: 'tests/e2e/modal.spec.ts failed to load', passed: 0, failed: 1, trace: null, error: "Error: Cannot find module './missing'", error_at: 'tests/e2e/modal.spec.ts:2', verdict: 'real', order: null }],
+  });
+  const anonymous = { errors: [{ message: `Error: Cannot find module '${ROOT}/tests/e2e/missing' imported from ${ROOT}/tests/e2e/modal.spec.ts`, location: { file: '<anonymous>', line: 1, column: 1 } }], suites: [] };
+  const t = loadErrorVerdict(anonymous, OPTS).tests[0];
+  assert.deepEqual([t.file, t.title, t.error_at], ['tests/e2e/modal.spec.ts', 'tests/e2e/modal.spec.ts failed to load', null]);
+  assert.equal(loadErrorVerdict({ ...report([['booking.spec.ts', 'async confirmation', ['failed']]]), errors: broken.errors }, OPTS), null);
+  assert.equal(loadErrorVerdict(report([['booking.spec.ts', 'async confirmation', ['failed']]]), OPTS), null);
 });
 
 test('a proof holds only when every test passed every run; a skipped run or one failure breaks it', () => {

@@ -11,6 +11,10 @@ document.querySelector('[data-testid="time-zone"]').textContent = timeZone;
 async function loadSlots() {
   const res = await fetch(`/api/slots?tz=${encodeURIComponent(timeZone)}`);
   const slots = await res.json();
+  if (!res.ok) {
+    statusEl.textContent = slots.error.message;
+    return;
+  }
   slotsEl.replaceChildren(
     ...slots.map((s) => {
       const li = document.createElement('li');
@@ -44,7 +48,12 @@ function closeModal() {
 
 async function pollStatus(id) {
   for (;;) {
-    const booking = await (await fetch(`/api/bookings/${id}`)).json();
+    const res = await fetch(`/api/bookings/${id}`);
+    const booking = await res.json();
+    if (!res.ok) {
+      statusEl.textContent = booking.error.message;
+      return;
+    }
     statusEl.textContent = booking.status === 'confirmed' ? 'Booking confirmed' : 'Booking pending';
     if (booking.status === 'confirmed') return;
     await new Promise((r) => setTimeout(r, 200));
@@ -61,6 +70,7 @@ bookBtn.addEventListener('click', async () => {
   const body = await res.json();
   if (!res.ok) {
     statusEl.textContent = body.error.message;
+    await loadSlots();
     return;
   }
   statusEl.textContent = 'Booking pending';

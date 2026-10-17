@@ -120,6 +120,28 @@ export function infraOf(report) {
   return null;
 }
 
+export function loadErrorVerdict(report, { pipelineId, sha, root }) {
+  const errors = report?.errors ?? [];
+  if (errors.length === 0) return null;
+  for (const suite of report.suites ?? []) for (const spec of specsOf(suite)) if (spec.tests.some((t) => t.status === 'unexpected')) return null;
+  const { message = '', location } = errors[0];
+  const at = location?.file.endsWith('.spec.ts') ? location : null;
+  const path = at?.file ?? /[^\s'"]+\.spec\.ts/.exec(message)?.[0];
+  const file = path ? relative(root, path) : null;
+  const test = {
+    file,
+    title: `${file ?? 'a spec'} failed to load`,
+    passed: 0,
+    failed: 1,
+    trace: null,
+    error: message.replace(/\u001b\[[0-9;]*m/g, '').slice(0, 500),
+    error_at: at ? `${file}:${at.line}` : null,
+    verdict: 'real',
+    order: null,
+  };
+  return { pipeline_id: pipelineId, sha, runs: 1, tests: [test] };
+}
+
 export function proven(verdict) {
   return verdict.tests.length > 0 && verdict.tests.every((t) => t.failed === 0 && t.passed === verdict.runs);
 }
@@ -176,6 +198,16 @@ function main(args) {
     }
     return 0;
   }
+  if (args[0] === '--load-error' && args[1] && args[2]) {
+    const report = readReport(args[1]);
+    if (!report) return 1;
+    const verdict = loadErrorVerdict(report, { pipelineId: Number(process.env.CI_PIPELINE_ID) || null, sha: process.env.CI_COMMIT_SHA ?? null, root: process.cwd() });
+    if (verdict) {
+      writeFileSync(args[2], `${JSON.stringify(verdict, null, 2)}\n`);
+      console.log(verdict.tests[0].file ?? 'unknown spec');
+    }
+    return 0;
+  }
   if (args[0] === '--unreproduced' && args[1]) {
     const verdict = readReport(args[1]);
     if (!verdict) return 1;
@@ -219,7 +251,7 @@ function main(args) {
   }
   const [reportPath, outPath, junitPath] = args;
   if (!reportPath || !outPath) {
-    console.error('usage: node tools/verdict.mjs --failed <e2e-report.json> | --infra <e2e-report.json> <verdict.json> | --real <verdict.json> | --proven <proof.json> | --unreproduced <verdict.json> | --suite <verdict.json> <suite-report.json>... | --base <base-report.json> <verdict.json> | <report.json> <verdict.json> [<junit.xml>]');
+    console.error('usage: node tools/verdict.mjs --failed <e2e-report.json> | --infra <e2e-report.json> <verdict.json> | --load-error <e2e-report.json> <verdict.json> | --real <verdict.json> | --proven <proof.json> | --unreproduced <verdict.json> | --suite <verdict.json> <suite-report.json>... | --base <base-report.json> <verdict.json> | <report.json> <verdict.json> [<junit.xml>]');
     return 2;
   }
   const report = readReport(reportPath);

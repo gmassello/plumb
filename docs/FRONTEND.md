@@ -11,7 +11,7 @@ One static page, `src/public/index.html`, with `app.js` (an ES module, no build 
 1. On load, it reads the browser's time zone (`Intl.DateTimeFormat().resolvedOptions().timeZone`), shows it, and lists the slots from `GET /api/slots?tz=<zone>`.
 2. Each slot has a **Select** button, or **Taken** (disabled) when it is booked.
 3. Select opens a `<dialog>`. Its **Book** button stays disabled for a random 150–600 ms, a deliberate animation-style wait.
-4. Book posts the booking, shows "Booking pending", reloads the slots, and polls `GET /api/bookings/:id` every 200 ms until it shows "Booking confirmed". An error shows the server's message.
+4. Book posts the booking, shows "Booking pending", reloads the slots, and polls `GET /api/bookings/:id` every 200 ms until it shows "Booking confirmed". An error shows the server's message: a refused booking also reloads the slots, and an error while loading the slots or polling (for example a booking the reset removed) stops there instead of retrying.
 
 ### State
 
