@@ -41,4 +41,5 @@ Module variables only: the chosen slot. Everything else is read from the server 
 - **Toggles:** language (English or Spanish) and theme (light or dark). The first visit takes `navigator.language` and `prefers-color-scheme`. Both choices are kept in `localStorage`, behind try/catch. An inline script in `<head>` applies them before the stylesheet loads, so the first paint is right. The language toggle also sets `document.documentElement.lang`.
 - **Effect:** a terminal that types the demo run. Under `prefers-reduced-motion: reduce` it shows every line at once.
 - **Screenshots:** `site/img/` holds real captures of public GitLab pages: pipeline 2948453748, MR !10, the `fix-proof` tests tab of !11's pipeline, and the summary note.
+- **Sharing:** `og:` and `twitter:card` tags point to `site/img/og.png`, a 1200x630 crop of the pipeline screenshot, by its absolute Pages URL.
 - **Test:** `tests/unit/site-text.test.js` checks that both languages have the same keys and no empty value, that every key the HTML uses exists, and that an unknown language falls back to English.

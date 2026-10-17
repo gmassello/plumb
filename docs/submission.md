@@ -13,11 +13,11 @@ A GitLab Duo flow that triages a red main pipeline: CI re-runs the failed test t
 ### What it does
 Plumb is a GitLab Duo Agent Platform flow that takes over when a `main` pipeline goes red, and walks away only when `main` is green again or a person has a precise issue to read. A Pipeline events trigger starts the flow on the failed pipeline; nobody mentions it or clicks anything.
 
-Before the flow starts, CI decides what kind of failure it is. `flake-verdict` re-runs each failed test 10 times on the same commit and writes `verdict.json`. <!-- src: grep -n "repeat-each=10" .gitlab-ci.yml --> Any pass makes the test flaky. A test that fails all 10 also runs 3 times on the parent commit, so the verdict says whether this commit broke it or it was already broken. <!-- src: grep -n "repeat-each=3" .gitlab-ci.yml --> The verdict also records order effects (state left by earlier runs, or a test that only fails inside the full suite), infrastructure failures that need no code change, and the test's history in the project.
+Before the flow starts, CI decides what kind of failure it is. `flake-verdict` re-runs each failed test 10 times on the same commit and writes `verdict.json`. <!-- src: grep -n "repeat-each=10" .gitlab-ci.yml --> Any pass makes the test flaky. A test file that fails to load counts as a real failure without re-runs. A test that fails all 10 also runs 3 times on the parent commit, so the verdict says whether this commit broke it or it was already broken. <!-- src: grep -n "repeat-each=3" .gitlab-ci.yml --> The verdict also records order effects (state left by earlier runs, or a test that only fails inside the full suite), infrastructure failures that need no code change, and the test's history in the project.
 
 The flow then acts on that verdict:
 
-- **Flaky:** it finds the cause (async wait, concurrency, animation, time zone, shared state), commits a fix on a `fix/` branch and opens a merge request. In that MR `fix-proof` runs the test 50 times, and `merge-gate` merges only if all 50 pass. <!-- src: grep -n "repeat-each=50" .gitlab-ci.yml --> If the proof fails, the flow replaces the fix with a quarantine tag and opens an issue that expires in 14 days. <!-- src: grep -n "14 days" .gitlab/duo/triage-flow.yml -->
+- **Flaky:** it finds the cause (async wait, concurrency, animation, time zone, shared state), commits a fix on a `fix/` branch and opens a merge request. In that MR `fix-proof` runs the test 50 times, and `merge-gate` merges only if all 50 pass and the MR changes nothing but e2e specs; a fix that touches the app waits for a human. <!-- src: grep -n "repeat-each=50" .gitlab-ci.yml; grep -n "nothing but e2e specs" .gitlab-ci.yml --> If the proof fails, the flow replaces the fix with a quarantine tag and opens an issue that expires in 14 days. <!-- src: grep -n "14 days" .gitlab/duo/triage-flow.yml -->
 - **Real failure:** it reads the commit message and diff and picks a cause. A regression gets an issue that quotes the diff. An intended app change gets an `update/` MR that always waits for a human. A CI setting change gets an `environment` issue. Missing test data gets a `fix/` MR.
 - **Recurring:** a test already fixed 2 times is not fixed a third time; it goes straight to quarantine with its history quoted ([!13](https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43144947/showcase/-/merge_requests/13)). <!-- src: grep -n "RECURRING_FIXES =" tools/history.mjs -->
 
@@ -48,10 +48,10 @@ A language model is good at reading a diff and writing a three-line fix, and the
 
 ### Known limitations
 - The flow fixes one test per pipeline; the others are listed in the MR, not fixed.
-- The cause of an always-failing test is the model's call. The merge is not: only `merge-gate` merges, after 50 of 50. <!-- src: grep -n "repeat-each=50" .gitlab-ci.yml -->
+- The cause of an always-failing test is the model's call. The merge is not: only `merge-gate` merges, after 50 of 50, and only MRs that change nothing but e2e specs. <!-- src: grep -n "repeat-each=50" .gitlab-ci.yml; grep -n "nothing but e2e specs" .gitlab-ci.yml -->
 - An expired quarantine turns the pipeline yellow, but nothing removes the tag. At most 2 tests can be quarantined; a third fails the pipeline. <!-- src: QUARANTINE_MAX=0 node tools/quarantine.mjs; echo $? -->
 - History is matched by exact test title, so a renamed test starts with none.
-- The demo app keeps bookings in memory and exposes its test reset endpoint.
+- The demo app keeps bookings in memory, and its API has no authentication; only the test reset endpoint needs a token.
 
 ## Built with (-)
 GitLab Duo Agent Platform, GitLab CI/CD, Google Cloud Run, Workload Identity Federation, Node.js, Playwright, Python
