@@ -16,7 +16,7 @@ try {
   if (!t) t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
   document.documentElement.setAttribute('data-theme', t);
   var l = localStorage.getItem('plumb-lang');
-  if (!l) l = (navigator.language || 'en').slice(0, 2) === 'es' ? 'es' : 'en';
+  if (l !== 'es') l = 'en';
   document.documentElement.lang = l;
 } catch (e) {}
 </script>
