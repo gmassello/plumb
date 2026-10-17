@@ -30,13 +30,13 @@ Only what the judges see counts: the entry text (`docs/submission.md`), the proj
 4. What if the agent's fix is wrong?
    It does not merge: !9's fix passed 33 of 50, and the flow replaced it with a 14-day quarantine and its issue (`docs/submission.md:35`, `docs/submission.md:20`).
 5. How is this different from automatic retries or existing flaky-test detection?
-   **gap**: the repo explains why the problem was chosen (`docs/BRIEF.md:52`), not how it compares with existing tools.
+   Retrying or quarantining with an issue for later is what GitLab's own testing guide does; Plumb writes the fix, proves it with 50 runs, and quarantines only when the proof fails (`docs/submission.md`, Inspiration).
 6. What does one incident cost (Duo credits, CI minutes)?
-   **gap**: not measured; `docs/BRIEF.md:76` only says the group's credits cover it.
+   One incident (pipeline 2958940993 → !14): 6.2 min of CI jobs on the red pipeline and 5.2 min on the MR pipeline, and a 4 min 10 s flow session. Duo credits per session are not visible to a Developer role (`docs/submission.md`, Accomplishments and Known limitations; `docs/CLAIMS.md`).
 7. What if several tests fail in the same pipeline?
    It fixes one (the first real test, or the flaky one with the fewest passes) and lists the rest in the MR (`docs/submission.md:50`).
 8. How likely is 50 of 50 to catch a fix that is still flaky?
-   **gap**: the repo does not publish the proof's power (how often a test that fails 5 % or 10 % of runs would still pass 50/50).
+   A test that fails 10% of runs passes 50/50 0.5% of the time, 5% passes it 7.7%, 1% passes it 60.5%: it catches frequent failures, not rare ones (`docs/submission.md`, Known limitations).
 9. Does it work on a real project, outside the demo app?
    **gap**: every run is on the repo's booking app (`docs/submission.md:32`); there is no run on another project.
 10. If it is Hands-off, what does a person still do?

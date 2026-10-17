@@ -96,6 +96,8 @@ Every claimed number and the command behind it: [`docs/CLAIMS.md`](docs/CLAIMS.m
 - A flaky test that happens to pass first and then fail most later runs reads as a state leak.
 - The duplicate check looks only at open issues and merge requests, so a test that breaks again after its fix merged gets a new one. That one quotes the test's history, and after 2 merged fixes the test is quarantined instead of fixed again.
 - History is matched by exact test title: a renamed test starts with no history. A fix that was later reverted still counts as a fix. If the GitLab API cannot be read, `verdict.json` has no history and the flow acts as if the test were new.
+- The 50-run proof catches a fix that still fails often, not one that fails rarely: a test that fails 10% of runs passes it 0.5% of the time, 5% passes it 7.7% of the time, 1% passes it 60.5% of the time (`(1 - f)^50`).
+- One incident (pipeline 2958940993 → !14) took 6.2 min of CI jobs on the red pipeline and 5.2 min on the merge request pipeline, plus a 4 min 10 s flow session. The Duo credits per session are not visible to a Developer role.
 - The parent-commit run compares with one commit back. A failure that started earlier shows as "already failing", without saying where it started.
 - Cause classification is the language model's call (12 of 12 right in QA-06, four scenarios). The merge is not: only `merge-gate` merges, after 50 of 50.
 - The app keeps bookings in memory. The deployed demo keeps its test reset endpoint `/_test/reset`, closed behind the `X-Reset-Token` header; the rest of the API has no authentication.

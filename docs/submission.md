@@ -40,6 +40,7 @@ A flaky test does not fail on demand, so every scenario had to be measured befor
 
 ### Accomplishments that we're proud of
 - From the red job to the summary note in 9 min 47 s, with no human action, on pipeline 2948453748. <!-- src: docs/DEMO.md § Timeline -->
+- One incident, measured end to end (pipeline 2958940993 → !14, merged): 6.2 min of CI jobs on the red pipeline, 1.9 of them the verdict re-runs; 5.2 min on the MR pipeline, 2.0 of them the 50-run proof; and a flow session of 4 min 10 s. <!-- src: for p in 2958940993 2958945808; do glab api "projects/:fullpath/pipelines/$p/jobs?per_page=100"; done, sum of duration per pipeline; flow session times in docs/sessions/9641497.md -->
 - Every path of the flow ran on a real pipeline, with public links: flaky fixed, flaky not fixable, flaky by order, regression, intended app change, environment, test data, recurring.
 - The cause of always-failing tests was right in 12 of 12 runs across four seeded scenarios, and no `update/` MR was ever merged automatically. <!-- src: docs/RESULTS.md § QA-06 -->
 
@@ -55,6 +56,8 @@ A language model is good at reading a diff and writing a three-line fix, and the
 - The cause of an always-failing test is the model's call. The merge is not: only `merge-gate` merges, after 50 of 50, and only MRs that change nothing but e2e specs. <!-- src: grep -n "repeat-each=50" .gitlab-ci.yml; grep -n "nothing but e2e specs" .gitlab-ci.yml -->
 - An expired quarantine turns the pipeline yellow, but nothing removes the tag. At most 2 tests can be quarantined; a third fails the pipeline. <!-- src: QUARANTINE_MAX=0 node tools/quarantine.mjs; echo $? -->
 - History is matched by exact test title, so a renamed test starts with none.
+- 50 of 50 catches a fix that still fails often, not one that fails rarely: a test that fails 10% of runs passes the proof 0.5% of the time, one that fails 5% passes it 7.7% of the time, and one that fails 1% passes it 60.5% of the time. <!-- src: node -e "for (const f of [0.01,0.05,0.1]) console.log(f, ((1-f)**50).toFixed(3))" -->
+- The Duo credits a session uses are not visible to the participant's Developer role (GraphQL `creditsUsed` returns null), so the cost above counts CI minutes and session time only.
 - The demo app keeps bookings in memory, and its API has no authentication; only the test reset endpoint needs a token.
 
 ## Built with (-)
