@@ -7,7 +7,7 @@ test.beforeEach(async ({ request }) => {
 test('booking from the confirmation modal', async ({ page }) => {
   await page.goto('/');
   await page.getByTestId('name').fill('Ana');
-  await page.getByTestId('slot-s1').getByRole('button', { name: 'Select' }).click();
+  await page.getByTestId('slot-s3').getByRole('button', { name: 'Select' }).click();
   const confirm = page.getByTestId('confirm-book');
   await expect(confirm).toBeEnabled();
   await confirm.click();
