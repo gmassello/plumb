@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Plumb design preview</title>
+<script>
+try {
+  var t = localStorage.getItem('plumb-theme');
+  if (!t) t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  document.documentElement.setAttribute('data-theme', t);
+} catch (e) {}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  color-scheme: light;
+  --bg: #ffffff;
+  --surface: #f5f6f6;
+  --surface-2: #eceef0;
+  --fg: #0b0c0e;
+  --muted: #5b616b;
+  --border: #dfe1e4;
+  --border-strong: #c4c8ce;
+  --accent: #08775a;
+  --accent-hover: #06634a;
+  --on-accent: #ffffff;
+  --ring: #08775a;
+  --danger: #c42b2b;
+  --term-bg: #0b0d0e;
+  --term-fg: #e6e8ea;
+  --term-muted: #8a8f98;
+  --term-ok: #2fe0a6;
+  --term-fail: #ff6b6b;
+  --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+  --space-24: 96px;
+  --shadow-card: 0 1px 2px rgb(11 12 14 / 0.06), 0 4px 16px rgb(11 12 14 / 0.06);
+  --plumb: 2px;
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #08090a;
+  --surface: #0f1011;
+  --surface-2: #18191a;
+  --fg: #f7f8f8;
+  --muted: #8a8f98;
+  --border: #23252a;
+  --border-strong: #34343a;
+  --accent: #2fe0a6;
+  --accent-hover: #5ae8b9;
+  --on-accent: #06120d;
+  --ring: #2fe0a6;
+  --danger: #ff6b6b;
+  --shadow-card: 0 0 0 1px rgb(255 255 255 / 0.04);
+}
+[hidden] { display: none !important; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 400 1rem/1.5 var(--font-sans); }
+main { max-width: 1200px; margin: 0 auto; padding: var(--space-12) var(--space-6) var(--space-24); }
+header { display: flex; justify-content: space-between; align-items: center; gap: var(--space-4); margin-bottom: var(--space-12); }
+section { margin-top: var(--space-12); }
+.eyebrow { font-size: 0.8125rem; font-weight: 600; line-height: 1.3; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin: 0 0 var(--space-3); }
+.display { font-size: 5rem; font-weight: 700; line-height: 1.05; letter-spacing: -0.04em; margin: 0; }
+h1 { font-size: 3.5rem; font-weight: 600; line-height: 1.1; letter-spacing: -0.03em; margin: 0; }
+h2 { font-size: 2.5rem; font-weight: 600; line-height: 1.15; letter-spacing: -0.025em; margin: 0; }
+h3 { font-size: 1.75rem; font-weight: 600; line-height: 1.2; letter-spacing: -0.02em; margin: 0 0 var(--space-2); }
+.subhead { font-size: 1.25rem; line-height: 1.4; letter-spacing: -0.01em; color: var(--muted); margin: var(--space-4) 0 0; max-width: 48rem; }
+.small { font-size: 0.875rem; color: var(--muted); }
+code, .mono { font-family: var(--font-mono); font-size: 0.875rem; line-height: 1.6; }
+.swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: var(--space-3); }
+.swatch { border: 1px solid var(--border); border-radius: var(--radius-md); overflow: hidden; }
+.swatch div { height: 56px; }
+.swatch p { margin: 0; padding: var(--space-2) var(--space-3); font-family: var(--font-mono); font-size: 0.75rem; }
+.row { display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: center; }
+.btn { font: 500 0.875rem/1.2 var(--font-sans); padding: 8px 14px; border-radius: var(--radius-md); border: 1px solid transparent; cursor: pointer; }
+.btn-primary { background: var(--accent); color: var(--on-accent); }
+.btn-primary:hover { background: var(--accent-hover); }
+.btn-secondary { background: var(--surface); color: var(--fg); border-color: var(--border); }
+.btn-secondary:hover { background: var(--surface-2); }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+.field { display: grid; gap: var(--space-1); max-width: 360px; }
+.field label { font-size: 0.875rem; font-weight: 500; }
+.input { font: 400 1rem/1.5 var(--font-sans); padding: 8px 12px; border: 1px solid var(--muted); border-radius: var(--radius-sm); background: var(--bg); color: var(--fg); }
+.input:hover { border-color: var(--fg); }
+.input[aria-invalid="true"] { border-color: var(--danger); }
+.error { font-size: 0.875rem; color: var(--danger); margin: 0; }
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: var(--space-4); }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: var(--space-6); box-shadow: var(--shadow-card); }
+.card:hover { border-color: var(--border-strong); }
+.card p { margin: 0; }
+.plumb { position: relative; }
+.plumb::before { content: ""; position: absolute; left: -1px; top: 0; width: var(--plumb); height: 100%; background: var(--accent); border-radius: var(--radius-lg) 0 0 var(--radius-lg); animation: draw 400ms ease-out both; }
+@keyframes draw { from { height: 0; } to { height: 100%; } }
+.chip { display: inline-block; font-family: var(--font-mono); font-size: 0.8125rem; padding: 2px 8px; border-radius: var(--radius-sm); background: var(--surface-2); }
+.chip-pass { color: var(--accent); }
+.chip-fail { color: var(--danger); }
+.stat { font-family: var(--font-mono); font-size: 3.5rem; font-weight: 600; line-height: 1.05; letter-spacing: -0.03em; }
+.term { background: var(--term-bg); color: var(--term-fg); border-radius: var(--radius-lg); font-family: var(--font-mono); font-size: 0.875rem; line-height: 1.6; overflow: hidden; }
+.term-bar { display: flex; gap: 6px; padding: var(--space-3) var(--space-4); border-bottom: 1px solid #1c1e21; }
+.term-bar span { width: 10px; height: 10px; border-radius: 50%; background: var(--term-muted); }
+.term pre { margin: 0; padding: var(--space-6); white-space: pre-wrap; word-break: break-word; min-height: 15em; font: inherit; }
+.t-muted { color: var(--term-muted); }
+.t-ok { color: var(--term-ok); }
+.t-fail { color: var(--term-fail); }
+.caret { display: inline-block; width: 0.6em; background: var(--term-fg); animation: blink 1s steps(1) infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .plumb::before, .caret { animation: none; }
+}
+@media (max-width: 640px) {
+  main { padding: var(--space-8) var(--space-4) var(--space-12); }
+  .display { font-size: 3rem; }
+  h1 { font-size: 2.25rem; }
+  h2 { font-size: 1.75rem; }
+}
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <span class="mono">plumb / design preview</span>
+    <button class="btn btn-secondary" id="theme" type="button">Dark theme</button>
+  </header>
+
+  <p class="eyebrow">GitLab Duo flow</p>
+  <p class="display">Plumb</p>
+  <p class="subhead">A red pipeline gets a verdict from CI, a fix from Duo, and a 50-run proof before anything merges.</p>
+
+  <section>
+    <p class="eyebrow">Headline effect</p>
+    <div class="term" role="img" aria-label="Terminal replaying pipeline 2948453748: async confirmation passed 3 of 10, flaky; Duo opened MR 10; fix-proof passed 50 of 50; merge-gate merged; red to note in 9 minutes 47 seconds">
+      <div class="term-bar"><span></span><span></span><span></span></div>
+      <pre id="term" aria-hidden="true"></pre>
+    </div>
+  </section>
+
+  <section>
+    <p class="eyebrow">Type scale</p>
+    <h1>When main goes red</h1>
+    <h2>CI decides, Duo fixes</h2>
+    <h3>A fix merges only after 50 of 50 runs pass</h3>
+    <p>A failed test is re-run 10 times on the same commit. Any pass makes it flaky; a test that fails all 10 also runs 3 times on the parent commit to tell a regression from an app or environment change.</p>
+    <p class="small">Caption: pipeline 2948453748, job <code>flake-verdict</code>.</p>
+  </section>
+
+  <section>
+    <p class="eyebrow">Components</p>
+    <div class="row">
+      <button class="btn btn-primary" type="button">Open the MR</button>
+      <button class="btn btn-secondary" type="button">See the pipeline</button>
+      <button class="btn btn-primary" type="button" disabled>Merged</button>
+      <button class="btn btn-secondary" type="button" aria-busy="true">Running…</button>
+    </div>
+    <div class="row" style="margin-top: var(--space-6); align-items: start">
+      <div class="field">
+        <label for="pid">Pipeline id</label>
+        <input class="input" id="pid" value="2948453748">
+      </div>
+      <div class="field">
+        <label for="bad">Pipeline id</label>
+        <input class="input" id="bad" value="abc" aria-invalid="true" aria-describedby="bad-msg">
+        <p class="error" id="bad-msg">A pipeline id is a number.</p>
+      </div>
+    </div>
+    <div class="cards" style="margin-top: var(--space-6)">
+      <div class="card plumb">
+        <p class="eyebrow">Verdict</p>
+        <p class="stat">3/10</p>
+        <p class="small"><code>async confirmation</code> passed 3 of 10 re-runs</p>
+        <p style="margin-top: var(--space-3)"><span class="chip">flaky</span></p>
+      </div>
+      <div class="card">
+        <p class="eyebrow">Proof</p>
+        <p class="stat">50/50</p>
+        <p class="small"><code>fix-proof</code> on !10</p>
+        <p style="margin-top: var(--space-3)"><span class="chip chip-pass">pass</span></p>
+      </div>
+      <div class="card">
+        <p class="eyebrow">Unproven fix</p>
+        <p class="stat">33/50</p>
+        <p class="small">!9 was not merged; the test went to quarantine</p>
+        <p style="margin-top: var(--space-3)"><span class="chip chip-fail">fail</span></p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <p class="eyebrow">Palette</p>
+    <div class="swatches" id="swatches"></div>
+  </section>
+</main>
+<script>
+var tokens = ['--bg','--surface','--surface-2','--fg','--muted','--border','--border-strong','--accent','--accent-hover','--on-accent','--ring','--danger','--term-bg','--term-fg','--term-muted','--term-ok','--term-fail'];
+function paintSwatches() {
+  var box = document.getElementById('swatches');
+  var cs = getComputedStyle(document.documentElement);
+  box.replaceChildren.apply(box, tokens.map(function (t) {
+    var el = document.createElement('div');
+    el.className = 'swatch';
+    var c = document.createElement('div');
+    c.style.background = 'var(' + t + ')';
+    var p = document.createElement('p');
+    p.textContent = t + ' ' + cs.getPropertyValue(t).trim();
+    el.append(c, p);
+    return el;
+  }));
+}
+var btn = document.getElementById('theme');
+function label() {
+  btn.textContent = document.documentElement.getAttribute('data-theme') === 'dark' ? 'Light theme' : 'Dark theme';
+}
+btn.addEventListener('click', function () {
+  var next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  try { localStorage.setItem('plumb-theme', next); } catch (e) {}
+  label();
+  paintSwatches();
+});
+label();
+paintSwatches();
+
+var lines = [
+  ['t-muted', '$ flake-verdict --pipeline 2948453748'],
+  ['', '  async confirmation   passed 3/10 re-runs'],
+  ['t-fail', '  verdict: flaky (async-wait)'],
+  ['t-muted', '$ duo triage-flow'],
+  ['', '  opened !10  Fix flaky test: async confirmation'],
+  ['t-muted', '$ fix-proof !10 --repeat-each=50'],
+  ['t-ok', '  50/50 passed'],
+  ['t-muted', '$ merge-gate'],
+  ['t-ok', '  merged !10 · red to note in 9 min 47 s, no human']
+];
+var term = document.getElementById('term');
+var caret = document.createElement('span');
+caret.className = 'caret';
+caret.textContent = ' ';
+function line(cls) {
+  var s = document.createElement('span');
+  if (cls) s.className = cls;
+  term.insertBefore(s, caret);
+  return s;
+}
+term.append(caret);
+if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  lines.forEach(function (l) { line(l[0]).textContent = l[1] + '\n'; });
+} else {
+  var i = 0;
+  (function next() {
+    if (i >= lines.length) return;
+    var l = lines[i++], s = line(l[0]), j = 0;
+    (function type() {
+      s.textContent = l[1].slice(0, ++j);
+      if (j < l[1].length) return setTimeout(type, 18);
+      s.textContent += '\n';
+      setTimeout(next, 350);
+    })();
+  })();
+}
+</script>
+</body>
+</html>
