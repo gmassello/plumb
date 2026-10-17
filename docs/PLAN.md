@@ -211,11 +211,23 @@ At the end of this plan a real red pipeline on the booking app's e2e suite is tu
   - happy: a chat log with tool steps and a final answer → a transcript with one row per step and the answer quoted, without tool responses.
   - happy: a pipeline with two sessions → its RESULTS row links both transcripts.
 
+### U15. Order, infrastructure and quarantine limits
+- **Goal:** the verdict tells a test that fails because of state left by earlier runs from an unlucky flaky one, an infrastructure failure never reaches a code fix, and quarantine has an expiry that shows and a cap that blocks.
+- **Covers:** R1, R3, R5
+- **Files:** `tools/verdict.mjs`, `tools/quarantine.mjs`, `.gitlab-ci.yml`, `.gitlab/duo/triage-flow.yml`, `demo/scenarios/order.patch`, `tests/unit/verdict.test.js`, `tests/unit/quarantine.test.js`
+- **Depends on:** U3, U5, U11
+- **Status:** done 2026-10-17. Flow v1.5.0. Scenario `order` on pipeline 2957810765: 1/10 `state-leak` → !12 `shared-state`, proof 50/50, merged.
+- **Tests:**
+  - happy: runs P P F×8 → `state-leak`; P F F F F P×5 → no order; 10/10 alone → `suite-only` with the full-suite result.
+  - edge: P×7 F×3 → no order, so an unlucky flaky run is not called a leak.
+  - happy: "ENOSPC" and a `config.webServer` timeout are infrastructure; "ECONNREFUSED" is not.
+  - happy: an expired quarantine → exit 3; a tagged test with no issue → exit 3; 3 tests over a cap of 2 → exit 1.
+
 ## Cut line
 | Tier | Units | Why |
 |---|---|---|
 | must | U1, U2, U3, U4, U5, U6, U7, U9, U11, U12 | the full loop from red pipeline to live app is the demo, and telling an outdated test from a regression is the idea's edge (Innovation/Idea); without any of these there is nothing to film |
-| should | U8, U10, U13, U14 | U8 backs every published number (Potential Impact); U10 strengthens the govern stage (Stage One, Technological Implementation) |
+| should | U8, U10, U13, U14, U15 | U8 backs every published number (Potential Impact); U10 strengthens the govern stage (Stage One, Technological Implementation) |
 | cut | — | nothing is cut: 370 hours at the 2026-10-11 revision leave room for the must units plus video, submission text and deck |
 
 ## Risks
