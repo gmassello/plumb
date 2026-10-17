@@ -15,9 +15,17 @@ stages:
   - gate
   - deploy
 
+.not-scheduled:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+      when: never
+
 baseline:
   stage: verify
   image: alpine:3.20
+  rules:
+    - !reference [.not-scheduled, rules]
+    - when: on_success
   script:
     - test -f LICENSE
     - grep -q "MIT License" LICENSE
@@ -35,6 +43,9 @@ unit:
   stage: verify
   image: node:24.14.1-alpine
   needs: []
+  rules:
+    - !reference [.not-scheduled, rules]
+    - when: on_success
   script:
     - npm run lint
     - npm test
@@ -43,6 +54,9 @@ api-checks:
   stage: verify
   image: node:24.14.1-alpine
   needs: []
+  rules:
+    - !reference [.not-scheduled, rules]
+    - when: on_success
   script:
     - apk add --no-cache python3 > /dev/null
     - PORT=8080 node src/server.js > server.log 2>&1 &
@@ -76,6 +90,7 @@ e2e:
   extends: .playwright
   needs: []
   rules:
+    - !reference [.not-scheduled, rules]
     - if: $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME =~ /^(fix|update)\//
       allow_failure: true
     - when: on_success
@@ -95,6 +110,9 @@ e2e:
 e2e-quarantine:
   extends: .playwright
   allow_failure: true
+  rules:
+    - !reference [.not-scheduled, rules]
+    - when: on_success
   script:
     - npx playwright test --grep @quarantine --pass-with-no-tests
   artifacts:
@@ -109,6 +127,7 @@ flake-verdict:
   stage: verdict
   needs: [e2e]
   rules:
+    - !reference [.not-scheduled, rules]
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
       when: on_failure
   script:
@@ -220,6 +239,7 @@ pages:
   image: alpine:3.20
   needs: [unit]
   rules:
+    - !reference [.not-scheduled, rules]
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
   script:
     - cp -r site public
@@ -231,6 +251,7 @@ deploy:
   image: google/cloud-sdk:586.0.0-slim
   needs: [baseline, unit, api-checks, e2e]
   rules:
+    - !reference [.not-scheduled, rules]
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
   id_tokens:
     GCP_OIDC:
@@ -253,6 +274,7 @@ live-checks:
   image: node:24.14.1-alpine
   needs: [deploy]
   rules:
+    - !reference [.not-scheduled, rules]
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
   script:
     - apk add --no-cache python3 > /dev/null
@@ -263,6 +285,21 @@ summary:
   image: node:24.14.1-alpine
   needs: [deploy]
   rules:
+    - !reference [.not-scheduled, rules]
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
   script:
     - node tools/summary.mjs
+
+live-health:
+  stage: deploy
+  image: node:24.14.1-alpine
+  needs: []
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+  variables:
+    LIVE_URL: https://booking-vic4jyzsha-uc.a.run.app
+    PAGE_URL: https://showcase-8b103c.gitlab.io/
+  script:
+    - apk add --no-cache python3 > /dev/null
+    - RESET_TOKEN=$LIVE_RESET_TOKEN python3 cases/small-booking-api/checks.py "$LIVE_URL"
+    - 'wget -qO- "$PAGE_URL" | grep -q "<title>Plumb</title>" || { echo "live-health: $PAGE_URL does not serve the project page."; exit 1; }'
