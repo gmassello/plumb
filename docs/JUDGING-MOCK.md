@@ -5,7 +5,7 @@ Weighted score: 4.6/5, up from 4.4. With the Google Cloud bonus (up to +0.2), th
 Only what the judges see counts:
 
 - the entry text, `docs/submission.md`;
-- the demo video, https://youtu.be/PaYtgcmaSj0 (2:02, public; it replaces the 1:55 cut, now private);
+- the demo video, https://youtu.be/ViidpLXD_PY (2:02, public; earlier cuts are private);
 - the project page, https://showcase-8b103c.gitlab.io/;
 - the public GitLab links.
 
