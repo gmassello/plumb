@@ -14,6 +14,7 @@ One window at 1280x800, captured in window mode, no microphone. Each money shot 
 | 8 | proof | main's pipeline | all green, `deploy` passed |
 | 9 | human | MR !15 | "Update test after app change", label `needs-review`, merged by a human ★ |
 | 10 | human | issue #10 | "Real regression", no code change |
+| 11 | human | MR !9 Changes tab, then `fix-proof` job 17155472981, then issue #9 | the quarantine tag in the diff; "33 passed" in the job log ★; the quarantine issue |
 
 Before the take: `sh video/check-demo.sh` all `ok`, `chrome-silent`, the debugger banner gone.
 The scenario push is run by the human: `! sh demo/scenarios/apply.sh order` and `! git push origin main`.

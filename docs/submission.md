@@ -64,7 +64,7 @@ A language model is good at reading a diff and writing a three-line fix, and the
 GitLab Duo Agent Platform, GitLab CI/CD, Google Cloud Run, Workload Identity Federation, Node.js, Playwright, Python
 
 ## Try it out (-)
-- Demo video: https://youtu.be/u_FShFO1OOQ
+- Demo video: https://youtu.be/PaYtgcmaSj0
 - Project page: https://showcase-8b103c.gitlab.io/
 - Repository: https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43144947/showcase
 - Live app: https://booking-vic4jyzsha-uc.a.run.app
@@ -80,7 +80,7 @@ GitLab Duo Agent Platform, GitLab CI/CD, Google Cloud Run, Workload Identity Fed
 | Design | 20% | What it does (full loop from red pipeline to deploy and summary note); Accomplishments (every path on a real pipeline) |
 | Potential Impact | 20% | Inspiration (84% of pass-to-fail transitions are flaky at Google; the developer on CI duty); Accomplishments (9 min 47 s, no human) |
 | Innovation/Idea | 20% | Inspiration (retry or quarantine vs. fix and prove); How we built it ("CI decides, Duo fixes"); What it does (recurring tests go to quarantine); Challenges (negative control) |
-| Presentation | 20% | Try it out (demo video, 1:55); Accomplishments (every path on a real pipeline) |
+| Presentation | 20% | Try it out (demo video, 2:02); Accomplishments (every path on a real pipeline) |
 | Most Stages Covered (special prize) | — | How we built it (all 9 stages, each with its job or file) |
 | Hands-off agent (Path A prize) | — | What it does (Hands-off autonomy level); Elevator pitch |
 | Google Cloud bonus | +0.2 | What it does (deploy to Cloud Run, live-checks); Try it out (live URL) |
