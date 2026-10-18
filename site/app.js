@@ -35,7 +35,7 @@ const lines = [
   ['t-muted', '$ flake-verdict --pipeline 2948453748'],
   ['', '  async confirmation   passed 3/10 re-runs'],
   ['t-fail', '  verdict: flaky (async-wait)'],
-  ['t-muted', '$ duo triage-flow'],
+  ['t-muted', '→ triage-flow, a GitLab Duo flow started by the pipeline event'],
   ['', '  opened !10  Fix flaky test: async confirmation'],
   ['t-muted', '$ fix-proof !10 --repeat-each=50'],
   ['t-ok', '  50/50 passed'],

@@ -26,6 +26,7 @@ Specialised references:
 
 - [`docs/BRIEF.md`](docs/BRIEF.md) — the product contract: requirements (R-IDs) tied to the judging criteria.
 - [`docs/USE-CASES.md`](docs/USE-CASES.md) — features, happy paths, acceptance criteria and the test cases with their checks.
+- [`docs/UX.md`](docs/UX.md) — a review of the project page as a judge sees it: the current flow, findings with proposals, and the proposed flow.
 - [`docs/CLAIMS.md`](docs/CLAIMS.md) — every published number and the command or record it comes from.
 - [`docs/submission.md`](docs/submission.md) — the Devpost entry copy, field by field, each number with its source.
 - [`docs/AI_DISCLOSURE.md`](docs/AI_DISCLOSURE.md) — what in the entry was made with AI tools: the demo video's avatar presenter and cloned voice, and the script.
