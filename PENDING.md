@@ -17,7 +17,7 @@ Code status in one line: unit tests (48) and API checks green; every triage path
 | Repo and CI | `gitlab-ai-hackathon/transcend-october-2026/43144947/showcase` @ `8b49ecc` | ok — `main` = `origin/main`, clean; pipeline 2961089937 success; public; MIT detected; `secret_detection` green | 2026-10-19 00:00 UTC |
 | Site | https://showcase-8b103c.gitlab.io/ | ok — the HTML and its 8 assets have the same hash as `origin/main`; 29 links checked (`/-/commit/57608d9d` gives 403 to curl only, it opens in a browser) | 2026-10-19 00:00 UTC |
 | Demo app | https://booking-vic4jyzsha-uc.a.run.app | ok, with a warning — 200 on `/`, `/health`, `/api/slots`; three 500s (about 10 s each) right after the 23:55 UTC redeploy, then fine | 2026-10-19 00:00 UTC |
-| Monitoring | schedule 4497507, every 6 h, job `live-health` | **failing** — the app checks pass 6/6, but the project page check (`.gitlab-ci.yml:305`) failed at 12:09, 18:09 and 00:08 UTC in 0.3 s, while curl gets 200 with `<title>Plumb</title>`; last green 2026-10-18 06:08 | 2026-10-19 00:28 UTC |
+| Monitoring | schedule 4497507, every 6 h, job `live-health` | ok — green on pipeline 2961165751. It had failed at 12:09, 18:09 and 00:08 UTC with exit 141: `wget | grep -q` under `pipefail` died on SIGPIPE; fixed in 4aeaecd (also in the `deploy` and `fix-proof` checks). The app checks can still time out on a Cloud Run cold start | 2026-10-19 00:42 UTC |
 | Submission | Devpost project page | **not published** — no Plumb project on https://devpost.com/gmassello | 2026-10-19 00:00 UTC |
 | Gallery card | https://gitlab-transcend.devpost.com/project-gallery | n/a until the submission exists | |
 | Upstream PR | n/a | n/a — Path A, no upstream | |
@@ -60,5 +60,5 @@ Copies counted in `README.md`, `docs/submission.md`, `site/text.js`, `site/index
 
 ## Out of my control
 
-- **The demo app and the page stay up until judging ends (2026-11-14)** — alarm: the `live-health` schedule, which is itself failing (see Monitoring); fallback: the video and the page's real screenshots, which the rules accept ("judge based solely on the text description, images, and video").
+- **The demo app and the page stay up until judging ends (2026-11-14)** — alarm: the `live-health` schedule (see Monitoring); fallback: the video and the page's real screenshots, which the rules accept ("judge based solely on the text description, images, and video").
 - **YouTube keeps the video public** — fallback: `video/out/demo.mp4` re-uploaded to the same title.
