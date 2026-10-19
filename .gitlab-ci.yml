@@ -201,7 +201,7 @@ fix-proof:
       if VERDICT_RUNS=50 node tools/verdict.mjs report.json proof.json proof-junit.xml; then
         node tools/verdict.mjs --proven proof.json || { cat proof.json; echo "fix-proof: not every run passed; a skipped run counts as a failure."; exit 1; }
       else
-        git diff "$CI_MERGE_REQUEST_DIFF_BASE_SHA" HEAD -- $specs | grep -q '^+.*@quarantine' || { echo "fix-proof: no test ran and nothing was quarantined, so a test was removed or skipped."; exit 1; }
+        git diff "$CI_MERGE_REQUEST_DIFF_BASE_SHA" HEAD -- $specs | grep '^+.*@quarantine' > /dev/null || { echo "fix-proof: no test ran and nothing was quarantined, so a test was removed or skipped."; exit 1; }
         echo "fix-proof: every changed test is quarantined, so there is nothing to prove."
       fi
   after_script:
@@ -263,7 +263,7 @@ deploy:
     - gcloud run deploy booking --source . --region us-central1 --allow-unauthenticated --max-instances 1 --set-env-vars RESET_TOKEN=$LIVE_RESET_TOKEN --quiet
     - url=$(gcloud run services describe booking --region us-central1 --format='value(status.url)')
     - echo "Deployed to $url"
-    - 'curl -fsS "$url" | grep -q "Book an appointment" || { echo "deploy: $url does not serve the booking page."; exit 1; }'
+    - 'curl -fsS "$url" | grep "Book an appointment" > /dev/null || { echo "deploy: $url does not serve the booking page."; exit 1; }'
     - echo "APP_URL=$url" > deploy.env
   artifacts:
     reports:
@@ -302,5 +302,5 @@ live-health:
   script:
     - apk add --no-cache python3 > /dev/null
     - RESET_TOKEN=$LIVE_RESET_TOKEN python3 cases/small-booking-api/checks.py "$LIVE_URL"
-    - wget -S -T 20 -O page.html "$PAGE_URL" 2>&1 | head -n 12
+    - wget -S -T 20 -O page.html "$PAGE_URL"
     - 'grep -q "<title>Plumb</title>" page.html || { echo "live-health: $PAGE_URL does not serve the project page. It served:"; head -c 400 page.html; exit 1; }'
