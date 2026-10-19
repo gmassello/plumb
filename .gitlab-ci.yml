@@ -302,4 +302,5 @@ live-health:
   script:
     - apk add --no-cache python3 > /dev/null
     - RESET_TOKEN=$LIVE_RESET_TOKEN python3 cases/small-booking-api/checks.py "$LIVE_URL"
-    - 'wget -qO- "$PAGE_URL" | grep -q "<title>Plumb</title>" || { echo "live-health: $PAGE_URL does not serve the project page."; exit 1; }'
+    - wget -S -T 20 -O page.html "$PAGE_URL" 2>&1 | head -n 12
+    - 'grep -q "<title>Plumb</title>" page.html || { echo "live-health: $PAGE_URL does not serve the project page. It served:"; head -c 400 page.html; exit 1; }'
