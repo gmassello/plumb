@@ -38,6 +38,7 @@ Plans and historical evidence (not a description of the current system):
 
 - [`docs/PLAN.md`](docs/PLAN.md) — work units with their status at the time each was done.
 - [`docs/DEMO.md`](docs/DEMO.md) — one full run of the loop on 2026-10-14.
+- [`PENDING.md`](PENDING.md) — the state of the entry: each published surface and when it was last verified, billable resources, duplicated facts, known gaps and the risks outside our control; kept up to date by the close audit.
 
 `docs/NOTES.md` holds personal status, setup, competition and strategy. It is git-ignored and must never be committed.
 
