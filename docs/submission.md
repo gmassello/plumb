@@ -26,7 +26,7 @@ After the merge, `deploy` ships the app to Google Cloud Run, `live-checks` runs 
 ### Inspiration
 At Google, about 84% of the transitions from pass to fail involve a flaky test, not a real regression. <!-- src: https://testing.googleblog.com/2016/05/flaky-tests-at-google-and-how-we.html (Google Testing Blog, 2016-05-27) --> So the developer on CI duty who opens a red `main` pipeline is usually chasing noise, and pays twice: the time to read the log, and the habit everyone learns of pressing retry. Retrying hides the flake; skipping it hides the bug.
 
-The usual answers are to retry the failed test, or to quarantine it and file an issue for someone to fix later; GitLab's own testing guide does both. <!-- src: https://docs.gitlab.com/development/testing_guide/unhealthy_tests/ --> Plumb writes the fix, proves it with 50 runs, and quarantines only when the proof fails. We wanted an agent that does the boring part end to end, without trusting a language model to decide what is safe to merge.
+The usual answers are to retry the failed test, or to quarantine it and file an issue for someone to fix later; GitLab's own testing guide does both. <!-- src: https://docs.gitlab.com/development/testing_guide/unhealthy_tests/ --> Plumb writes the fix, proves it with 50 runs, and quarantines only when the proof fails. Another flaky-test entry in this hackathon classifies the failure and opens a quarantine MR for a person to merge; Plumb writes the fix, proves it with 50 of 50 runs and merges it without one. <!-- src: glab api "projects/gitlab-ai-hackathon%2Ftranscend-october-2026%2F43285461%2Fflake-hunter/merge_requests?state=all" on 2026-10-22: !1, !2 and !4 are quarantine MRs merged by their author --> We wanted an agent that does the boring part end to end, without trusting a language model to decide what is safe to merge.
 
 ### How we built it
 The design rule is "CI decides, Duo fixes" (ADR 0001). Everything that decides is deterministic: the re-run counts, the 50-run proof, the merge, the quarantine cap and the recurrence threshold live in `.gitlab-ci.yml` and small Node scripts with unit tests. The Duo flow (`.gitlab/duo/triage-flow.yml`, public in the AI Catalog as `triage-flow`) reads `verdict.json`, picks the cause, writes the fix and opens the MR or issue. `flow-drift` fails the pipeline if the published flow differs from the one in the repo, so the flow that runs is the one that was reviewed.
@@ -51,7 +51,13 @@ A language model is good at reading a diff and writing a three-line fix, and the
 - Handle every failing test in a pipeline, not only the first.
 - Take a test out of quarantine automatically when its expiry date passes and it is green again.
 
+### What we chose not to build
+- Other test frameworks (Cypress, Jest, Appium): one framework done end to end beats four done halfway.
+- Infrastructure flakiness (a runner that dies, a registry outage): it needs a retry, not a code change, so the verdict records it and the flow does not touch code.
+- A dashboard of its own: the record lives where the team already looks, in GitLab merge requests, issues and comments.
+
 ### Known limitations
+- Every triaged pipeline is on this repo's booking app; the flow has not yet run on a second project.
 - The flow fixes one test per pipeline; the others are listed in the MR, not fixed.
 - The cause of an always-failing test is the model's call. The merge is not: only `merge-gate` merges, after 50 of 50, and only MRs that change nothing but e2e specs. <!-- src: grep -n "repeat-each=50" .gitlab-ci.yml; grep -n "nothing but e2e specs" .gitlab-ci.yml -->
 - An expired quarantine turns the pipeline yellow, but nothing removes the tag. At most 2 tests can be quarantined; a third fails the pipeline. <!-- src: QUARANTINE_MAX=0 node tools/quarantine.mjs; echo $? -->
@@ -71,6 +77,16 @@ GitLab Duo Agent Platform, GitLab CI/CD, Google Cloud Run, Workload Identity Fed
 - Pipelines: https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43144947/showcase/-/pipelines
 - Every triaged pipeline: https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43144947/showcase/-/blob/main/docs/RESULTS.md
 
+## Screenshots
+Upload one at a time, in this order: Devpost orders the gallery by when each upload finishes.
+
+| # | File | What it shows |
+|---|---|---|
+| 1 | `site/img/pipeline-red.png` | GitLab pipeline 2948453748, failed: the e2e and flake-verdict jobs are red |
+| 2 | `site/img/mr-fix.png` | Merge request 10, the fix Duo opened, with the cause and the evidence |
+| 3 | `site/img/proof-50.png` | fix-proof job log for merge request 10: 50 passed |
+| 4 | `site/img/summary-note.png` | Summary note on the failed commit: MR 10 merged, proof 50/50, deployed URL |
+
 ## Criteria coverage
 
 | Criterion | Weight | Paragraph |
@@ -78,8 +94,8 @@ GitLab Duo Agent Platform, GitLab CI/CD, Google Cloud Run, Workload Identity Fed
 | Stage One: uses GitLab Duo Agent Platform | pass/fail | What it does (Pipeline events trigger, flow acts); How we built it (custom flow in the AI Catalog) |
 | Technological Implementation | 20% | How we built it (deterministic CI gates, flow-drift, WIF); What it does (verdict, proof, merge-gate) |
 | Design | 20% | What it does (full loop from red pipeline to deploy and summary note); Accomplishments (every path on a real pipeline) |
-| Potential Impact | 20% | Inspiration (84% of pass-to-fail transitions are flaky at Google; the developer on CI duty); Accomplishments (9 min 47 s, no human) |
-| Innovation/Idea | 20% | Inspiration (retry or quarantine vs. fix and prove); How we built it ("CI decides, Duo fixes"); What it does (recurring tests go to quarantine); Challenges (negative control) |
+| Potential Impact | 20% | Inspiration (84% of pass-to-fail transitions are flaky at Google; the developer on CI duty); Accomplishments (9 min 47 s, no human). The impact figure is Google's, not ours: time saved per team is not measured, and `docs/BRIEF.md` has no `## Impact` section |
+| Innovation/Idea | 20% | Inspiration (retry or quarantine vs. fix and prove; another flaky-test entry quarantines for a person to merge); What we chose not to build; How we built it ("CI decides, Duo fixes"); What it does (recurring tests go to quarantine); Challenges (negative control) |
 | Presentation | 20% | Try it out (demo video, 2:02); Accomplishments (every path on a real pipeline) |
 | Most Stages Covered (special prize) | — | How we built it (all 9 stages, each with its job or file) |
 | Hands-off agent (Path A prize) | — | What it does (Hands-off autonomy level); Elevator pitch |
