@@ -106,6 +106,26 @@ graph TB
 
 R7's stages map to: plan (issues), create (fix commit), verify (verdict, proof), package (Cloud Run builds the image from the `Dockerfile` in `deploy`), secure (GitLab's SAST and Secret Detection templates on every pipeline), release (merge-gate), configure (CI and flow YAML in the repo), monitor (live check, the scheduled `live-health`, GitLab Observability traces of CI), govern (service account identity, token scope, quarantine expiry).
 
+### Who decides what
+
+The rule from ADR 0001, row by row. Every decision on the left is code with a fixed number; the model never sees a choice that a row on the left already made.
+
+| Decision | Made by | Where |
+|---|---|---|
+| How many times a failed test is re-run (10 on the commit, 3 on the parent, 3 full-suite runs) | code | `.gitlab-ci.yml`, job `flake-verdict` |
+| Flaky or real, order effects (`state-leak`, `suite-only`), infrastructure failure | code | `tools/verdict.mjs` |
+| A test fixed twice is not fixed again (recurring) | code | `tools/history.mjs`, `RECURRING_FIXES` |
+| Whether a fix is proven: 50 of 50 runs, no skipped run | code | `.gitlab-ci.yml` job `fix-proof`, `tools/verdict.mjs --proven` |
+| Whether a merge request merges: proof passed and only e2e specs changed | code | `.gitlab-ci.yml`, job `merge-gate` |
+| Quarantine cap (2) and expiry | code | `tools/quarantine.mjs`, job `quarantine-check` |
+| The published flow is the reviewed one | code | `tools/flow-drift.mjs`, job `flow-drift` |
+| The cause of a flaky test (async wait, concurrency, animation, time zone, shared state) | model | `.gitlab/duo/triage-flow.yml` |
+| The cause of an always-failing test (regression, app change, environment, test data) | model | `.gitlab/duo/triage-flow.yml` |
+| The fix, the test update and the quarantine tag commit | model | `.gitlab/duo/triage-flow.yml` (`create_commit`) |
+| The text of issues, merge requests and notes | model | `.gitlab/duo/triage-flow.yml` |
+
+The flow has no tool that merges (`toolset` in `.gitlab/duo/triage-flow.yml`), so nothing the model writes reaches `main` without `merge-gate`.
+
 ### Contracts
 - **Trigger:** project trigger "Pipeline events → Failed" on `triage-flow`. `context:goal` is the pipeline webhook JSON (`object_attributes.id`, `ref`, `sha`, `status`, `user`, `builds[]`); `context:project_id` is the project id.
 - **`verdict.json`** (artifact of `flake-verdict`, `expire_in: 30 days`):

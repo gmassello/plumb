@@ -69,6 +69,19 @@ On every `main` pipeline whose `unit` job passes, `pages` publishes the project 
 
 The flow is public in the AI Catalog as `triage-flow`.
 
+The language model never decides a merge. Who decides what:
+
+| Decision | Made by |
+|---|---|
+| Flaky or real (10 re-runs), and whether this commit broke it (3 on the parent) | `flake-verdict`, code |
+| A test fixed twice goes to quarantine instead | `tools/history.mjs`, code |
+| Whether a fix is proven (50 of 50) and whether it merges (only e2e specs changed) | `fix-proof` and `merge-gate`, code |
+| Quarantine cap and expiry | `quarantine-check`, code |
+| The cause of the failure, and the fix itself | the Duo flow, model |
+| What the issue or merge request says | the Duo flow, model |
+
+The full table, with the file behind each row, is in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md#who-decides-what).
+
 ## See it work
 
 Each path of the flow on a real pipeline. All links are public; every number is in [`docs/RESULTS.md`](docs/RESULTS.md), with the flow session transcripts in [`docs/sessions/`](docs/sessions/).
