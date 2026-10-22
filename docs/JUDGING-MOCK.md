@@ -39,7 +39,7 @@ None. Every criterion has evidence in the entry and in the video.
 5. How is this different from automatic retries or existing flaky-test detection?
    GitLab's own testing guide retries the test or quarantines it with an issue for later. Plumb writes the fix, proves it with 50 runs, and quarantines only when the proof fails (`docs/submission.md:29`).
 6. What does one incident cost (Duo credits, CI minutes)?
-   For pipeline 2958940993 → !14: 6.2 min of CI jobs on the red pipeline, 5.2 min on the MR pipeline, and a 4 min 10 s flow session (`docs/submission.md:43`). A Developer role cannot see the Duo credits per session (`docs/submission.md:60`).
+   For pipeline 2958940993 → !14: 6.2 min of CI jobs on the red pipeline, 5.2 min on the MR pipeline, and a 4 min 10 s flow session (`docs/submission.md:43`). Over the 10 incidents with a proven merge request the median is 9.9 min of CI jobs (`docs/RESULTS.md`). A Developer role cannot see the Duo credits per session (`docs/submission.md:60`).
 7. Is that you presenting, and is the run in the video live?
    The face and voice are an AI avatar and a cloned voice of the author, made with HeyGen. The screen recording is a real run on the live project, with waiting sped up (`docs/AI_DISCLOSURE.md:7`, `docs/AI_DISCLOSURE.md:9`).
 8. How likely is 50 of 50 to catch a fix that is still flaky?

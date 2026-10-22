@@ -66,6 +66,25 @@ function proofCell(proof) {
   return proof.tests.map(rate).join(', ');
 }
 
+export const minutes = (jobs) => Math.round(jobs.reduce((sum, j) => sum + (j.duration ?? 0), 0) / 6) / 10;
+
+export function median(values) {
+  const v = [...values].sort((a, b) => a - b);
+  if (!v.length) return null;
+  const mid = Math.floor(v.length / 2);
+  return v.length % 2 ? v[mid] : Math.round(((v[mid - 1] + v[mid]) / 2) * 10) / 10;
+}
+
+export function mergeCell(items) {
+  const merged = items.filter((i) => i.ref.startsWith('!') && i.state === 'merged');
+  if (!merged.length) return '—';
+  return merged.map((m) => (m.mergeGate ? `${m.ref} by [\`merge-gate\`](${WEB}/-/jobs/${m.mergeGate})` : `${m.ref} by hand`)).join('<br>');
+}
+
+function ciCell(ci) {
+  return ci ? `${ci.red} + ${ci.mr}` : '—';
+}
+
 function createdCell(items) {
   if (!items.length) return 'none';
   return items.map((i) => `[${i.ref}](${i.web_url}) ${i.state}`).join('<br>');
@@ -79,14 +98,21 @@ export function buildResults({ pipelines, sessions, updateMerges, generatedAt })
     '',
     '## Pipelines',
     '',
-    '| Pipeline | Verdict (re-runs passed) | Flow sessions (transcripts) | Cause | Created | Proof |',
-    '|---|---|---|---|---|---|',
+    '| Pipeline | Verdict (re-runs passed) | Flow sessions (transcripts) | Cause | Created | Proof | Merge | CI minutes (red + MR pipeline) |',
+    '|---|---|---|---|---|---|---|---|',
   ];
   for (const p of pipelines) {
     const causes = [...new Set(p.causes.map((c) => c ?? '—'))].join(', ');
     const runs = p.sessions?.length ? p.sessions.map((id) => `[${id}](sessions/${id}.md)`).join('<br>') : p.causes.length;
     lines.push(
-      `| [${p.id}](${WEB}/-/pipelines/${p.id}) | ${verdictCell(p.verdict)} | ${runs} | ${causes} | ${createdCell(p.items)} | ${proofCell(p.proof)} |`,
+      `| [${p.id}](${WEB}/-/pipelines/${p.id}) | ${verdictCell(p.verdict)} | ${runs} | ${causes} | ${createdCell(p.items)} | ${proofCell(p.proof)} | ${mergeCell(p.items)} | ${ciCell(p.ci)} |`,
+    );
+  }
+  const costs = pipelines.filter((p) => p.ci).map((p) => Math.round((p.ci.red + p.ci.mr) * 10) / 10);
+  if (costs.length) {
+    lines.push(
+      '',
+      `CI minutes are the sum of every job's duration in the red pipeline and in the merge request pipeline that ran the proof. Over the ${costs.length} incidents with a fix merge request: median **${median(costs)} min**, total **${Math.round(costs.reduce((a, b) => a + b, 0) * 10) / 10} min**. A merge marked \`merge-gate\` was made by that CI job (its log shows the API call); GitLab names the token's owner in the merge note because \`MERGE_BOT_TOKEN\` is the author's personal access token.`,
     );
   }
   const qa = sessions.filter((s) => QA06[s.pipeline]);
@@ -115,8 +141,14 @@ function glab(args) {
 const api = async (path) => glab([`projects/${PROJECT_ID}/${path}`]);
 const graphql = async (query) => glab(['graphql', '-f', `query=${query}`]).data;
 
+const jobCache = new Map();
+async function jobsOf(pipelineId) {
+  if (!jobCache.has(pipelineId)) jobCache.set(pipelineId, await api(`pipelines/${pipelineId}/jobs?per_page=100`));
+  return jobCache.get(pipelineId);
+}
+
 async function artifact(pipelineId, jobName, file) {
-  const jobs = await api(`pipelines/${pipelineId}/jobs?per_page=100`);
+  const jobs = await jobsOf(pipelineId);
   const job = jobs.find((j) => j.name === jobName);
   if (!job) return null;
   try {
@@ -158,13 +190,19 @@ async function main() {
       ...issues.map((i) => ({ ref: `#${i.iid}`, web_url: i.web_url, state: i.state })),
     ];
     let proof = null;
+    let proofPipeline = null;
     for (const mr of mrs) {
       for (const p of await api(`merge_requests/${mr.iid}/pipelines`)) {
-        proof = await artifact(p.id, 'fix-proof', 'proof.json');
-        if (proof) break;
+        const gate = (await jobsOf(p.id)).find((j) => j.name === 'merge-gate' && j.status === 'success');
+        const item = items.find((i) => i.iid === mr.iid);
+        if (gate && !item.mergeGate) item.mergeGate = gate.id;
+        if (!proof) {
+          proof = await artifact(p.id, 'fix-proof', 'proof.json');
+          if (proof) proofPipeline = p.id;
+        }
       }
-      if (proof) break;
     }
+    const ci = proofPipeline ? { red: minutes(await jobsOf(id)), mr: minutes(await jobsOf(proofPipeline)) } : null;
     pipelines.push({
       id,
       verdict: await artifact(id, 'flake-verdict', 'verdict.json'),
@@ -172,6 +210,7 @@ async function main() {
       sessions: sessions.filter((s) => s.pipeline === id).map((s) => s.id),
       items,
       proof,
+      ci,
     });
   }
   const merged = await api('merge_requests?state=merged&per_page=100');

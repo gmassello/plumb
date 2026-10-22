@@ -86,6 +86,8 @@ Each path of the flow on a real pipeline. All links are public; every number is 
 | Environment | [2944325042](https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43144947/showcase/-/pipelines/2944325042) | 0/10 real | [#8](https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43144947/showcase/-/issues/8) names the `TZ` setting the commit added | no code touched |
 | Test data | [2944438629](https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43144947/showcase/-/pipelines/2944438629) | 0/10 real | [!7](https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43144947/showcase/-/merge_requests/7) makes the test reset and use data it knows exists | proven 50/50, merged |
 
+No person merged a fix. All 11 `fix/` merge requests that merged were merged by the `merge-gate` CI job, seconds after it finished; the Merge column of [`docs/RESULTS.md`](docs/RESULTS.md) links each job. GitLab still writes "gmassello enabled an automatic merge" on each one, because the job calls the merge API with `MERGE_BOT_TOKEN`, the author's personal access token, and the merge requests list the author because the flow opens them for the person whose pipeline fired it. The fix commits themselves are signed `triage-flow`.
+
 Every claimed number and the command behind it: [`docs/CLAIMS.md`](docs/CLAIMS.md).
 
 ## Limits
@@ -98,7 +100,7 @@ Every claimed number and the command behind it: [`docs/CLAIMS.md`](docs/CLAIMS.m
 - The duplicate check looks only at open issues and merge requests, so a test that breaks again after its fix merged gets a new one. That one quotes the test's history, and after 2 merged fixes the test is quarantined instead of fixed again.
 - History is matched by exact test title: a renamed test starts with no history. A fix that was later reverted still counts as a fix. If the GitLab API cannot be read, `verdict.json` has no history and the flow acts as if the test were new.
 - The 50-run proof catches a fix that still fails often, not one that fails rarely: a test that fails 10% of runs passes it 0.5% of the time, 5% passes it 7.7% of the time, 1% passes it 60.5% of the time (`(1 - f)^50`).
-- One incident (pipeline 2958940993 → !14) took 6.2 min of CI jobs on the red pipeline and 5.2 min on the merge request pipeline, plus a 4 min 10 s flow session. The Duo credits per session are not visible to a Developer role.
+- One incident (pipeline 2958940993 → !14) took 6.2 min of CI jobs on the red pipeline and 5.2 min on the merge request pipeline, plus a 4 min 10 s flow session. Over the 10 incidents with a proven merge request, the median is 9.9 min of CI jobs (`docs/RESULTS.md`). The Duo credits per session are not visible to a Developer role.
 - The parent-commit run compares with one commit back. A failure that started earlier shows as "already failing", without saying where it started.
 - Cause classification is the language model's call (12 of 12 right in QA-06, four scenarios). The merge is not: only `merge-gate` merges, after 50 of 50.
 - The app keeps bookings in memory. The deployed demo keeps its test reset endpoint `/_test/reset`, closed behind the `X-Reset-Token` header; the rest of the API has no authentication.

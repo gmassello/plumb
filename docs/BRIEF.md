@@ -96,7 +96,7 @@ Today the workaround is manual: someone notices the red pipeline, re-runs it, gu
 ## Assumptions
 - ~~The Pipeline events trigger works in this group~~ Confirmed: it starts the flow on the red pipeline with no mention (`docs/DEMO.md`).
 - ~~Flow jobs can run the Playwright browser image~~ Resolved the other way: the re-runs run in the CI job `flake-verdict`, and the flow reads its `verdict.json`.
-- ~~The group's Duo credits cover development and the demo runs~~ Confirmed: 33 flow sessions ran (`docs/sessions/`).
+- ~~The group's Duo credits cover development and the demo runs~~ Confirmed: every flow session in `docs/sessions/` ran on them.
 
 ## Outstanding questions
 - ~~Product name (chosen by the author; the event FAQ asks not to let AI name it)~~ Resolved 2026-10-17: Plumb. The project path stays `showcase`, which the event assigns.

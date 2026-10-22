@@ -41,6 +41,7 @@ A flaky test does not fail on demand, so every scenario had to be measured befor
 ### Accomplishments that we're proud of
 - From the red job to the summary note in 9 min 47 s, with no human action, on pipeline 2948453748. <!-- src: docs/DEMO.md § Timeline -->
 - One incident, measured end to end (pipeline 2958940993 → !14, merged): 6.2 min of CI jobs on the red pipeline, 1.9 of them the verdict re-runs; 5.2 min on the MR pipeline, 2.0 of them the 50-run proof; and a flow session of 4 min 10 s. <!-- src: for p in 2958940993 2958945808; do glab api "projects/:fullpath/pipelines/$p/jobs?per_page=100"; done, sum of duration per pipeline; flow session times in docs/sessions/9641497.md -->
+- All **11** `fix/` merge requests that merged were merged by the `merge-gate` CI job, 3 to 48 s after it finished. GitLab names the author on those merges because the job calls the merge API with the author's token; the fix commits are signed `triage-flow`. <!-- src: docs/CLAIMS.md, row "merged by merge-gate" -->
 - Every path of the flow ran on a real pipeline, with public links: flaky fixed, flaky not fixable, flaky by order, regression, intended app change, environment, test data, recurring.
 - The cause of always-failing tests was right in 12 of 12 runs across four seeded scenarios, and no `update/` MR was ever merged automatically. <!-- src: docs/RESULTS.md § QA-06 -->
 

@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
-import { buildResults, causeOf, pipelineOf, transcript } from '../../tools/results.mjs';
+import { buildResults, causeOf, median, mergeCell, minutes, pipelineOf, transcript } from '../../tools/results.mjs';
 
 const verdict = (title, passed, v) => ({ runs: 10, tests: [{ title, passed, failed: 10 - passed, verdict: v }] });
 const pipeline = (id, v, extra = {}) => ({ id, verdict: v, causes: ['async-wait'], items: [], proof: null, ...extra });
@@ -87,4 +87,30 @@ test('a session transcript lists each step and quotes the final answer, without 
 test('each pipeline links the transcripts of its sessions', () => {
   const md = buildResults({ ...RUN, pipelines: [pipeline(1, null, { sessions: [7, 8] })] });
   assert.match(md, /\| \[7\]\(sessions\/7\.md\)<br>\[8\]\(sessions\/8\.md\) \|/);
+});
+
+test('a merge made by merge-gate links its job; one without it is by hand; an open merge request has no merge', () => {
+  assert.match(mergeCell([{ ref: '!10', state: 'merged', mergeGate: 17184272600 }, { ref: '#9', state: 'opened' }]), /^!10 by \[`merge-gate`\]\(.*\/-\/jobs\/17184272600\)$/);
+  assert.equal(mergeCell([{ ref: '!2', state: 'merged' }]), '!2 by hand');
+  assert.equal(mergeCell([{ ref: '!15', state: 'opened', mergeGate: 1 }]), '—');
+});
+
+test('CI minutes sum every job, a job without a duration counts zero, and the median takes the middle', () => {
+  assert.equal(minutes([{ duration: 300 }, { duration: 72 }, { duration: null }]), 6.2);
+  assert.equal(median([11.4, 3, 7]), 7);
+  assert.equal(median([4, 6]), 5);
+  assert.equal(median([]), null);
+});
+
+test('a pipeline with a proven fix shows its CI minutes and the summary gives median and total', () => {
+  const md = buildResults({
+    ...RUN,
+    pipelines: [
+      pipeline(1, null, { ci: { red: 6.2, mr: 5.2 } }),
+      pipeline(2, null, { ci: { red: 4, mr: 3 } }),
+      pipeline(3, null),
+    ],
+  });
+  assert.match(md, /\| 6\.2 \+ 5\.2 \|/);
+  assert.match(md, /Over the 2 incidents with a fix merge request: median \*\*9\.2 min\*\*, total \*\*18\.4 min\*\*/);
 });
