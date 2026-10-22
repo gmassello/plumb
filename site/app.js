@@ -12,6 +12,7 @@ function paint() {
   document.querySelectorAll('[data-t]').forEach((el) => { el.textContent = t[el.dataset.t]; });
   document.querySelectorAll('[data-t-alt]').forEach((el) => { el.alt = t[el.dataset.tAlt]; });
   document.querySelectorAll('[data-t-label]').forEach((el) => { el.setAttribute('aria-label', t[el.dataset.tLabel]); });
+  document.getElementById('lang').lang = root.lang === 'es' ? 'en' : 'es';
   document.getElementById('theme').textContent = root.dataset.theme === 'dark' ? t.toggle_theme_light : t.toggle_theme_dark;
 }
 

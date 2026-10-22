@@ -155,7 +155,7 @@ Plumb has no app screens; there is no `docs/UX.md`. These are the surfaces that 
 
 ## Effects
 
-- **Self-typing terminal** (headline effect; preview and video cards, never the PDF deck). It types the demo run line by line, using only numbers from `docs/CLAIMS.md`. The run is pipeline 2948453748: verdict 3/10 flaky, MR !10, proof 50/50, red to note in 9 min 47 s. Each line appears after the previous one finishes, at about 18 ms per character. Under `prefers-reduced-motion: reduce`, every line shows at once and the caret does not blink. In the deck it is static: the final state, because a PDF does not animate.
+- **Self-typing terminal** (headline effect; preview and video cards, never the PDF deck). It types the demo run line by line, using only numbers from `docs/CLAIMS.md`. The run is pipeline 2948453748: verdict 3/10 flaky, MR !10, proof 50/50, red to note in 9 min 47 s. Each line appears after the previous one finishes, at about 18 ms per character. The caret blinks 5 times, then stays solid (WCAG 2.2.2). Under `prefers-reduced-motion: reduce`, every line shows at once and the caret does not blink. In the deck it is static: the final state, because a PDF does not animate.
 - **Plumb line draw-in** (secondary): a plumb card's left rule grows from 0 to full height over 400 ms when it enters. With `prefers-reduced-motion: reduce` it is drawn from the start.
 - No other motion: no gradients, aurora, marquee or 3D tilt.
 
