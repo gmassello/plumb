@@ -10,6 +10,24 @@ UI tests are the worst case, and their causes are known: async wait alone explai
 
 Today the workaround is manual: someone notices the red pipeline, re-runs it, guesses whether it is the test or the code, and either fixes the test or quarantines it by hand. GitLab itself documents a manual quarantine process with a 3-day fast quarantine and a 3-month long-term limit ([GitLab Handbook](https://handbook.gitlab.com/handbook/engineering/testing/quarantine-process/)). Nobody closes the loop automatically: detection tools flag flakiness, and humans still do the diagnosis, the fix and the proof.
 
+## Impact
+- **Persona**: the developer on CI duty who opens a red `main` pipeline; sin contactar.
+- **Pierde hoy**: the time to read a log only to learn the failure was a flaky test, and then a retry that hides it until next time.
+- **La cifra**: sin medir: there is no baseline of how long a person takes. The loop itself goes from the red job to the summary note in 9 min 47 s with no human (`docs/DEMO.md` § Timeline, pipeline 2948453748).
+- **Despues del evento**: run the flow on a second project's real suite, for a team that already quarantines by hand.
+
+## Safety
+- **Accion irreversible**: merging into `main`, which deploys the app to Cloud Run.
+- **Quien la autoriza**: `merge-gate`, only after 50 of 50 runs and only for merge requests that change nothing but e2e specs. Anything else waits for a maintainer to merge it.
+- **A quien nunca se le aplica**: `update/` merge requests (app changes) and any merge request that touches app code.
+- **Forzado en**: `.gitlab-ci.yml` job `merge-gate` (the spec-only check); `tests/unit/verdict.test.js` "a proof holds only when every test passed every run; a skipped run or one failure breaks it".
+
+## Demo surface
+- **Que ejecuta el jurado**: `python3 cases/small-booking-api/checks.py https://booking-vic4jyzsha-uc.a.run.app`, or opens !10 and its pipelines from the project page.
+- **Que resultado nuevo sale**: 6 passed against the live app that the loop deployed.
+- **Que apuesta demuestra**: CI decides, Duo fixes: the merge is a 50-run proof, never the model's call.
+- **Donde**: https://showcase-8b103c.gitlab.io/
+
 ## Actors
 - A1. Developer — pushes code; the failing pipeline is theirs.
 - A2. The flow — a Duo Agent Platform flow with its own service account; diagnoses, fixes, proves, merges or quarantines.
@@ -30,6 +48,9 @@ Today the workaround is manual: someone notices the red pipeline, re-runs it, gu
 - R12. When the app changed on purpose, the flow opens an MR that updates the test to the new behaviour on an `update/` branch, and it is never merged automatically: a human confirms that the change was intended. [criterion: Design]
 - R13. When the cause is the environment, the flow opens an issue labelled `environment` that names the configuration the commit changed and the failing step, and touches no code. [criterion: Potential Impact]
 - R14. When the cause is test data, the flow opens an MR that makes the test create the data it needs; it is proven and merged like a flaky-test fix (R4). [criterion: Technological Implementation]
+- R15. A fix that changes app code is proven like any other but waits for a human; only fixes that change nothing but e2e specs merge on their own. [criterion: Design]
+- R16. A test already fixed twice is not fixed a third time: it goes to quarantine with its fix history quoted. [criterion: Innovation/Idea]
+- R17. The loop watches itself: the published flow must match the repo, at most 2 tests can be quarantined, an expired quarantine turns the pipeline yellow, and the live app and project page are checked every 6 hours. [criterion: Technological Implementation]
 
 ## Key flows
 - F1. **Flaky test fixed** — pipeline fails on an e2e test → the test is re-run N times on the same commit and passes sometimes → the cause is classified from traces and code → a fix is opened as an MR → N repeated runs pass → the fix is merged → the app deploys and is verified live → summary posted. (A1, A2; R1, R3, R4, R6)
@@ -47,6 +68,8 @@ Today the workaround is manual: someone notices the red pipeline, re-runs it, gu
 - AE5. **Covers R11, R12.** Given a commit titled as a redesign that renames the "Book" button to "Confirm booking", when the e2e test that clicks "Book" fails on all N re-runs, then the flow classifies it as an app change, opens an MR on an `update/` branch that clicks "Confirm booking", and the MR is not merged without a human.
 - AE6. **Covers R11, R13.** Given a commit that only sets `TZ` for the e2e job, when the time-zone test fails on all N re-runs, then the flow opens an issue labelled `environment` that names `TZ` and opens no MR.
 - AE7. **Covers R11, R14, R4.** Given a test that books a slot it never frees and a seed with no slot left, when it fails on all N re-runs, then the flow opens an MR where the test resets or creates its own data, and it is merged only after N repeated runs pass.
+- AE8. **Covers R15.** Given a proven fix that also edits the app code, when `merge-gate` runs, then the merge request is not merged and waits for a human.
+- AE9. **Covers R16.** Given a test with 2 merged fixes, when it fails as flaky again, then the flow quarantines it and quotes both earlier fixes ([!13](https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43144947/showcase/-/merge_requests/13)).
 
 ## Key decisions
 - Flaky tests as the problem — chosen over a pipeline-efficiency doctor, a feature-flag reaper, a cost canary and migration rehearsal because it was the only open angle in both competitor scans (about 360 projects) that also matches the author's QA background and the CI telemetry already wired in. settled: user-approved
@@ -65,18 +88,18 @@ Today the workaround is manual: someone notices the red pipeline, re-runs it, gu
 - Predicting flakiness before a test has ever failed.
 - Running across several projects or a whole group.
 ### Outside this product
-- Test frameworks other than Playwright (Cypress, Jest, Appium).
-- Infrastructure flakiness (a runner that dies, a registry outage). The environment cause in R13 covers only configuration a commit changes in the repo.
-- A dashboard of its own: the record lives in GitLab merge requests, issues and comments.
-- A polished booking product: the app exists to be tested, so it skips the language, theme and register toggles.
+- Test frameworks other than Playwright (Cypress, Jest, Appium) — one framework done end to end beats four done halfway, and the verdict reads Playwright's JSON report.
+- Infrastructure flakiness (a runner that dies, a registry outage) — it needs a retry, not a code change, so the verdict records it and the flow touches no code. The environment cause in R13 covers only configuration a commit changes in the repo.
+- A dashboard of its own — the record lives where the team already looks, in GitLab merge requests, issues and comments.
+- A polished booking product — the app exists to be tested, so it skips the language, theme and register toggles.
 
 ## Assumptions
-- The Pipeline events trigger works in this group (its documentation is inconsistent). If it does not, a mention on the failed pipeline's MR starts the same flow, and the demo loses the "no human" moment.
-- Flow jobs can run the Playwright browser image. If not, the re-runs happen in a normal CI job the flow starts and reads.
-- The group's Duo credits cover development and the demo runs.
+- ~~The Pipeline events trigger works in this group~~ Confirmed: it starts the flow on the red pipeline with no mention (`docs/DEMO.md`).
+- ~~Flow jobs can run the Playwright browser image~~ Resolved the other way: the re-runs run in the CI job `flake-verdict`, and the flow reads its `verdict.json`.
+- ~~The group's Duo credits cover development and the demo runs~~ Confirmed: 33 flow sessions ran (`docs/sessions/`).
 
 ## Outstanding questions
 - ~~Product name (chosen by the author; the event FAQ asks not to let AI name it)~~ Resolved 2026-10-17: Plumb. The project path stays `showcase`, which the event assigns.
-- Opt in to Most Environmentally Impactful? — blocks: R8 | resolve before planning: no
+- ~~Opt in to Most Environmentally Impactful?~~ Resolved 2026-10-22: no. There is no SCI measurement, and building one this close to the deadline competes with the entry.
 - ~~Does the booking app carry the language, theme and register toggles, or is it only a test subject?~~ Resolved 2026-10-09: test subject only, no toggles (see Key decisions).
-- Google Cloud account for the deploy — blocks: R6 | resolve before planning: no
+- ~~Google Cloud account for the deploy~~ Resolved: project `showcase-flaky`, Cloud Run deployed through Workload Identity Federation.
