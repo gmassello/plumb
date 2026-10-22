@@ -1,4 +1,4 @@
-# <Product> — Use cases
+# Plumb — Use cases
 
 Source: `docs/BRIEF.md` (R, F, AE) and `docs/PLAN.md` (priorities from its Cut line, units by U-ID).
 
@@ -19,6 +19,9 @@ Source: `docs/BRIEF.md` (R, F, AE) and `docs/PLAN.md` (priorities from its Cut l
 | An intended app change gets a test-update MR that waits for a human | R12 · F4 | A2, A3 | must (U6, U12) | Design | yes: the `update/` MR with `needs-review` |
 | An environment change gets an issue that names the setting | R13 · F5 | A2 | must (U12) | Potential Impact | no: backed by runs in `docs/RESULTS.md` |
 | Missing test data gets a proven fix where the test sets up its data | R14 · F6 | A2 | must (U6, U12) | Technological Implementation | no: backed by runs in `docs/RESULTS.md` |
+| A proven fix that touches app code waits for a human | R15 | A2, A3 | should (U17) | Design | no: backed by U17's run in the CI image |
+| A test already fixed twice goes to quarantine with its history | R16 | A2 | should (U16) | Innovation/Idea | yes: !13 quotes the earlier fixes |
+| The loop watches itself: flow drift, quarantine cap and expiry, live checks every 6 hours | R17 | A2 | must (U20); should (U10, U15) | Technological Implementation | no: backed by the `live-health` schedule |
 
 ## Happy paths
 
@@ -98,7 +101,7 @@ A self-owned, trivial case: the app's API that the e2e suite drives and the depl
 | Layer | Criterion | How it is proven |
 |---|---|---|
 | Product | Health, time-zone listing, booking that confirms within 2 s, slot taken, unknown ids and validation all behave as the spec says | `python3 cases/small-booking-api/checks.py http://localhost:8080` exits 0 with "6 passed"; CI job `api-checks` runs it on every pipeline |
-| Product | The same contract holds on the deployed app | `python3 cases/small-booking-api/checks.py <Cloud Run URL>` exits 0; CI job `live-checks` runs it after every deploy on main |
+| Product | The same contract holds on the deployed app | `python3 cases/small-booking-api/checks.py <Cloud Run URL>` exits 0; CI job `live-checks` runs it after every deploy on main, and `live-health` every 6 hours. Both pass `RESET_TOKEN`: without it the reset answers `403`, and a booking left by an earlier run fails the checks |
 | System | The checks were written from the spec and catch a broken server | Validated 2026-10-10: a reference server passed 6/6, and a mutant accepting a taken slot failed `check_slot_taken` |
 
 ### Medium — the paths beyond the flaky fix
@@ -110,6 +113,8 @@ A subset of the delivery with no event-provided suite: F2 to F6 on the same app 
 | Product | An unprovable fix ends in quarantine with an issue and a green main (AE3) | red `fix-proof` log, the issue through the API, the next main pipeline status |
 | Product | An intended app change gets an `update/` MR that is proven and left open (AE5) | the MR through the API: branch, label `needs-review`, `fix-proof` 50/50, state `opened` |
 | Product | An environment change gets an `environment` issue and no MR (AE6) | `verdict.json` 0/10, the issue and the MR list through the API |
+| Product | A proven fix that also edits app code is not merged and waits for a human (AE8) | U17 run in the CI image: a fix that also touches `src/public/app.js` fails `merge-gate`; not run on a real pipeline |
+| Product | A test with 2 merged fixes is quarantined, and both fixes are quoted (AE9) | pipeline 2959218101 → [!13](https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43144947/showcase/-/merge_requests/13), commit db0921c |
 | Product | Missing test data gets a `test-data` fix that is proven and merged (AE7) | MR description, `fix-proof` 50/50, `merge-gate` HTTP 200 |
 | System | The flow picks the right cause for always-failing tests (QA-06) | 4 scenarios × 3 runs listed in `docs/RESULTS.md` (U8): right cause in ≥ 11 of 12, and 0 merges from `update/` |
 | System | No human acted between the push and the outcome | the only human event in the pipeline and MR history is the initial push, except the review an `update/` MR waits for |

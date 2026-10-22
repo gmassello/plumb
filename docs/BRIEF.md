@@ -23,8 +23,8 @@ Today the workaround is manual: someone notices the red pipeline, re-runs it, gu
 - **Forzado en**: `.gitlab-ci.yml` job `merge-gate` (the spec-only check); `tests/unit/verdict.test.js` "a proof holds only when every test passed every run; a skipped run or one failure breaks it".
 
 ## Demo surface
-- **Que ejecuta el jurado**: `python3 cases/small-booking-api/checks.py https://booking-vic4jyzsha-uc.a.run.app`, or opens !10 and its pipelines from the project page.
-- **Que resultado nuevo sale**: 6 passed against the live app that the loop deployed.
+- **Que ejecuta el jurado**: `PORT=8080 node src/server.js` and `python3 cases/small-booking-api/checks.py http://localhost:8080`, or opens !10 and its pipelines from the project page.
+- **Que resultado nuevo sale**: 6 passed against the same app the loop deploys. The run against the live app needs the reset token, so CI runs it (`live-checks` after each deploy, `live-health` every 6 hours).
 - **Que apuesta demuestra**: CI decides, Duo fixes: the merge is a 50-run proof, never the model's call.
 - **Donde**: https://showcase-8b103c.gitlab.io/
 
