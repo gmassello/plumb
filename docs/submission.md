@@ -6,12 +6,12 @@ Copy for the Devpost entry, one section per form field. The limit is in each hea
 Plumb
 
 ## Elevator pitch (20-200)
-A hands-off GitLab Duo flow that triages a red main pipeline: CI re-runs the failed test to decide flaky or real, Duo fixes it, and the fix merges only after 50 of 50 runs pass. <!-- src: grep -n "repeat-each=50" .gitlab-ci.yml -->
+A hands-off GitLab Duo flow for a red main pipeline: CI re-runs the failed test to tell flaky from real, Duo writes the fix, and CI merges it, no person, after 50 of 50 runs pass. <!-- src: grep -n "repeat-each=50" .gitlab-ci.yml -->
 
 ## About the project (-)
 
 ### What it does
-Plumb is a GitLab Duo Agent Platform flow that takes over when a `main` pipeline goes red, and walks away only when `main` is green again or a person has a precise issue to read. A Pipeline events trigger starts the flow on the failed pipeline; nobody mentions it or clicks anything. It is a Path A project at the Hands-off autonomy level: a person sets the rules in CI and walks away.
+Plumb is a GitLab Duo Agent Platform flow that takes over when a `main` pipeline goes red, and walks away only when `main` is green again or a person has a precise issue to read. A Pipeline events trigger starts the flow on the failed pipeline; nobody mentions it or clicks anything, and nobody merges: CI proves the fix with 50 runs and its `merge-gate` job merges it, as it did for all 11 fix merge requests that merged. <!-- src: docs/CLAIMS.md, row "merged by merge-gate" --> It is a Path A project at the Hands-off autonomy level: a person sets the rules in CI and walks away.
 
 Before the flow starts, CI decides what kind of failure it is. `flake-verdict` re-runs each failed test 10 times on the same commit and writes `verdict.json`. <!-- src: grep -n "repeat-each=10" .gitlab-ci.yml --> Any pass makes the test flaky. A test file that fails to load counts as a real failure without re-runs. A test that fails all 10 also runs 3 times on the parent commit, so the verdict says whether this commit broke it or it was already broken. <!-- src: grep -n "repeat-each=3" .gitlab-ci.yml --> The verdict also records order effects (state left by earlier runs, or a test that only fails inside the full suite), infrastructure failures that need no code change, and the test's history in the project.
 
