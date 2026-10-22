@@ -139,7 +139,7 @@ At the end of this plan a real red pipeline on the booking app's e2e suite is tu
 
 ### U10. Flow drift check
 - **Goal:** a CI job compares `.gitlab/duo/triage-flow.yml` with the flow definition published in GitLab, read through GraphQL, and fails when they differ. The flow that runs is then always the one reviewed in the repo.
-- **Covers:** R7
+- **Covers:** R7, R17
 - **Files:** `.gitlab-ci.yml`, `tools/flow-drift.mjs`, `tests/unit/flow-drift.test.js`
 - **Depends on:** U4
 - **Status:** done 2026-10-15 (flow v1.4.0). The job reads the catalog with `MERGE_BOT_TOKEN`, or anonymously once the item is public. It runs only on main, with `needs: []`, so a failure never starts `flake-verdict`. A schema check was not added: the catalog validates the YAML when it is saved.
@@ -215,7 +215,7 @@ At the end of this plan a real red pipeline on the booking app's e2e suite is tu
 
 ### U15. Order, infrastructure and quarantine limits
 - **Goal:** the verdict tells a test that fails because of state left by earlier runs from an unlucky flaky one, an infrastructure failure never reaches a code fix, and quarantine has an expiry that shows and a cap that blocks.
-- **Covers:** R1, R3, R5
+- **Covers:** R1, R3, R5, R17
 - **Files:** `tools/verdict.mjs`, `tools/quarantine.mjs`, `.gitlab-ci.yml`, `.gitlab/duo/triage-flow.yml`, `demo/scenarios/order.patch`, `tests/unit/verdict.test.js`, `tests/unit/quarantine.test.js`
 - **Depends on:** U3, U5, U11
 - **Status:** done 2026-10-17. Flow v1.5.0. Scenario `order` on pipeline 2957810765: 1/10 `state-leak` → !12 `shared-state`, proof 50/50, merged.
@@ -227,26 +227,27 @@ At the end of this plan a real red pipeline on the booking app's e2e suite is tu
 
 ### U16. Test history as the flow's memory
 - **Goal:** the flow knows what already happened to a failing test (earlier fixes, quarantines, issues), quotes it, and stops fixing a test whose fixes did not hold.
-- **Covers:** R3, R5, R8
+- **Covers:** R3, R5, R8, R16
 - **Files:** `tools/history.mjs`, `tests/unit/history.test.js`, `tools/summary.mjs`, `tests/unit/summary.test.js`, `.gitlab-ci.yml`, `.gitlab/duo/triage-flow.yml`, `demo/scenarios/recurring.patch`, `demo/scenarios/apply.sh`, `package.json`
 - **Depends on:** U3, U5, U7
-- **Status:** built 2026-10-17, flow v1.6.0; the `recurring` scenario has not run on a pipeline yet. A local run against the API gave `async confirmation` fixes `!3, !10, !11` and `booking from the confirmation modal` `!4, !12`, both recurring.
+- **Status:** done 2026-10-17, flow v1.6.0. The `recurring` scenario ran on pipeline 2959218101 and led to !13, quarantined with its fix history (db0921c); it was undone in 3520ef9. A local run against the API gave `async confirmation` fixes `!3, !10, !11` and `booking from the confirmation modal` `!4, !12`, both recurring.
 - **Tests:**
   - happy: merged fixes and earlier issues are listed in iid order.
   - edge: a title that only contains the test's title is not counted.
   - happy: 1 fix → not recurring; 2 → recurring; update MRs and closed fixes do not count.
   - happy: an MR titled `Quarantine …` is reported as quarantined, and the summary names the earlier fixes.
+  - happy: Covers AE9. A test with 2 merged fixes that fails as flaky again is quarantined, and the summary quotes both fixes (`tests/unit/summary.test.js`, pipeline 2959218101).
 
 ### U17. Review fixes: proof, merge scope, infra list, quarantine trigger
 - **Goal:** only a test-only merge request whose 50 runs all passed merges by itself; only failures a commit cannot cause count as infrastructure; a fix is quarantined only when `fix-proof` failed.
-- **Covers:** R4, R5
+- **Covers:** R4, R5, R15
 - **Files:** `tools/verdict.mjs`, `tests/unit/verdict.test.js`, `.gitlab-ci.yml`, `.gitlab/duo/triage-flow.yml`
 - **Depends on:** U4, U15
 - **Status:** done 2026-10-17, flow v1.7.0. Replaces the U15 test that called a `config.webServer` timeout infrastructure.
 - **Tests:**
   - happy: 3/3 passed → proven; 2/3, three skipped runs or fewer runs than expected → not proven.
   - edge: `config.webServer` timeout, `browserType.launch` and `getaddrinfo ENOTFOUND` → not infrastructure; `getaddrinfo EAI_AGAIN` → DNS failure.
-  - happy (CI image, local): a `test.skip` fix fails `fix-proof`; a quarantine passes it; a fix that also touches `src/public/app.js` fails `merge-gate`.
+  - happy (CI image, local): a `test.skip` fix fails `fix-proof`; a quarantine passes it; Covers AE8: a fix that also touches `src/public/app.js` fails `merge-gate`.
 
 ### U18. Review fixes: history, load errors, commits on main, last slot, front errors
 - **Goal:** a fix that ended in quarantine is not history; a spec that fails to load still gets a verdict; the flow commits on the current `main` content; `shared-state.spec.ts` books the last slot again; the booking page stops on HTTP errors.
@@ -268,12 +269,31 @@ At the end of this plan a real red pipeline on the booking app's e2e suite is tu
   - happy: a `describe`, a mid-title tag and a title across lines are listed as quarantined; an infra verdict shows `infra: <pattern>`.
   - edge: skipped and interrupted runs are not counted; three skipped runs give no verdict; with `RESET_TOKEN=x` the reset without the header is `403` and `checks.py` with the token passes 6/6; a 20 KB body is `413`.
 
+### U20. CI and uptime: live checks every 6 hours
+- **Goal:** until judging ends, a schedule proves that the live app, the project page, the published flow and the quarantines are still right, and its log says what it received when they are not.
+- **Covers:** R6, R17
+- **Files:** `.gitlab-ci.yml` (`live-health`), pipeline schedule 4497507
+- **Depends on:** U7, U10, U15
+- **Status:** done 2026-10-17 (904b155). Red at 12:09, 18:09 and 00:08 UTC on 2026-10-18 because `wget | grep -q` died on SIGPIPE under `pipefail`; fixed in 4aeaecd and green on pipeline 2961165751.
+- **Tests:**
+  - happy: the page serves `<title>Plumb</title>` and the app answers `/health` with 200.
+  - edge: a page that serves something else fails the job and prints its first 400 bytes.
+
+### U21. Project page and demo video
+- **Goal:** a judge with no context sees the whole loop in a few minutes: a project page in English and Spanish, light and dark, every number linked to its run, and a demo video under 3 minutes.
+- **Covers:** R9
+- **Files:** `site/`, `video/script.tsv`, `.gitlab-ci.yml` (`pages`)
+- **Depends on:** U9, U14
+- **Status:** done. Page in 51e1a98; video sources in b78ec13, published at https://youtu.be/ViidpLXD_PY (2:02); UX review applied in 8b49ecc; accessibility fixes in d3e7322.
+- **Tests:**
+  - happy: `tests/unit/site-text.test.js`, the same keys in both languages.
+
 ## Cut line
 | Tier | Units | Why |
 |---|---|---|
-| must | U1, U2, U3, U4, U5, U6, U7, U9, U11, U12 | the full loop from red pipeline to live app is the demo, and telling an outdated test from a regression is the idea's edge (Innovation/Idea); without any of these there is nothing to film |
-| should | U8, U10, U13, U14, U15, U16, U17, U18, U19 | U8 backs every published number (Potential Impact); U10 strengthens the govern stage (Stage One, Technological Implementation) |
-| cut | — | nothing is cut: 370 hours at the 2026-10-11 revision leave room for the must units plus video, submission text and deck |
+| must | U1, U2, U3, U4, U5, U6, U7, U9, U11, U12, U20 | the full loop from red pipeline to live app is the demo, and telling an outdated test from a regression is the idea's edge (Innovation/Idea); without any of these there is nothing to film |
+| should | U8, U10, U13, U14, U15, U16, U17, U18, U19, U21 | U8 backs every published number (Potential Impact); U10 strengthens the govern stage (Stage One, Technological Implementation) |
+| cut | — | nothing is cut: 110 hours on 2026-10-22, every must unit done; what is left is sending the entry |
 
 ## Risks
 - The webServer runs once per `playwright test` invocation, so all 10 or 50 repetitions share one in-memory state. This is inferred from Playwright's source, not documented — likelihood: media — mitigation: the first U2 test checks it with a hit counter, and tests that need clean state call the reset endpoint — fallback: restart the server per repetition batch.
@@ -284,6 +304,7 @@ At the end of this plan a real red pipeline on the booking app's e2e suite is tu
 - The flow picks the wrong cause for an always-failing test — likelihood: media — mitigation: QA-06 measures it on 12 runs, and an app-change MR never merges itself (`merge-gate` skips `update/`) — fallback: the reviewer closes the MR; a wrong `test-data` merge shows up again on the next red pipeline.
 - Six flows do not fit a video under 3 minutes — likelihood: alta — mitigation: the video shows F1 end to end plus a short cut of F4; F2, F3, F5 and F6 are backed by runs in `docs/RESULTS.md` — fallback: drop the F4 cut.
 - `MERGE_BOT_TOKEN` expires on 2026-11-09 — likelihood: baja — mitigation: the date is after judging — fallback: replace it with a new `api`-only token.
+- Cloud Run answers 500 or times out for the first seconds after a redeploy (three 500s seen on 2026-10-18) — likelihood: media — mitigation: `live-health` checks the app every 6 hours — fallback: the video and the page's screenshots; `--min-instances 1` would remove it but costs money and is not set.
 
 ## Out of scope
 - Releasing a test from quarantine automatically once someone else fixes it.
