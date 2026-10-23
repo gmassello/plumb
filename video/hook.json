@@ -1,6 +1,6 @@
 {
   "shots": [
-    { "seconds": 3.0, "image": "site/img/pipeline-red.png", "push": 0.08, "headline": "Is it the code, or the test?" },
+    { "seconds": 5.0, "clip": "video/broll.mp4", "from": 0.5, "headline": "Is it the code, or the test?" },
     { "seconds": 1.5, "image": "site/img/pipeline-red.png", "filter": "eq=brightness=-0.30:saturation=0.4",
       "readout": "1/10 · flaky       → fixed, proven 50/50, merged" },
     { "seconds": 1.5, "image": "site/img/pipeline-red.png", "filter": "eq=brightness=-0.30:saturation=0.4",
@@ -10,5 +10,5 @@
     { "seconds": 1.5 },
     { "seconds": 3.0, "title": "Plumb", "subtitle": "it knows which one." }
   ],
-  "audio": { "hits": [0.0, 3.0, 4.5, 6.0], "drone_out": 9.5, "swell_at": 11.0, "loudness": -14.0, "peak": -1.0 }
+  "audio": { "hits": [0.0, 5.0, 6.5, 8.0], "drone_out": 11.5, "swell_at": 13.0, "loudness": -14.0, "peak": -1.0 }
 }
