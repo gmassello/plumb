@@ -45,8 +45,12 @@ Copies counted in `README.md`, `docs/submission.md`, `site/text.js`, `site/index
 | Negative control | 33 of 50 | `docs/RESULTS.md:20` (pipeline 2944554222, !9) | 9 |
 | Right cause of a real failure | 12/12 | `docs/RESULTS.md:52` (QA-06) | 6 |
 | Video length | 2:02 | `ffprobe` on `video/out/demo.mp4`: 121.6 s | 5 |
+| Fix merges made by `merge-gate` | 11 of 11 | `docs/CLAIMS.md`, row "merged by merge-gate" (added 2026-10-22) | 3 |
+| Median CI minutes per incident | 9.9 min over 10 | `docs/RESULTS.md`, line under Pipelines (added 2026-10-22) | 2 |
 
 ## Known gaps
+
+- **Cold start after a redeploy** — on 2026-10-22 23:05 UTC `live-checks` failed on pipeline 2978742313 because `/api/slots` answered something that was not JSON right after the deploy; the next pipeline was green. `--min-instances 1` would remove it and costs money.
 
 - **No run outside the demo app** — every triaged pipeline is on this repo's booking app (`docs/JUDGING-MOCK.md`, question 9). It would take running the flow on a second project.
 

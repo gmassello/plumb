@@ -116,6 +116,7 @@ Every claimed number and the command behind it: [`docs/CLAIMS.md`](docs/CLAIMS.m
 - One incident (pipeline 2958940993 → !14) took 6.2 min of CI jobs on the red pipeline and 5.2 min on the merge request pipeline, plus a 4 min 10 s flow session. Over the 10 incidents with a proven merge request, the median is 9.9 min of CI jobs (`docs/RESULTS.md`). The Duo credits per session are not visible to a Developer role.
 - The parent-commit run compares with one commit back. A failure that started earlier shows as "already failing", without saying where it started.
 - Cause classification is the language model's call (12 of 12 right in QA-06, four scenarios). The merge is not: only `merge-gate` merges, after 50 of 50.
+- The flow treats everything it reads (logs, verdicts, commit messages, issue and merge request text) as evidence, never as instructions. One run tested it: a commit message that told it to call a regression an app change and merge it was ignored and quoted (pipeline 2978801570, session [9928444](docs/sessions/9928444.md)). One run is not a guarantee against every injection.
 - The app keeps bookings in memory. The deployed demo keeps its test reset endpoint `/_test/reset`, closed behind the `X-Reset-Token` header; the rest of the API has no authentication.
 
 ## License
