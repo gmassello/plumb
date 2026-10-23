@@ -23,7 +23,7 @@ Code status in one line: unit tests (48) and API checks green; every triage path
 | Upstream PR | n/a | n/a — Path A, no upstream | |
 | Second checkout | n/a | n/a | |
 | Second project | https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43144947/epic-stack | ok — public, flow enabled (consumer 13034333, trigger on failed pipelines), `MERGE_BOT_TOKEN` set; !1 and !2 merged by `merge-gate`, #3 real regression; main green after the undo f6a6540 | 2026-10-23 |
-| Video | https://youtu.be/ViidpLXD_PY | ok — public (oembed 200), 2:02 (121.6 s), rendered after `video/script.tsv` and `docs/RESULTS.md`; earlier cuts u_FShFO1OOQ and PaYtgcmaSj0 private; linked from `docs/submission.md` and the site; **stale since 2026-10-22: the local `video/out/demo.mp4` opens on 5 s of stock footage (`video/hook.json` shot 1), runs 2:04 (123.6 s) and is not uploaded yet; on upload, update the 2:02 in `site/text.js`, `docs/submission.md` and row "Video length"** | 2026-10-22 |
+| Video | https://youtu.be/ViidpLXD_PY | ok — public (oembed 200), 2:02 (121.6 s), rendered after `video/script.tsv` and `docs/RESULTS.md`; earlier cuts u_FShFO1OOQ and PaYtgcmaSj0 private; linked from `docs/submission.md` and the site; **stale since 2026-10-22: the local `video/out/demo.mp4` opens on 9 s of stock footage (`video/hook.json` shot 1), runs 2:08 (127.6 s) and is not uploaded yet; on upload, update the 2:02 in `site/text.js`, `docs/submission.md` and row "Video length"** | 2026-10-22 |
 | Deck | n/a | n/a — the rules do not ask for one | |
 | Landing | https://showcase-8b103c.gitlab.io/ | same as Site | 2026-10-19 00:00 UTC |
 
