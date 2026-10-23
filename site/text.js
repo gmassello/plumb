@@ -79,6 +79,7 @@ export const TEXT = {
     stat2_label: 'runs a fix must pass before it merges',
     stat3_label: 'a fix that was not good enough, and stayed out',
     stat4_label: 'times it named the right cause of a real failure',
+    stat5_label: 'red pipelines triaged on a second app, epic-stack; both of its fixes failed the proof and never merged',
     results_note: 'Every number links to the command or record it comes from.',
     limits_eyebrow: 'Honest limits',
     limits_title: 'What it does not do yet',
@@ -93,6 +94,7 @@ export const TEXT = {
     link_pipelines: 'Pipelines',
     link_app: 'Live demo app (the booking page under test)',
     link_results: 'Every triaged pipeline',
+    link_epic: 'Second project: epic-stack, every triaged pipeline',
     link_video: 'Demo video (2:02)',
     footer: 'Plumb · MIT license · built for the GitLab Transcend hackathon'
   },
@@ -176,6 +178,7 @@ export const TEXT = {
     stat2_label: 'corridas que un arreglo tiene que pasar para entrar',
     stat3_label: 'un arreglo que no alcanzó, y quedó afuera',
     stat4_label: 'veces que nombró la causa correcta de una falla real',
+    stat5_label: 'pipelines rojos revisados en una segunda app, epic-stack; sus dos arreglos no pasaron la prueba y nunca se mergearon',
     results_note: 'Cada número enlaza al comando o registro del que sale.',
     limits_eyebrow: 'Límites, sin maquillar',
     limits_title: 'Lo que todavía no hace',
@@ -190,6 +193,7 @@ export const TEXT = {
     link_pipelines: 'Pipelines',
     link_app: 'App de demo en vivo (la página de reservas que se prueba)',
     link_results: 'Todos los pipelines revisados',
+    link_epic: 'Segundo proyecto: epic-stack, todos los pipelines revisados',
     link_video: 'Video de la demo (2:02)',
     footer: 'Plumb · licencia MIT · hecho para el hackathon GitLab Transcend'
   }

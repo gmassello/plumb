@@ -78,6 +78,7 @@ GitLab Duo Agent Platform, GitLab CI/CD, Google Cloud Run, Workload Identity Fed
 - Live app: https://booking-vic4jyzsha-uc.a.run.app
 - Pipelines: https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43144947/showcase/-/pipelines
 - Every triaged pipeline: https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43144947/showcase/-/blob/main/docs/RESULTS.md
+- Second project (epic-stack), every triaged pipeline: https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43144947/showcase/-/blob/main/docs/results/epic-stack/RESULTS.md
 
 ## Screenshots
 Upload one at a time, in this order: Devpost orders the gallery by when each upload finishes.
