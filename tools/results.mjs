@@ -1,13 +1,24 @@
 import { execFileSync } from 'node:child_process';
 import { mkdirSync, writeFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
 import { pathToFileURL } from 'node:url';
+import { parseArgs } from 'node:util';
 import { rate } from './summary.mjs';
 
-const PROJECT_ID = 87376478;
-const PROJECT_PATH = 'gitlab-ai-hackathon/transcend-october-2026/43144947/showcase';
-const WEB = `https://gitlab.com/${PROJECT_PATH}`;
-const OUT = 'docs/RESULTS.md';
-const SESSIONS = 'docs/sessions';
+export function options(args) {
+  const { values } = parseArgs({
+    args,
+    options: {
+      project: { type: 'string', default: '87376478' },
+      path: { type: 'string', default: 'gitlab-ai-hackathon/transcend-october-2026/43144947/showcase' },
+      out: { type: 'string', default: 'docs/RESULTS.md' },
+    },
+  });
+  return { ...values, sessions: join(dirname(values.out), 'sessions'), web: `https://gitlab.com/${values.path}` };
+}
+
+let opts = options([]);
+let WEB = opts.web;
 
 export const QA06 = {
   2940411157: 'regression',
@@ -116,6 +127,7 @@ export function buildResults({ pipelines, sessions, updateMerges, generatedAt })
     );
   }
   const qa = sessions.filter((s) => QA06[s.pipeline]);
+  if (!qa.length) return [...lines, ''].join('\n');
   const right = qa.filter((s) => s.cause === QA06[s.pipeline]).length;
   lines.push(
     '',
@@ -138,7 +150,7 @@ function glab(args) {
   return JSON.parse(execFileSync('glab', ['api', ...args], { encoding: 'utf8', maxBuffer: 64 * 1024 * 1024, stdio: ['ignore', 'pipe', 'pipe'] }));
 }
 
-const api = async (path) => glab([`projects/${PROJECT_ID}/${path}`]);
+const api = async (path) => glab([`projects/${opts.project}/${path}`]);
 const graphql = async (query) => glab(['graphql', '-f', `query=${query}`]).data;
 
 const jobCache = new Map();
@@ -167,17 +179,19 @@ async function chatLog(sessionId) {
 }
 
 async function main() {
+  opts = options(process.argv.slice(2));
+  WEB = opts.web;
   const data = await graphql(
-    `{ duoWorkflowWorkflows(projectPath: "${PROJECT_PATH}", first: 100) { nodes { id goal } } }`,
+    `{ duoWorkflowWorkflows(projectPath: "${opts.path}", first: 100) { nodes { id goal } } }`,
   );
   const sessions = [];
-  mkdirSync(SESSIONS, { recursive: true });
+  mkdirSync(opts.sessions, { recursive: true });
   for (const node of data.duoWorkflowWorkflows.nodes.reverse()) {
     const pipeline = pipelineOf(node.goal);
     if (!pipeline) continue;
     const id = Number(node.id.split('/').at(-1));
     const log = await chatLog(id);
-    writeFileSync(`${SESSIONS}/${id}.md`, transcript({ id, pipeline }, log));
+    writeFileSync(`${opts.sessions}/${id}.md`, transcript({ id, pipeline }, log));
     sessions.push({ id, pipeline, cause: causeOf(log.filter((m) => m.message_type === 'agent').at(-1)?.content) });
   }
   const pipelines = [];
@@ -216,8 +230,8 @@ async function main() {
   const merged = await api('merge_requests?state=merged&per_page=100');
   const updateMerges = merged.filter((m) => m.source_branch.startsWith('update/')).length;
   const generatedAt = new Date().toISOString().slice(0, 10);
-  writeFileSync(OUT, buildResults({ pipelines, sessions, updateMerges, generatedAt }));
-  console.log(`results: wrote ${OUT} (${pipelines.length} pipelines, ${sessions.length} flow sessions)`);
+  writeFileSync(opts.out, buildResults({ pipelines, sessions, updateMerges, generatedAt }));
+  console.log(`results: wrote ${opts.out} (${pipelines.length} pipelines, ${sessions.length} flow sessions)`);
   return 0;
 }
 

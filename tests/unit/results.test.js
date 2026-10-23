@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
-import { buildResults, causeOf, median, mergeCell, minutes, pipelineOf, transcript } from '../../tools/results.mjs';
+import { buildResults, causeOf, median, mergeCell, minutes, options, pipelineOf, transcript } from '../../tools/results.mjs';
 
 const verdict = (title, passed, v) => ({ runs: 10, tests: [{ title, passed, failed: 10 - passed, verdict: v }] });
 const pipeline = (id, v, extra = {}) => ({ id, verdict: v, causes: ['async-wait'], items: [], proof: null, ...extra });
@@ -113,4 +113,22 @@ test('a pipeline with a proven fix shows its CI minutes and the summary gives me
   });
   assert.match(md, /\| 6\.2 \+ 5\.2 \|/);
   assert.match(md, /Over the 2 incidents with a fix merge request: median \*\*9\.2 min\*\*, total \*\*18\.4 min\*\*/);
+});
+
+test('options default to Plumb and put the sessions next to the output file', () => {
+  assert.deepEqual(options([]), {
+    project: '87376478',
+    path: 'gitlab-ai-hackathon/transcend-october-2026/43144947/showcase',
+    out: 'docs/RESULTS.md',
+    sessions: 'docs/sessions',
+    web: 'https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43144947/showcase',
+  });
+  const other = options(['--project', '1', '--path', 'g/app', '--out', 'docs/results/app/RESULTS.md']);
+  assert.equal(other.sessions, 'docs/results/app/sessions');
+  assert.equal(other.web, 'https://gitlab.com/g/app');
+});
+
+test('a project without the seeded QA-06 runs has no QA-06 section', () => {
+  const md = buildResults({ ...RUN, pipelines: [], sessions: [{ id: 1, pipeline: 5, cause: 'async-wait' }] });
+  assert.doesNotMatch(md, /QA-06/);
 });
