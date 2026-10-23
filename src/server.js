@@ -25,7 +25,7 @@ function view(b) {
     id: b.id,
     slotId: b.slotId,
     name: b.name,
-    status: b.confirmed ? 'confirmed' : 'pending',
+    status: Date.now() >= b.confirmAt ? 'confirmed' : 'pending',
   };
 }
 
