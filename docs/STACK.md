@@ -17,7 +17,7 @@ What the project runs on, and the file that pins each version. Change the versio
 | Piece | Version | Pinned in |
 |---|---|---|
 | `@playwright/test` | 1.63.0, the only dependency (dev) | `package.json`, `package-lock.json` |
-| Browser image | `mcr.microsoft.com/playwright:v1.63.0-noble`, Chromium only, time zone UTC | `.gitlab-ci.yml`, `playwright.config.ts` |
+| Browser image | `mcr.microsoft.com/playwright:v1.63.0-noble`, Chromium only, time zone UTC | `ci/plumb.gitlab-ci.yml`, `playwright.config.ts` |
 | HTTP contract checks | Python 3, standard library only | `cases/small-booking-api/checks.py` |
 
 ## CI and delivery
@@ -26,7 +26,7 @@ What the project runs on, and the file that pins each version. Change the versio
 |---|---|---|
 | CI | GitLab CI on gitlab.com shared runners | `.gitlab-ci.yml` |
 | Security scans | GitLab templates `Jobs/SAST` and `Jobs/Secret-Detection` | `.gitlab-ci.yml` `include:` |
-| Other job images | `alpine:3.20` (`baseline`, `pages`), `curlimages/curl:8.10.1` (`merge-gate`), `google/cloud-sdk:586.0.0-slim` (`deploy`) | `.gitlab-ci.yml` |
+| Other job images | `alpine:3.20` (`baseline`, `pages`, `merge-gate`), `node:24.14.1-alpine` (`quarantine-check`, `unit`, `api-checks`), `google/cloud-sdk:586.0.0-slim` (`deploy`) | `.gitlab-ci.yml`, `ci/plumb.gitlab-ci.yml` |
 | Hosting | Google Cloud Run, service `booking`, project `showcase-flaky`, region `us-central1` | `.gitlab-ci.yml` job `deploy` |
 | Project page | GitLab Pages, static `site/` copied to `public/`; fonts from Google Fonts | `.gitlab-ci.yml` job `pages` |
 | Cloud auth | Workload Identity Federation: GitLab `id_tokens` → pool `gitlab-pool`, provider `gitlab-com` → service account `gitlab-deploy`; no key file | `deploy/gcp-wif.json`, `.gitlab-ci.yml` |

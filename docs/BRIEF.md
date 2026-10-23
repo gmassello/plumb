@@ -14,13 +14,13 @@ Today the workaround is manual: someone notices the red pipeline, re-runs it, gu
 - **Persona**: the developer on CI duty who opens a red `main` pipeline; sin contactar.
 - **Pierde hoy**: the time to read a log only to learn the failure was a flaky test, and then a retry that hides it until next time.
 - **La cifra**: sin medir: there is no baseline of how long a person takes. The loop itself goes from the red job to the summary note in 9 min 47 s with no human (`docs/DEMO.md` § Timeline, pipeline 2948453748).
-- **Despues del evento**: run the flow on a second project's real suite, for a team that already quarantines by hand.
+- **Despues del evento**: run the flow on a second project's real suite, for a team that already quarantines by hand. Started during the event: [a copy of epic-stack](https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43144947/epic-stack) runs Plumb's jobs through `include: project` (U23), but no fix there has passed the proof yet.
 
 ## Safety
 - **Accion irreversible**: merging into `main`, which deploys the app to Cloud Run.
 - **Quien la autoriza**: `merge-gate`, only after 50 of 50 runs and only for merge requests that change nothing but e2e specs. Anything else waits for a maintainer to merge it.
 - **A quien nunca se le aplica**: `update/` merge requests (app changes) and any merge request that touches app code.
-- **Forzado en**: `.gitlab-ci.yml` job `merge-gate` (the spec-only check); `tests/unit/verdict.test.js` "a proof holds only when every test passed every run; a skipped run or one failure breaks it".
+- **Forzado en**: `ci/plumb.gitlab-ci.yml` job `merge-gate` (the spec-only check); `tests/unit/verdict.test.js` "a proof holds only when every test passed every run; a skipped run or one failure breaks it".
 
 ## Demo surface
 - **Que ejecuta el jurado**: `PORT=8080 node src/server.js` and `python3 cases/small-booking-api/checks.py http://localhost:8080`, or opens !10 and its pipelines from the project page.

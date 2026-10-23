@@ -1,10 +1,10 @@
 diff --git a/.gitlab-ci.yml b/.gitlab-ci.yml
-index 425ad53..2aa2a64 100644
+index 944e18d..b992465 100644
 --- a/.gitlab-ci.yml
 +++ b/.gitlab-ci.yml
-@@ -7,6 +7,9 @@ include:
-   - template: Jobs/SAST.gitlab-ci.yml
+@@ -8,6 +8,9 @@ include:
    - template: Jobs/Secret-Detection.gitlab-ci.yml
+   - local: ci/plumb.gitlab-ci.yml
  
 +variables:
 +  TZ: America/Argentina/Buenos_Aires

@@ -6,7 +6,7 @@ Deadline: **2026-10-27 13:00 UTC** (2026-10-27 10:00 ART). Competition:
 Stages (from the Official Rules, `docs/HACKATHON.md`): submissions until 2026-10-27 13:00 UTC, judging 2026-10-28 10:00 → 2026-11-14 17:00 UTC,
 winners around 2026-11-16.
 
-Code status in one line: unit tests (48) and API checks green; every triage path ran on a real pipeline; demo video published; no run on a second project.
+Code status in one line: unit tests (48) and API checks green; every triage path ran on a real pipeline; demo video published; one run on a second project (epic-stack), where the proof rejected both fixes.
 
 ---
 
@@ -22,6 +22,7 @@ Code status in one line: unit tests (48) and API checks green; every triage path
 | Gallery card | https://gitlab-transcend.devpost.com/project-gallery | n/a until the submission exists | |
 | Upstream PR | n/a | n/a — Path A, no upstream | |
 | Second checkout | n/a | n/a | |
+| Second project | https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43144947/epic-stack | ok — public, flow enabled (consumer 13034333, trigger on failed pipelines), `MERGE_BOT_TOKEN` set; !1 and !2 merged by `merge-gate`, #3 real regression; main green after the undo f6a6540 | 2026-10-23 |
 | Video | https://youtu.be/ViidpLXD_PY | ok — public (oembed 200), 2:02 (121.6 s), rendered after `video/script.tsv` and `docs/RESULTS.md`; earlier cuts u_FShFO1OOQ and PaYtgcmaSj0 private; linked from `docs/submission.md` and the site; **stale since 2026-10-22: the local `video/out/demo.mp4` opens on 5 s of stock footage (`video/hook.json` shot 1), runs 2:04 (123.6 s) and is not uploaded yet; on upload, update the 2:02 in `site/text.js`, `docs/submission.md` and row "Video length"** | 2026-10-22 |
 | Deck | n/a | n/a — the rules do not ask for one | |
 | Landing | https://showcase-8b103c.gitlab.io/ | same as Site | 2026-10-19 00:00 UTC |
@@ -41,18 +42,18 @@ Copies counted in `README.md`, `docs/submission.md`, `site/text.js`, `site/index
 | Fact | Real value | Command or record that produces it | Copies |
 |---|---|---|---|
 | Red to summary note | 9 min 47 s | `docs/DEMO.md:27` (pipeline 2948453748) | 9 |
-| Runs a fix must pass | 50 of 50 | `grep -n "repeat-each=50" .gitlab-ci.yml` | 32 |
+| Runs a fix must pass | 50 of 50 | `grep -n "repeat-each=50" ci/plumb.gitlab-ci.yml` | 32 |
 | Negative control | 33 of 50 | `docs/RESULTS.md:20` (pipeline 2944554222, !9) | 9 |
 | Right cause of a real failure | 12/12 | `docs/RESULTS.md:52` (QA-06) | 6 |
 | Video length | 2:02 | `ffprobe` on `video/out/demo.mp4`: 121.6 s | 5 |
 | Fix merges made by `merge-gate` | 11 of 11 | `docs/CLAIMS.md`, row "merged by merge-gate" (added 2026-10-22) | 3 |
-| Median CI minutes per incident | 9.9 min over 10 | `docs/RESULTS.md`, line under Pipelines (added 2026-10-22) | 2 |
+| Median CI minutes per incident | 9.5 min over 11 | `docs/RESULTS.md`, line under Pipelines (added 2026-10-22) | 2 |
 
 ## Known gaps
 
 - **Cold start after a redeploy** — on 2026-10-22 23:05 UTC `live-checks` failed on pipeline 2978742313 because `/api/slots` answered something that was not JSON right after the deploy; the next pipeline was green. `--min-instances 1` would remove it and costs money.
 
-- **No run outside the demo app** — every triaged pipeline is on this repo's booking app (`docs/JUDGING-MOCK.md`, question 9). It would take running the flow on a second project.
+- **No proven fix outside the demo app** — [epic-stack](https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43144947/epic-stack) runs the flow through `include: project`. It had 3 red pipelines: two flaky tests whose fixes failed the proof (27/50, 30/50) and were quarantined, and one regression issue. The model called the seeded test-data flake an async wait. Its flow trigger stays on.
 
 ## Don't break this when you come back
 

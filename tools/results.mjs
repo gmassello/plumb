@@ -206,7 +206,7 @@ async function main() {
     let proof = null;
     let proofPipeline = null;
     for (const mr of mrs) {
-      for (const p of await api(`merge_requests/${mr.iid}/pipelines`)) {
+      for (const p of (await api(`merge_requests/${mr.iid}/pipelines`)).reverse()) {
         const gate = (await jobsOf(p.id)).find((j) => j.name === 'merge-gate' && j.status === 'success');
         const item = items.find((i) => i.iid === mr.iid);
         if (gate && !item.mergeGate) item.mergeGate = gate.id;

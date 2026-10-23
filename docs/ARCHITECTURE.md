@@ -112,11 +112,11 @@ The rule from ADR 0001, row by row. Every decision on the left is code with a fi
 
 | Decision | Made by | Where |
 |---|---|---|
-| How many times a failed test is re-run (10 on the commit, 3 on the parent, 3 full-suite runs) | code | `.gitlab-ci.yml`, job `flake-verdict` |
+| How many times a failed test is re-run (10 on the commit, 3 on the parent, 3 full-suite runs) | code | `ci/plumb.gitlab-ci.yml`, job `flake-verdict` |
 | Flaky or real, order effects (`state-leak`, `suite-only`), infrastructure failure | code | `tools/verdict.mjs` |
 | A test fixed twice is not fixed again (recurring) | code | `tools/history.mjs`, `RECURRING_FIXES` |
-| Whether a fix is proven: 50 of 50 runs, no skipped run | code | `.gitlab-ci.yml` job `fix-proof`, `tools/verdict.mjs --proven` |
-| Whether a merge request merges: proof passed and only e2e specs changed | code | `.gitlab-ci.yml`, job `merge-gate` |
+| Whether a fix is proven: 50 of 50 runs, no skipped run | code | `ci/plumb.gitlab-ci.yml` job `fix-proof`, `tools/verdict.mjs --proven` |
+| Whether a merge request merges: proof passed and only e2e specs changed | code | `ci/plumb.gitlab-ci.yml`, job `merge-gate` |
 | Quarantine cap (2) and expiry | code | `tools/quarantine.mjs`, job `quarantine-check` |
 | The published flow is the reviewed one | code | `tools/flow-drift.mjs`, job `flow-drift` |
 | The cause of a flaky test (async wait, concurrency, animation, time zone, shared state) | model | `.gitlab/duo/triage-flow.yml` |
@@ -155,6 +155,30 @@ The flow has no tool that merges (`toolset` in `.gitlab/duo/triage-flow.yml`), s
 - **Merge:** `merge-gate` calls `PUT /projects/:id/merge_requests/:iid/merge?auto_merge=true` with `MERGE_BOT_TOKEN`, only when `$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME =~ /^fix\//`, so an `update/` MR can never merge itself. The merge is recorded as the author's, so the main pipeline that follows counts as human-started.
 - **No verdict, no action:** the flow stops without acting when the failed pipeline has no `flake-verdict` job (a red main pipeline after a merge, a red deploy).
 - **Summary:** the `summary` job (`tools/summary.mjs`, `node:24.14.1-alpine`) finds the merged `fix/` or `update/` MR of the main commit, takes the pipeline id from its branch name, and posts one note on that pipeline's commit with `MERGE_BOT_TOKEN` (the job token cannot comment on commits). The note has the verdict, the MR, the proof result (or "quarantined" when the MR's last pipeline has no `proof.json`) and the live URL. It then labels the MR `triage::merged`, or `triage::quarantined`. A main commit that is not a flow merge gets no note.
+
+### Using Plumb in another project
+
+The triage jobs (`quarantine-check`, `e2e`, `e2e-quarantine`, `flake-verdict`, `fix-proof`, `merge-gate`) live in `ci/plumb.gitlab-ci.yml`. Plumb includes it with `include: local`. Another project includes it from a tag, so a push to Plumb's `main` cannot change that project's pipeline:
+
+```yaml
+variables:
+  PLUMB_REF: v1.0.0
+include:
+  - project: gitlab-ai-hackathon/transcend-october-2026/43144947/showcase
+    ref: v1.0.0
+    file: ci/plumb.gitlab-ci.yml
+```
+
+The project must follow this contract. Nothing is configurable:
+
+- the e2e specs are `tests/e2e/*.spec.ts`;
+- `playwright.config` starts the app with `webServer`, runs with `retries: 0`, and writes a JSON report to `e2e-report.json` and a JUnit report to `e2e-junit.xml`;
+- `@playwright/test` is 1.63.0, the version of the CI image, and installs with `npm ci`;
+- a quarantined test has `@quarantine` in its title.
+
+The `.plumb-tools` `before_script` downloads `verdict.mjs`, `history.mjs` and `quarantine.mjs` at `$PLUMB_REF` when the project does not have them ([`BACKEND.md`](BACKEND.md)). The flow is enabled on the project from the AI Catalog with the GraphQL mutation `aiCatalogItemConsumerCreate`, using trigger type `pipeline_hooks` and the condition `object_attributes.status in [failed]`. That adds the flow's service account `ai-triage-flow-gitlab-ai-hackathon` as a member. `MERGE_BOT_TOKEN` is a project variable, masked and not protected, because `fix/` branches are not protected.
+
+The one project that does this today is [epic-stack](https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43144947/epic-stack), an evaluation copy of `epicweb-dev/epic-stack`. Its runs are in [`docs/results/epic-stack/RESULTS.md`](results/epic-stack/RESULTS.md).
 
 ### Data
 Nothing persistent of its own. Evidence lives in GitLab: CI artifacts (`verdict.json`, Playwright traces, 30 days), MRs, issues and notes. The booking app keeps its bookings in memory; a restart resets them.
@@ -197,5 +221,5 @@ Nothing persistent of its own. Evidence lives in GitLab: CI artifacts (`verdict.
 
 ## Out of this design
 - R9 (demo video under 3 min) is presentation work, covered by the record-video step, not by a component.
-- Releasing a test from quarantine automatically, prediction of flakiness, multi-project runs: deferred in the BRIEF.
+- Releasing a test from quarantine automatically and prediction of flakiness: deferred in the BRIEF. Other projects use Plumb through `include: project` (below), not through a CI/CD Catalog component.
 - Repairing infrastructure: `flake-verdict` recognises a fixed list of infrastructure error patterns and the flow reports a match in a `triage::infra` issue, but nothing retries or fixes the runner beyond the Playwright jobs' single `retry` on runner, stuck and scheduler failures. The environment cause (R13) covers only configuration a commit changes in the repo.

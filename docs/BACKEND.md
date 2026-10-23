@@ -34,6 +34,8 @@ Changing either one changes the measured failure rates in `docs/PLAN.md` U2 and 
 
 Plain Node scripts in `tools/`, each with its unit test in `tests/unit/`. Exported functions are pure; `main()` does the I/O.
 
+The jobs that run `verdict.mjs`, `history.mjs` and `quarantine.mjs` live in `ci/plumb.gitlab-ci.yml`. In another project that includes that file, the three scripts are not in the repository: the `.plumb-tools` `before_script` downloads them from this project's repository files API at `$PLUMB_REF` (anonymous, the project is public) when `tools/verdict.mjs` is missing. They use only Node's standard library and read `CI_API_V4_URL` and `CI_PROJECT_ID`, so they work unchanged there.
+
 | Script | Job | What it does |
 |---|---|---|
 | `verdict.mjs` | `flake-verdict`, `fix-proof` | Reads Playwright JSON reports and writes `verdict.json` / `proof.json` and a JUnit file with one case per run. Modes: `--failed` (the failed tests as `file:line`), `--infra` (infrastructure failure patterns), `--load-error` (a spec that failed to load becomes one `real` test named `<file> failed to load`), `--real`, `--proven` (every run of every test passed), `--base` (parent-commit result), `--unreproduced`, `--suite` (full-suite re-runs) |
@@ -41,7 +43,7 @@ Plain Node scripts in `tools/`, each with its unit test in `tests/unit/`. Export
 | `history.mjs` | `flake-verdict` | Adds `history` to each test in `verdict.json`: the merged fix and update MRs and the quarantine, regression and environment issues whose title names the test, read anonymously from the GitLab API. A fix MR whose pipeline also has a `Quarantined:` issue (the flow replaced the fix with a quarantine) is not counted as a fix. `recurring` at `RECURRING_FIXES` (2) fixes. Always exits 0: without the API the verdict just has no history |
 | `flow-drift.mjs` | `flow-drift` | Compares `.gitlab/duo/triage-flow.yml` with the latest version published in the AI Catalog (GraphQL) and fails on any difference |
 | `summary.mjs` | `summary` | On a `main` commit merged from a flow MR, posts one note on the commit whose pipeline failed (verdict, MR, proof, live URL) and labels the MR `triage::merged` or `triage::quarantined` |
-| `results.mjs` | run by hand | Regenerates `docs/RESULTS.md` and `docs/sessions/` from the GitLab API through `glab` |
+| `results.mjs` | run by hand | Regenerates `docs/RESULTS.md` and `docs/sessions/` from the GitLab API through `glab`. `--project <id> --path <group/project> --out <file>` reads another project and writes the sessions next to `<file>` (`docs/results/epic-stack/`) |
 
 ### How the verdict is decided
 
