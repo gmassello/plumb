@@ -4,8 +4,6 @@ export const SEED = [
   { id: 's3', startUtc: '2026-11-03T01:30:00Z' },
 ];
 
-export const SEED_BOOKINGS = [{ slotId: 's3', name: 'Sample visitor' }];
-
 export function localParts(startUtc, timeZone) {
   const parts = Object.fromEntries(
     new Intl.DateTimeFormat('en-CA', {
