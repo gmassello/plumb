@@ -23,7 +23,7 @@ Code status in one line: unit tests (48) and API checks green; every triage path
 | Upstream PR | n/a | n/a — Path A, no upstream | |
 | Second checkout | n/a | n/a | |
 | Second project | https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43144947/epic-stack | ok — public, flow enabled (consumer 13034333, trigger on failed pipelines), `MERGE_BOT_TOKEN` set; !1 and !2 merged by `merge-gate`, #3 real regression; main green after the undo f6a6540 | 2026-10-23 |
-| Video | https://youtu.be/ViidpLXD_PY | ok — public (oembed 200), 2:02 (121.6 s), rendered after `video/script.tsv` and `docs/RESULTS.md`; earlier cuts u_FShFO1OOQ and PaYtgcmaSj0 private; linked from `docs/submission.md` and the site; **stale since 2026-10-22: the local `video/out/demo.mp4` opens on 9 s of stock footage (`video/hook.json` shot 1), runs 2:08 (127.6 s) and is not uploaded yet; on upload, update the 2:02 in `site/text.js`, `docs/submission.md` and row "Video length"** | 2026-10-22 |
+| Video | https://youtu.be/I6_9prWib8Q | ok — public (oembed 200), 2:23 (143.4 s): cold open with the red-pipeline overlay, the epic-stack beat after "human", rendered after `video/script.tsv`; earlier cuts ViidpLXD_PY, u_FShFO1OOQ and PaYtgcmaSj0 private (oembed 403); linked from `docs/submission.md`, the README and the site | 2026-10-24 00:10 UTC |
 | Deck | n/a | n/a — the rules do not ask for one | |
 | Landing | https://showcase-8b103c.gitlab.io/ | same as Site | 2026-10-23 22:12 UTC |
 
@@ -45,7 +45,7 @@ Copies counted in `README.md`, `docs/submission.md`, `site/text.js`, `site/index
 | Runs a fix must pass | 50 of 50 | `grep -n "repeat-each=50" ci/plumb.gitlab-ci.yml` | 32 |
 | Negative control | 33 of 50 | `docs/RESULTS.md:20` (pipeline 2944554222, !9) | 9 |
 | Right cause of a real failure | 12/12 | `docs/RESULTS.md:52` (QA-06) | 6 |
-| Video length | 2:02 | `ffprobe` on `video/out/demo.mp4`: 121.6 s | 5 |
+| Video length | 2:23 | `ffprobe` on `video/out/demo.mp4`: 143.4 s | 5 |
 | Fix merges made by `merge-gate` | 11 of 11 | `docs/CLAIMS.md`, row "merged by merge-gate" (added 2026-10-22) | 3 |
 | Median CI minutes per incident | 9.5 min over 11 | `docs/RESULTS.md`, line under Pipelines (added 2026-10-22) | 2 |
 

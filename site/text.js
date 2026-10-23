@@ -95,7 +95,7 @@ export const TEXT = {
     link_app: 'Live demo app (the booking page under test)',
     link_results: 'Every triaged pipeline',
     link_epic: 'Second project: epic-stack, every triaged pipeline',
-    link_video: 'Demo video (2:02)',
+    link_video: 'Demo video (2:23)',
     footer: 'Plumb · MIT license · built for the GitLab Transcend hackathon'
   },
   es: {
@@ -194,7 +194,7 @@ export const TEXT = {
     link_app: 'App de demo en vivo (la página de reservas que se prueba)',
     link_results: 'Todos los pipelines revisados',
     link_epic: 'Segundo proyecto: epic-stack, todos los pipelines revisados',
-    link_video: 'Video de la demo (2:02)',
+    link_video: 'Video de la demo (2:23)',
     footer: 'Plumb · licencia MIT · hecho para el hackathon GitLab Transcend'
   }
 };

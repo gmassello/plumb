@@ -15,6 +15,7 @@ One window at 1280x800, captured in window mode, no microphone. Each money shot 
 | 9 | human | MR !15 | "Update test after app change", label `needs-review`, merged by a human ★ |
 | 10 | human | issue #10 | "Real regression", no code change |
 | 11 | human | MR !9 Changes tab, then `fix-proof` job 17155472981, then issue #9 | the quarantine tag in the diff; "33 passed" in the job log ★; the quarantine issue |
+| 12 | epic | epic-stack pipelines filtered by Failed; then its `.gitlab-ci.yml` (second take, cropped so the `include:` sits above the subtitles); then issue #1; then the `merge-gate` job 17402280047 | the three red pipelines; `include: project … ref: v1.0.0`; "Proof pass rate: 27/50" ★; `merge-gate http=200` ★ |
 
 Before the take: `sh video/check-demo.sh` all `ok`, `chrome-silent`, the debugger banner gone.
 The scenario push is run by the human: `! sh demo/scenarios/apply.sh order` and `! git push origin main`.

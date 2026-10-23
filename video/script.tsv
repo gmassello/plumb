@@ -29,6 +29,10 @@ beat	en	es
 1:50 human	A test already fixed twice is quarantined, not fixed again.	A test already fixed twice is quarantined, not fixed again.
 1:50 human	One fix passed only 33 of 50, so it was not merged.	One fix passed only thirty-three out of fifty, so it was not merged.
 1:50 human	The flow swapped it for a quarantine and an issue.	The flow swapped it for a quarantine and an issue.
+2:05 epic	The same flow ran on epic-stack, an app it was not built for.	The same flow ran on epic stack, an app it was not built for.
+2:05 epic	One include line brings in Plumb's CI jobs.	One include line brings in Plumb's C I jobs.
+2:05 epic	Both fixes failed the proof, 27 and 30 out of 50, so neither merged.	Both fixes failed the proof, twenty-seven and thirty out of fifty, so neither one merged.
+2:05 epic	Merge gate merged the quarantines instead, with no person.	Merge gate merged the quarantines instead, with no person involved.
 2:10 close	It picked the right cause in 12 of 12 runs.	It picked the right cause in twelve out of twelve runs.
 2:10 close	Every pipeline and flow session is public in the repo.	Every pipeline and flow session is public, in the repo.
 2:10 close	Plumb is open source on GitLab. Thanks for watching.	Plumb is open source on GitLab, thanks for watching.
