@@ -90,6 +90,7 @@ Upload one at a time, in this order: Devpost orders the gallery by when each upl
 | 3 | `site/img/mr-fix.png` | Merge request 10, the fix Duo opened, with the cause and the evidence |
 | 4 | `site/img/proof-50.png` | fix-proof job log for merge request 10: 50 passed |
 | 5 | `site/img/summary-note.png` | Summary note on the failed commit: MR 10 merged, proof 50/50, deployed URL |
+| 6 | `docs/img/epic-stack-quarantine.png` | epic-stack, a second app: the quarantine issue the flow opened after its fix passed only 27 of 50 proof runs |
 
 ## Criteria coverage
 
