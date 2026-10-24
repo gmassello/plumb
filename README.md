@@ -1,5 +1,7 @@
 # Plumb
 
+[![A red main pipeline: is it the code, or the test? Opening frame of the demo video](docs/img/cold-open.jpg)](https://youtu.be/I6_9prWib8Q)
+
 Entry for the [GitLab Transcend "Life After Code" hackathon](https://gitlab-transcend.devpost.com/): agents that automate the DevSecOps lifecycle after code is written, built on GitLab Duo Agent Platform.
 
 **Status:** entry for the GitLab Transcend hackathon. Demo video: https://youtu.be/I6_9prWib8Q. Plumb's project page, in plain English and Spanish, is live at https://showcase-8b103c.gitlab.io/, published from [`site/`](site/) by the `pages` job.

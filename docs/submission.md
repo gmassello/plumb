@@ -85,10 +85,11 @@ Upload one at a time, in this order: Devpost orders the gallery by when each upl
 
 | # | File | What it shows |
 |---|---|---|
-| 1 | `site/img/pipeline-red.png` | GitLab pipeline 2948453748, failed: the e2e and flake-verdict jobs are red |
-| 2 | `site/img/mr-fix.png` | Merge request 10, the fix Duo opened, with the cause and the evidence |
-| 3 | `site/img/proof-50.png` | fix-proof job log for merge request 10: 50 passed |
-| 4 | `site/img/summary-note.png` | Summary note on the failed commit: MR 10 merged, proof 50/50, deployed URL |
+| 1 | `docs/img/cold-open.jpg` | Opening frame of the demo video: a team at a red `main` pipeline (lint and unit green, e2e failed), "Is it the code, or the test?" |
+| 2 | `site/img/pipeline-red.png` | GitLab pipeline 2948453748, failed: the e2e and flake-verdict jobs are red |
+| 3 | `site/img/mr-fix.png` | Merge request 10, the fix Duo opened, with the cause and the evidence |
+| 4 | `site/img/proof-50.png` | fix-proof job log for merge request 10: 50 passed |
+| 5 | `site/img/summary-note.png` | Summary note on the failed commit: MR 10 merged, proof 50/50, deployed URL |
 
 ## Criteria coverage
 

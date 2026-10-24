@@ -12,4 +12,4 @@ What in this entry was made with AI tools, besides Plumb's own use of GitLab Duo
 ## Credits
 
 - Music: "Stake Out" by Alex Jones / Xander Jones, from the YouTube Audio Library, licensed for use without attribution.
-- Opening footage: "People Coding on Computer" by cottonbro studio, from [Pexels](https://www.pexels.com/video/people-coding-on-computer-6804109/), under the Pexels license. The file is not in the repository.
+- Opening footage: "People Coding on Computer" by cottonbro studio, from [Pexels](https://www.pexels.com/video/people-coding-on-computer-6804109/), under the Pexels license. The clip is not in the repository; one frame of it, with Plumb's red-pipeline overlay, is (`docs/img/cold-open.jpg`, shown in the README and the Devpost gallery).
