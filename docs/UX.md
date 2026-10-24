@@ -1,5 +1,7 @@
 # UX
 
+> **Review as of 2026-10-18.** The page has changed since (English copy in the HTML, the epic-stack card, the 2:23 video); findings cite the line numbers and links of that date. The page as built is in [`FRONTEND.md`](FRONTEND.md#project-page).
+
 The UX of Plumb's project page, https://showcase-8b103c.gitlab.io/ (`site/`), from a judge's point of view: someone with no context who has a few minutes to spend. The booking app in `src/public/` is out of scope. It exists to be tested, not to be judged.
 
 ## Review 2026-10-18

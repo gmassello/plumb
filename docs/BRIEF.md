@@ -1,4 +1,4 @@
-# <Product> — Brief
+# Plumb — Brief
 
 ## Summary
 A GitLab Duo flow that wakes up when a pipeline fails on an end-to-end test, proves whether the test is flaky by re-running it, fixes the root cause and merges the fix only when the fix is proven stable. When it cannot prove a fix, it quarantines the test with the evidence so it stops blocking the team. When the test fails every time, it reads the commit to tell a real regression from an intended app change, an environment change or missing test data, and acts on each one differently. Either way, the change reaches production with no human in the middle, except where judging intent needs one.

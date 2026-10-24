@@ -1,4 +1,4 @@
-# <Product> — Plan
+# Plumb — Plan
 
 > This is the work plan, with each unit's status as of when it was done. The built system is described in the [README](../README.md) and [ARCHITECTURE](ARCHITECTURE.md).
 
