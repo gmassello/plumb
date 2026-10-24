@@ -1,7 +1,7 @@
 # Pending — GitLab Transcend "Life After Code" close
 
 Deadline: **2026-10-27 13:00 UTC** (2026-10-27 10:00 ART). Competition:
-<https://gitlab-transcend.devpost.com/> · Submission: not published yet · PR: n/a.
+<https://gitlab-transcend.devpost.com/> · Submission: <https://devpost.com/software/plumb-t69qx1> · PR: n/a.
 
 Stages (from the Official Rules, `docs/HACKATHON.md`): submissions until 2026-10-27 13:00 UTC, judging 2026-10-28 10:00 → 2026-11-14 17:00 UTC,
 winners around 2026-11-16.
@@ -14,18 +14,18 @@ Code status in one line: unit tests (48) and API checks green; every triage path
 
 | Surface | Where | Status | Verified |
 |---|---|---|---|
-| Repo and CI | `gitlab-ai-hackathon/transcend-october-2026/43144947/showcase` @ `8b49ecc` | ok — `main` = `origin/main`, clean; pipeline 2961089937 success; public; MIT detected; `secret_detection` green | 2026-10-19 00:00 UTC |
-| Site | https://showcase-8b103c.gitlab.io/ | ok — `index.html`, `app.js`, `text.js` and `styles.css` have the same hash as `origin/main` (e2f1023); the 5 images answer 200 | 2026-10-23 22:12 UTC |
+| Repo and CI | `gitlab-ai-hackathon/transcend-october-2026/43144947/showcase` @ `c31b3de` | ok — `main` = `origin/main`, clean (only untracked local plan files); push pipeline 2983439213 success; 11 `fix/` MRs merged; public; MIT | 2026-10-24 00:10 UTC |
+| Site | https://showcase-8b103c.gitlab.io/ | ok — `index.html`, `app.js`, `text.js` and `styles.css` match `origin/main` (c31b3de, no-cache); every link answers 200 except the two font `preconnect` hosts (404 at the root, expected); stat card 3/3 and the epic-stack link live | 2026-10-24 00:10 UTC |
 | Demo app | https://booking-vic4jyzsha-uc.a.run.app | ok — serves "Book an appointment"; `deploy` and `live-checks` green on pipeline 2983124458, `live-health` green on schedule run 2983142614 | 2026-10-23 22:12 UTC |
-| Monitoring | schedule 4497507, every 6 h, job `live-health` | ok — green on pipeline 2961165751. It had failed at 12:09, 18:09 and 00:08 UTC with exit 141: `wget | grep -q` under `pipefail` died on SIGPIPE; fixed in 4aeaecd (also in the `deploy` and `fix-proof` checks). The app checks can still time out on a Cloud Run cold start | 2026-10-19 00:42 UTC |
-| Submission | Devpost project page | **not published** — no Plumb project on https://devpost.com/gmassello | 2026-10-19 00:00 UTC |
-| Gallery card | https://gitlab-transcend.devpost.com/project-gallery | n/a until the submission exists | |
+| Monitoring | schedule 4497507, every 6 h, job `live-health` | ok — green on schedule pipeline 2983441390 | 2026-10-24 00:10 UTC |
+| Submission | https://devpost.com/software/plumb-t69qx1 | ok — submitted to Life After Code; public page shows the tagline, video I6_9prWib8Q, 6 gallery images, 7 tags and the 4 Try it out links (anonymous curl) | 2026-10-24 00:40 UTC |
+| Gallery card | https://gitlab-transcend.devpost.com/project-gallery | pending — the card is not in the anonymous gallery HTML yet, right after submitting | |
 | Upstream PR | n/a | n/a — Path A, no upstream | |
 | Second checkout | n/a | n/a | |
 | Second project | https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43144947/epic-stack | ok — public, flow enabled (consumer 13034333, trigger on failed pipelines), `MERGE_BOT_TOKEN` set; !1 and !2 merged by `merge-gate`, #3 real regression; main green after the undo f6a6540 | 2026-10-23 |
 | Video | https://youtu.be/I6_9prWib8Q | ok — public (oembed 200), 2:23 (143.4 s): cold open with the red-pipeline overlay, the epic-stack beat after "human", rendered after `video/script.tsv`; earlier cuts ViidpLXD_PY, u_FShFO1OOQ and PaYtgcmaSj0 private (oembed 403); linked from `docs/submission.md`, the README and the site | 2026-10-24 00:10 UTC |
 | Deck | n/a | n/a — the rules do not ask for one | |
-| Landing | https://showcase-8b103c.gitlab.io/ | same as Site | 2026-10-23 22:12 UTC |
+| Landing | https://showcase-8b103c.gitlab.io/ | same as Site | 2026-10-24 00:10 UTC |
 
 ## Billable resources
 
@@ -60,6 +60,7 @@ Copies counted in `README.md`, `docs/submission.md`, `site/text.js`, `site/index
 - `video/out/` and `video/*.mov` are git-ignored and hold hours of render and takes; `build-audio.sh` wipes `video/out/`.
 - After a video take, book slot s1 in `tests/e2e/modal.spec.ts` again (`video/shots.md`).
 - Old YouTube cuts are set to private, never deleted.
+- Re-assembling the video: `video/raw.mov` is `raw-v2.mov` + `raw-epic.mov` (the epic-stack beat, cut by hand from two takes, one segment per subtitle). Marks `"0,28,60,93,148,248.4"`, `MAX_SECONDS=170`, `OUTRO=$PWD/video/out/slide-close.png:7`, then `mix-music.sh`. The 2:08 cut is backed up in `~/.cache/plumb-video-2m08`.
 - `e2e-quarantine` fails on purpose (`allow_failure: true`): a red there is not a broken main.
 - Never rewrite `main`'s history: the CI/CD history is a submission requirement.
 
