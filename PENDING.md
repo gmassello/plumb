@@ -19,7 +19,7 @@ Code status in one line: unit tests (48) and API checks green; every triage path
 | Demo app | https://booking-vic4jyzsha-uc.a.run.app | ok — serves "Book an appointment"; `deploy` and `live-checks` green on pipeline 2983124458, `live-health` green on schedule run 2983142614 | 2026-10-23 22:12 UTC |
 | Monitoring | schedule 4497507, every 6 h, job `live-health` | ok — green on schedule pipeline 2983441390 | 2026-10-24 00:10 UTC |
 | Submission | https://devpost.com/software/plumb-t69qx1 | ok — submitted to Life After Code; public page shows the tagline, video I6_9prWib8Q, 6 gallery images, 7 tags and the 4 Try it out links (anonymous curl) | 2026-10-24 00:40 UTC |
-| Gallery card | https://gitlab-transcend.devpost.com/project-gallery | pending — the card is not in the anonymous gallery HTML yet, right after submitting | |
+| Gallery card | https://gitlab-transcend.devpost.com/project-gallery | not published yet — Devpost shows no cards at all (0 `gallery-item`) while submissions are open; check the card's thumbnail and tagline after 2026-10-27 13:00 UTC | 2026-10-24 UTC |
 | Upstream PR | n/a | n/a — Path A, no upstream | |
 | Second checkout | n/a | n/a | |
 | Second project | https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43144947/epic-stack | ok — public, flow enabled (consumer 13034333, trigger on failed pipelines), `MERGE_BOT_TOKEN` set; !1 and !2 merged by `merge-gate`, #3 real regression; main green after the undo f6a6540 | 2026-10-23 |
