@@ -116,6 +116,8 @@ No person merged a fix. All 11 `fix/` merge requests that merged were merged by 
 
 Every claimed number and the command behind it: [`docs/CLAIMS.md`](docs/CLAIMS.md).
 
+What the winners did and what Plumb would change next: [`docs/IMPROVEMENTS.md`](docs/IMPROVEMENTS.md).
+
 ## Limits
 
 - The flow handles one test per pipeline: the first real test, or the flaky test with the fewest passes. Other failing tests are listed in the merge request, not fixed.

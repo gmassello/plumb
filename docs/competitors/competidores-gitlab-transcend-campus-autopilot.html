@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang='es'>
+<head>
+<meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<title>Competidores — GitLab Transcend &quot;Life After Code&quot;</title>
+<style>
+:root {
+  --bg: #fbfaf8; --fg: #1a1b1e; --dim: #62656b; --line: #e2e0dc; --card: #ffffff;
+  --fuerte: #1f7a4d; --fuerte-bg: #e6f4ec;
+  --cumple: #2f6f9f; --cumple-bg: #e7f0f8;
+  --flojo: #9a6212; --flojo-bg: #fbf0dd;
+  --ausente: #a13b32; --ausente-bg: #fbeae8;
+  --sin: #6b3fa0; --sin-bg: #f0e9f9;
+}
+* { box-sizing: border-box; }
+html { color-scheme: light; }
+body {
+  margin: 0; padding: 32px 16px 64px; background: var(--bg); color: var(--fg);
+  font: 15px/1.6 ui-sans-serif, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+}
+main { max-width: 1040px; margin: 0 auto; }
+h1 { font-size: 1.7rem; margin: 0 0 4px; letter-spacing: -0.01em; }
+h2 { font-size: 1.15rem; margin: 36px 0 10px; }
+h3 { font-size: 1rem; margin: 24px 0 8px; color: var(--dim); }
+p { margin: 10px 0; }
+hr { border: 0; border-top: 1px solid var(--line); margin: 28px 0; }
+a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+code {
+  font: 0.86em ui-monospace, SFMono-Regular, Menlo, monospace;
+  background: var(--card); border: 1px solid var(--line); border-radius: 4px; padding: 1px 5px;
+}
+blockquote {
+  margin: 16px 0; padding: 12px 16px; border-left: 3px solid var(--sin);
+  background: var(--sin-bg); border-radius: 0 6px 6px 0;
+}
+blockquote p { margin: 0; }
+.wrap { overflow-x: auto; margin: 14px 0; border: 1px solid var(--line); border-radius: 8px; }
+table { border-collapse: separate; border-spacing: 0; width: 100%; font-size: 0.9rem; background: var(--card); }
+th, td { border-bottom: 1px solid var(--line); padding: 6px 10px; text-align: left; vertical-align: top; }
+td + td, th + th { border-left: 1px solid var(--line); }
+tbody tr:last-child td { border-bottom: 0; }
+th {
+  position: sticky; top: 0; z-index: 1; background: #f1eee9;
+  font-weight: 600; white-space: nowrap; border-bottom: 2px solid var(--line);
+}
+tbody tr:nth-child(even) { background: #f7f5f2; }
+tbody tr:hover { background: #eef4fb; }
+table.sortable th { cursor: pointer; user-select: none; }
+table.sortable th::after { content: " \2195"; color: var(--dim); font-size: 0.8em; }
+table.sortable th.asc::after { content: " \2191"; color: var(--fg); }
+table.sortable th.desc::after { content: " \2193"; color: var(--fg); }
+.v { font-weight: 600; border-radius: 4px; padding: 1px 7px; white-space: nowrap; display: inline-block; }
+.v-fuerte { color: var(--fuerte); background: var(--fuerte-bg); }
+.v-cumple { color: var(--cumple); background: var(--cumple-bg); }
+.v-flojo { color: var(--flojo); background: var(--flojo-bg); }
+.v-ausente { color: var(--ausente); background: var(--ausente-bg); }
+.v-sin-evidencia { color: var(--sin); background: var(--sin-bg); outline: 1px dashed var(--sin); }
+details {
+  border: 1px solid var(--line); border-radius: 8px; margin: 12px 0;
+  padding: 0 16px; background: var(--card);
+}
+details[open] { padding-bottom: 12px; }
+summary {
+  cursor: pointer; padding: 12px 0; font-size: 1.05rem; font-weight: 600; list-style-position: outside;
+}
+.pie { color: var(--dim); font-size: 0.85rem; margin-top: 40px; }
+@media print {
+  body { background: #fff; color: #000; padding: 0; }
+  details { break-inside: avoid; }
+  details:not([open]) > *:not(summary) { display: revert; }
+  table.sortable th { cursor: auto; }
+}
+</style>
+</head>
+<body>
+<main>
+<h1>Competidores — GitLab Transcend &quot;Life After Code&quot;</h1>
+<div class='wrap'><table><thead><tr><th></th><th></th></tr></thead><tbody><tr><td>Fecha</td><td>2026-11-17</td></tr><tr><td>Modo</td><td>hackathon</td></tr><tr><td>Evaluados</td><td>1 (+ Plumb propio) · clonados 1 · <strong>nada se ejecuto</strong> (solo GET de lectura a la demo)</td></tr><tr><td>Ventana</td><td>submissions 2026-10-05 → 2026-10-27 13:00 UTC</td></tr></tbody></table></div>
+<h2>En criollo</h2>
+<ul><li><strong>Que se miro:</strong> Campus Autopilot, un rival de la misma categoria (Path A, Hands-off), con el mismo premio unico que Plumb.</li><li><strong>Quien es la amenaza:</strong> el. Cuenta casi la misma historia que Plumb (la CI decide, Duo arregla), pero llega hasta produccion en Google Cloud y vuelve atras sola cuando un release sale mal.</li><li><strong>Como estamos:</strong> Plumb es mas fuerte en pagina del proyecto y en prueba sobre un segundo proyecto real; el rival gana en pruebas automaticas (160 vs 59) y en ciclo completo hasta produccion.</li><li><strong>Que conviene hacer:</strong> nada nuevo en el repo: el concurso cerro y los proyectos estan archivados. Sirve para el retro y para la defensa del pitch: la diferencia a marcar es &quot;validamos contra un proyecto ajeno (epic-stack)&quot;, que el rival no tiene.</li></ul>
+<p><strong>Pesos del jurado</strong> (<code>docs/judging.tsv</code>; Stage One es pasa/no pasa, bonus Google Cloud +0.2):</p>
+<div class='wrap'><table><thead><tr><th>Criterio</th><th>Peso</th><th>Secciones que lo responden</th></tr></thead><tbody><tr><td>Technological Implementation</td><td>20%</td><td>2, 4, 5, 8, 9, 10</td></tr><tr><td>Design</td><td>20%</td><td>6, 1</td></tr><tr><td>Potential Impact</td><td>20%</td><td>1, 3</td></tr><tr><td>Innovation / Idea</td><td>20%</td><td>7, 4</td></tr><tr><td>Presentation</td><td>20%</td><td>1, 8</td></tr></tbody></table></div>
+<p><strong>Lo que no se pudo ver</strong> — el margen de error de todo lo que sigue:</p>
+<ul><li>Los sitios de GitLab Pages redirigen a login para anonimos en todos los proyectos: no se pudo ver su pagina del proyecto, si la tiene (no hay <code>site/</code> en el arbol [1]).</li><li>El video (2:52) no se miro: solo se confirmo que esta embebido en Devpost [8]. Calidad de narracion y de la parte visual: sin evidencia.</li><li>La nota de Design se apoya en el codigo del front, no en una captura: la pagina viva solo se midio por codigo de respuesta [7].</li></ul>
+<hr>
+<h2>Tabla comparativa</h2>
+<p>Escala: <code><span class="v v-fuerte">fuerte</span></code> · <code><span class="v v-cumple">cumple</span></code> · <code><span class="v v-flojo">flojo</span></code> · <code><span class="v v-ausente">ausente</span></code> (se miro y no esta) · <code><span class="v v-sin-evidencia">sin evidencia</span></code> (no se pudo ver).</p>
+<div class='wrap'><table class="sortable"><thead><tr><th>Proyecto</th><th>Nicho</th><th>Tech 20%</th><th>Design 20%</th><th>Impact 20%</th><th>Innovation 20%</th><th>Presentation 20%</th><th>Nota</th><th>Amenaza</th></tr></thead><tbody><tr><td><code>Campus Autopilot</code></td><td>issue a produccion sin clics, con vuelta atras y re-entrega</td><td><span class="v v-fuerte">fuerte</span></td><td><span class="v v-flojo">flojo</span></td><td><span class="v v-fuerte">fuerte</span></td><td><span class="v v-fuerte">fuerte</span></td><td><span class="v v-cumple">cumple</span></td><td>4.0 prom.</td><td>alta</td></tr><tr><td><code>Plumb</code> (propio)</td><td>triage de pruebas inestables, la CI decide y Duo arregla</td><td><span class="v v-cumple">cumple</span></td><td><span class="v v-cumple">cumple</span></td><td><span class="v v-cumple">cumple</span></td><td><span class="v v-fuerte">fuerte</span></td><td><span class="v v-cumple">cumple</span></td><td>4.1 prom.</td><td>—</td></tr></tbody></table></div>
+<p><strong>Amenaza</strong> es contra Plumb: mismo premio, misma tesis, mismo bonus de Google Cloud.</p>
+<hr>
+<details><summary><code>gitlab-ai-hackathon/.../43289904/showcase</code> — Campus Autopilot</summary>
+<p><strong>Que hace:</strong> un dueño de codigo abre un issue, agentes de Duo escriben, prueban y revisan el cambio, una compuerta fija decide si se mergea, y el release sale por canarios a staging y produccion en Google Cloud; si falla, otro flow abre incidente y revierte, y el cambio vuelve a entregarse corregido.</p>
+<div class='wrap'><table><thead><tr><th></th><th></th></tr></thead><tbody><tr><td>Repo</td><td><a href="https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43289904/showcase">https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43289904/showcase</a> · creado 2026-10-12 · Python (FastAPI) · MIT (archivo <code>LICENSE</code>; la API dice licencia <code>null</code>) [1]</td></tr><tr><td>Demo</td><td>Cloud Run produccion: <code>curl</code> 200 en 10.4 s en <code>/readyz</code> (arranque en frio), 200 en 0.34 s en <code>/</code> [7]; Pages: <span class="v v-sin-evidencia">sin evidencia</span></td></tr><tr><td>Devpost</td><td><code>campus-autopilot</code> · video si, YouTube 2:52 [8]</td></tr><tr><td>Equipo</td><td>1 persona (<code>Sanchay Singh</code>: 85 de 111 commits, 77%) · mas 26 de las cuentas del flow (Autopilot 21, Incident Response 5) [3]</td></tr><tr><td>Historial</td><td>primer commit 2026-10-13 · 111 commits · previos al evento: no (el repo se creo el 12) [3]</td></tr></tbody></table></div>
+<div class='wrap'><table><thead><tr><th>Criterio</th><th>Veredicto</th><th>Evidencia</th></tr></thead><tbody><tr><td>Technological Implementation 20%</td><td><span class="v v-fuerte">fuerte</span></td><td>160 tests y 445 asserts [4]; 7.823 lineas sin lockfiles; 808 pipelines en el proyecto [2]; Terraform con acceso sin llaves; 4 escaneres + compuerta de politica [5]</td></tr><tr><td>Design 20%</td><td><span class="v v-flojo">flojo</span></td><td>solo <code>app/static/app.js</code> y <code>index.html</code> de la app de ejemplo, sin <code>site/</code> ni design system [1]; el esfuerzo esta en el flujo, no en lo visual</td></tr><tr><td>Potential Impact 20%</td><td><span class="v v-fuerte">fuerte</span></td><td>ciclo issue → produccion en 34 min y incidente → arreglo en 21 min, medidos en MRs y releases [6]; 8 releases de GitLab [9]</td></tr><tr><td>Innovation / Idea 20%</td><td><span class="v v-fuerte">fuerte</span></td><td>&quot;fix forward&quot;: tras un revert exacto, el steward abre un issue para re-entregar el cambio corregido [6]</td></tr><tr><td>Presentation 20%</td><td><span class="v v-cumple">cumple</span></td><td>README con diagrama, prueba fechada y limites honestos; video 2:52 [8]; sin pagina del proyecto vista</td></tr><tr><td>Stage One (usa Duo)</td><td><span class="v v-cumple">cumple</span></td><td>20 pipelines <code>duo_workflow</code> (19 ok, 1 fallido), 17 commits de la cuenta del flow, 3 flows en <code>.gitlab/duo/flows/</code> [2]</td></tr><tr><td>Bonus Google Cloud</td><td>+0.2</td><td>demo viva en Cloud Run (200) y Terraform en <code>infra/</code> [1][7]</td></tr><tr><td>Seguridad</td><td><span class="v v-cumple">cumple</span></td><td>no hay <code>.env</code> en el arbol, solo <code>.env.example</code>; <code>infra/showcase.auto.tfvars</code> declara no tener secretos [1]</td></tr></tbody></table></div>
+<p><strong>Lo mas <span class="v v-fuerte">fuerte</span>:</strong> cierra el ciclo completo (entrega, reversion, re-entrega) con tiempos medidos, y lo prueba en el historial del proyecto [6].</p>
+<p><strong>Donde se cae:</strong> sin pagina de proyecto ni design system; una sola persona detras; los flows se pegan a mano en el AI Catalog y el steward actua con el token de un dueño [6].</p>
+<p><strong><span class="v v-sin-evidencia">sin evidencia</span>:</strong> video, Pages, y si el steward es &quot;no hay clics&quot; en la practica (su propio README dice que durante el juicio corre cada hora).</p>
+</details>
+<hr>
+<h2>Donde queda tu proyecto</h2>
+<div class='wrap'><table><thead><tr><th>Criterio</th><th>Plumb</th><th>Campus Autopilot</th></tr></thead><tbody><tr><td>Tests (casos / asserts)</td><td>59 / 147</td><td>160 / 445 [4]</td></tr><tr><td>Commits · cuentas</td><td>147 · 1</td><td>111 · 1 humana [3]</td></tr><tr><td>Lineas de codigo (sin lockfiles ni sesiones)</td><td>13.576</td><td>7.823 [4]</td></tr><tr><td>Demo en Cloud Run</td><td>si, <code>booking-vic4jyzsha-uc.a.run.app</code> (README)</td><td>si, 200 [7]</td></tr><tr><td>Pagina del proyecto</td><td>si, <code>site/</code> con toggles</td><td>no [1]</td></tr><tr><td>Segundo proyecto de prueba</td><td>si, epic-stack (27/50)</td><td>no</td></tr><tr><td>Video</td><td>si (README)</td><td>si, 2:52 [8]</td></tr></tbody></table></div>
+<p>Nota de Plumb: <strong>sin cambios</strong> (Tech 4, Design 4, Impact 4, Innovation 4.5, Presentation 4; +0.2). La evidencia contra el rival no mueve ninguna celda; la mas expuesta es Tech (rival 160 tests contra 59), y se mantiene en 4 porque Plumb tiene la validacion externa sobre epic-stack.</p>
+<h3>Sugerencias</h3>
+<div class='wrap'><table><thead><tr><th>#</th><th>Sugerencia</th><th>Por que importa</th><th>Criterio (peso)</th><th>Origen</th><th>Evidencia</th><th>Esfuerzo</th><th>Mueve nota</th></tr></thead><tbody><tr><td>S-01</td><td>Defender en el pitch la validacion sobre un proyecto ajeno</td><td>es lo que el rival no tiene y separa las dos tesis casi iguales</td><td>Innovation (20%)</td><td>brecha</td><td>rival sin segundo proyecto [1][2]</td><td>bajo</td><td>si</td></tr><tr><td>S-02</td><td>Responder &quot;¿y despues del arreglo?&quot;: explicar hasta donde llega Plumb (diagnostico y arreglo) frente a la entrega hasta produccion del rival</td><td>el jurado va a comparar alcance del ciclo</td><td>Potential Impact (20%)</td><td>brecha</td><td>rival mide 34 min issue → produccion [6]</td><td>bajo</td><td>si</td></tr><tr><td>S-03</td><td>Subir la cobertura de tests de la logica de Plumb</td><td>el rival tiene 160 tests contra 59</td><td>Technological Implementation (20%)</td><td>brecha</td><td>[4]</td><td>medio</td><td>si</td></tr><tr><td>S-04</td><td>Poner mas estrellas o topics al repo</td><td>—</td><td>—</td><td>—</td><td>—</td><td>bajo</td><td><strong>cosmetico</strong></td></tr></tbody></table></div>
+<blockquote><p>Control de sesgo: Plumb sale mejor en Design y en la validacion externa, y peor en tests y alcance del ciclo; no es &quot;mejor en todo&quot;. Las tres celdas mas comodas (Design, Innovation, Presentation de Plumb) se revisaron contra <code>site/</code> y el README propios.</p></blockquote>
+<hr>
+<details><summary>Apendice — como se midio</summary>
+<div class='wrap'><table><thead><tr><th>Ref</th><th>Comando</th></tr></thead><tbody><tr><td>[1]</td><td><code>glab api projects/87534896</code> y <code>glab api &quot;projects/87534896/repository/tree?recursive=true&amp;per_page=100&quot; --paginate</code>; <code>LICENSE</code> por <code>repository/files/LICENSE/raw</code></td></tr><tr><td>[2]</td><td><code>glab api -i &quot;projects/87534896/pipelines?per_page=1&quot;</code> (X-Total 808) y <code>...?source=duo_workflow&amp;per_page=1</code> (X-Total 20); estados con <code>per_page=100</code> y <code>jq</code></td></tr><tr><td>[3]</td><td><code>glab api &quot;projects/87534896/repository/commits?all=true&amp;per_page=100&amp;page=N&quot;</code> (4 paginas, 111) y <code>jq</code> por <code>author_name</code></td></tr><tr><td>[4]</td><td>clone <code>--depth 50</code>: <code>grep -rcE &#x27;^\s*def test_&#x27; tests</code>, <code>grep -rcE &#x27;^\s*assert &#x27; tests</code>, <code>git ls-files \| grep -vE &#x27;lock\|\.txt$&#x27; \| xargs wc -l</code> (clone borrado al final)</td></tr><tr><td>[5]</td><td><code>grep -nE &#x27;^[a-z0-9_:-]+:$&#x27; .gitlab-ci.yml</code> (jobs <code>container_scanning</code>, <code>semgrep-sast</code>, <code>secret_detection</code>, <code>policy-gate</code>, <code>merge-steward</code>, <code>deploy-*</code>)</td></tr><tr><td>[6]</td><td><code>README.md</code> del rival, secciones &quot;Proof, in the project&#x27;s history&quot; y &quot;Honest limits&quot; (leida por API)</td></tr><tr><td>[7]</td><td><code>curl -s -o /dev/null -w &#x27;%{http_code} %{time_total}s&#x27;</code> sobre <code>/readyz</code> de produccion y staging y <code>/</code> de produccion</td></tr><tr><td>[8]</td><td><code>curl -sL -A &#x27;Mozilla/5.0&#x27; https://devpost.com/software/campus-autopilot</code> y <code>grep -oE &#x27;youtube.com/embed/[^?&quot;]*&#x27;</code></td></tr><tr><td>[9]</td><td><code>glab api -i &quot;projects/87534896/releases?per_page=1&quot;</code> (X-Total 8)</td></tr></tbody></table></div>
+<p>Notas por criterio del rival (1 a 5): Tech 4.5, Design 3, Impact 4, Innovation 4, Presentation 4; bonus Google Cloud +0.2.</p>
+</details>
+<p class='pie'>Generado desde el .md por hackathon-review-competitor. El .md es la fuente: este archivo no se edita a mano.</p>
+</main>
+<script>
+const RANK = {"sin evidencia":0,"ausente":1,"flojo":2,"cumple":3,"fuerte":4,
+              "baja":0,"media":1,"alta":2};
+const key = (td) => {
+  const raw = td.textContent.trim();
+  const low = raw.toLowerCase();
+  for (const word in RANK) if (low.includes(word)) return [0, RANK[word]];
+  const num = parseFloat(raw.replace(",", "."));
+  if (!isNaN(num) && /^[\d.,\s/]+$/.test(raw)) return [0, num];
+  return [1, low];
+};
+document.querySelectorAll("table.sortable th").forEach((th, i) => {
+  th.addEventListener("click", () => {
+    const table = th.closest("table");
+    const body = table.tBodies[0];
+    const desc = !th.classList.contains("desc");
+    table.querySelectorAll("th").forEach(o => o.classList.remove("asc", "desc"));
+    th.classList.add(desc ? "desc" : "asc");
+    [...body.rows]
+      .sort((a, b) => {
+        const [ka, va] = key(a.cells[i]), [kb, vb] = key(b.cells[i]);
+        if (ka !== kb) return ka - kb;
+        const cmp = typeof va === "number" ? va - vb : String(va).localeCompare(String(vb), "es");
+        return desc ? -cmp : cmp;
+      })
+      .forEach(row => body.appendChild(row));
+  });
+});
+</script>
+</body>
+</html>

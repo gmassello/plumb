@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang='es'>
+<head>
+<meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<title>Competidores — GitLab Transcend &quot;Life After Code&quot;</title>
+<style>
+:root {
+  --bg: #fbfaf8; --fg: #1a1b1e; --dim: #62656b; --line: #e2e0dc; --card: #ffffff;
+  --fuerte: #1f7a4d; --fuerte-bg: #e6f4ec;
+  --cumple: #2f6f9f; --cumple-bg: #e7f0f8;
+  --flojo: #9a6212; --flojo-bg: #fbf0dd;
+  --ausente: #a13b32; --ausente-bg: #fbeae8;
+  --sin: #6b3fa0; --sin-bg: #f0e9f9;
+}
+* { box-sizing: border-box; }
+html { color-scheme: light; }
+body {
+  margin: 0; padding: 32px 16px 64px; background: var(--bg); color: var(--fg);
+  font: 15px/1.6 ui-sans-serif, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+}
+main { max-width: 1040px; margin: 0 auto; }
+h1 { font-size: 1.7rem; margin: 0 0 4px; letter-spacing: -0.01em; }
+h2 { font-size: 1.15rem; margin: 36px 0 10px; }
+h3 { font-size: 1rem; margin: 24px 0 8px; color: var(--dim); }
+p { margin: 10px 0; }
+hr { border: 0; border-top: 1px solid var(--line); margin: 28px 0; }
+a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+code {
+  font: 0.86em ui-monospace, SFMono-Regular, Menlo, monospace;
+  background: var(--card); border: 1px solid var(--line); border-radius: 4px; padding: 1px 5px;
+}
+blockquote {
+  margin: 16px 0; padding: 12px 16px; border-left: 3px solid var(--sin);
+  background: var(--sin-bg); border-radius: 0 6px 6px 0;
+}
+blockquote p { margin: 0; }
+.wrap { overflow-x: auto; margin: 14px 0; border: 1px solid var(--line); border-radius: 8px; }
+table { border-collapse: separate; border-spacing: 0; width: 100%; font-size: 0.9rem; background: var(--card); }
+th, td { border-bottom: 1px solid var(--line); padding: 6px 10px; text-align: left; vertical-align: top; }
+td + td, th + th { border-left: 1px solid var(--line); }
+tbody tr:last-child td { border-bottom: 0; }
+th {
+  position: sticky; top: 0; z-index: 1; background: #f1eee9;
+  font-weight: 600; white-space: nowrap; border-bottom: 2px solid var(--line);
+}
+tbody tr:nth-child(even) { background: #f7f5f2; }
+tbody tr:hover { background: #eef4fb; }
+table.sortable th { cursor: pointer; user-select: none; }
+table.sortable th::after { content: " \2195"; color: var(--dim); font-size: 0.8em; }
+table.sortable th.asc::after { content: " \2191"; color: var(--fg); }
+table.sortable th.desc::after { content: " \2193"; color: var(--fg); }
+.v { font-weight: 600; border-radius: 4px; padding: 1px 7px; white-space: nowrap; display: inline-block; }
+.v-fuerte { color: var(--fuerte); background: var(--fuerte-bg); }
+.v-cumple { color: var(--cumple); background: var(--cumple-bg); }
+.v-flojo { color: var(--flojo); background: var(--flojo-bg); }
+.v-ausente { color: var(--ausente); background: var(--ausente-bg); }
+.v-sin-evidencia { color: var(--sin); background: var(--sin-bg); outline: 1px dashed var(--sin); }
+details {
+  border: 1px solid var(--line); border-radius: 8px; margin: 12px 0;
+  padding: 0 16px; background: var(--card);
+}
+details[open] { padding-bottom: 12px; }
+summary {
+  cursor: pointer; padding: 12px 0; font-size: 1.05rem; font-weight: 600; list-style-position: outside;
+}
+.pie { color: var(--dim); font-size: 0.85rem; margin-top: 40px; }
+@media print {
+  body { background: #fff; color: #000; padding: 0; }
+  details { break-inside: avoid; }
+  details:not([open]) > *:not(summary) { display: revert; }
+  table.sortable th { cursor: auto; }
+}
+</style>
+</head>
+<body>
+<main>
+<h1>Competidores — GitLab Transcend &quot;Life After Code&quot;</h1>
+<div class='wrap'><table><thead><tr><th></th><th></th></tr></thead><tbody><tr><td>Fecha</td><td>2026-11-17</td></tr><tr><td>Modo</td><td>hackathon</td></tr><tr><td>Evaluados</td><td>1 (Dongjo) + Plumb (propio) · clonados 1 (borrado) · <strong>nada se ejecuto</strong></td></tr><tr><td>Ventana</td><td>submissions 2026-10-05 → 2026-10-27 13:00 UTC (ya cerrada: lo medido es lo que vio el jurado)</td></tr></tbody></table></div>
+<h2>En criollo</h2>
+<ul><li><strong>Que se miro:</strong> el repo de Dongjo en GitLab, su ficha de Devpost, su demo en vivo y la evidencia de que su flow de Duo corrio de verdad (40 corridas propias de Duo, 60 commits de la cuenta de servicio del flow [1][2]).</li><li><strong>Quien es la amenaza:</strong> Dongjo, alta. Cubre todo el ciclo (issue → plan → codigo → ataque → firma → canary → release) con pruebas enlazadas, mientras Plumb cubre un tramo (pipeline rojo → arreglo → merge).</li><li><strong>Como estamos:</strong> Plumb queda un escalon abajo en Tecnologia, Diseno e Innovacion; empatamos en Impacto y Presentacion y en el bonus de Google Cloud.</li><li><strong>Que conviene hacer:</strong> el concurso cerro el 2026-10-27; lo accionable es lo que todavia se puede tocar en la ficha y en la pagina (ver sugerencias), no codigo nuevo.</li></ul>
+<p><strong>Pesos del jurado</strong> (<code>docs/judging.tsv</code>; los cinco criterios valen lo mismo):</p>
+<div class='wrap'><table><thead><tr><th>Criterio</th><th>Peso</th><th>Secciones que lo responden</th></tr></thead><tbody><tr><td>Stage One: usa GitLab Duo Agent Platform</td><td>pasa/no pasa</td><td>2</td></tr><tr><td>Technological Implementation</td><td>20%</td><td>4, 5, 9, 10</td></tr><tr><td>Design</td><td>20%</td><td>4, 6</td></tr><tr><td>Potential Impact</td><td>20%</td><td>1, 6</td></tr><tr><td>Innovation/Idea</td><td>20%</td><td>7</td></tr><tr><td>Presentation</td><td>20%</td><td>1, 8</td></tr><tr><td>Bonus Google Cloud</td><td>+0.2</td><td>9, 11</td></tr></tbody></table></div>
+<p><strong>Lo que no se pudo ver</strong> — el margen de error de todo lo que sigue:</p>
+<ul><li>La Dongjo Console (<code>showcase-bf2b4b.gitlab.io</code>) responde 302 a un login de GitLab Pages [3]: no se vio lo que ve el jurado ahi. La pagina de Plumb da el mismo 302 [3]: ninguna de las dos se midio desde afuera.</li><li>El contenido del video (YouTube responde 200 [4]): no se miro, solo que existe y dura 2:53 segun el README.</li><li>Los 100 commits que devolvio la API son una muestra: el paginado repitio paginas, el total real de commits es <code>sin evidencia</code>.</li></ul>
+<hr>
+<h2>Tabla comparativa</h2>
+<p>Escala: <code><span class="v v-fuerte">fuerte</span></code> · <code><span class="v v-cumple">cumple</span></code> · <code><span class="v v-flojo">flojo</span></code> · <code><span class="v v-ausente">ausente</span></code> (se miro y no esta) · <code><span class="v v-sin-evidencia">sin evidencia</span></code> (no se pudo ver).</p>
+<div class='wrap'><table class="sortable"><thead><tr><th>Proyecto</th><th>Nicho</th><th>Tecnologia 20%</th><th>Diseno 20%</th><th>Impacto 20%</th><th>Innovacion 20%</th><th>Presentacion 20%</th><th>Nota</th><th>Amenaza</th></tr></thead><tbody><tr><td><code>Dongjo</code></td><td>issue → release firmado, red team</td><td><span class="v v-fuerte">fuerte</span></td><td><span class="v v-fuerte">fuerte</span></td><td><span class="v v-cumple">cumple</span></td><td><span class="v v-fuerte">fuerte</span></td><td><span class="v v-cumple">cumple</span></td><td>4.6/5</td><td>alta</td></tr><tr><td><code>Plumb</code> (propio)</td><td>pipeline rojo → arreglo probado</td><td><span class="v v-cumple">cumple</span></td><td><span class="v v-cumple">cumple</span></td><td><span class="v v-cumple">cumple</span></td><td><span class="v v-cumple">cumple</span></td><td><span class="v v-cumple">cumple</span></td><td>4.0/5</td><td>—</td></tr></tbody></table></div>
+<p><strong>Amenaza</strong> es contra Plumb: Dongjo compite por el mismo premio unico (Path A, Hands-off) y su cobertura es mas ancha.</p>
+<hr>
+<details><summary><code>Dongjo</code> — Faiz Muflich (faizmuh26)</summary>
+<p><strong>Que hace:</strong> asignas un issue y vuelve un cambio planeado, construido, atacado, arreglado, firmado, desplegado en canary (prueba con poco trafico) y publicado con evidencia.</p>
+<div class='wrap'><table><thead><tr><th></th><th></th></tr></thead><tbody><tr><td>Repo</td><td><a href="https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43486598/showcase">https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43486598/showcase</a> · creado 2026-10-19 · Python · MIT [5]</td></tr><tr><td>Demo</td><td><a href="https://dongjo-823854619520.europe-north1.run.app/">https://dongjo-823854619520.europe-north1.run.app/</a> · <code>curl</code> 200 en 4.18 s (arranque en frio); <code>/version</code> 200 en 0.62 s [3]</td></tr><tr><td>Devpost</td><td><code>dongjo</code> · video si (YouTube, 2:53) [4]</td></tr><tr><td>Equipo</td><td>1 persona (2 cuentas: <code>faizmuh26</code>, <code>Faiz Muflich</code>) + 1 commit de otra · 26 de 100 commits leidos son de la cuenta de servicio del flow [2]</td></tr><tr><td>Historial</td><td>primer commit 2026-10-19 (&quot;Initial commit&quot; de la plantilla), 0 commits antes del 2026-10-18 · previos al evento: no [6]</td></tr></tbody></table></div>
+<div class='wrap'><table><thead><tr><th>Criterio</th><th>Veredicto</th><th>Evidencia</th></tr></thead><tbody><tr><td>Stage One (Duo)</td><td><span class="v v-fuerte">fuerte</span></td><td>2 flows en <code>flows/</code> (377 lineas el principal), 40 pipelines <code>duo_workflow</code>, 26 de 100 commits leidos de cuenta de servicio, 60 en el total listado [1][2][7]</td></tr><tr><td>Tecnologia 20%</td><td><span class="v v-fuerte">fuerte</span></td><td>113 tests, 351 asserts, 4.777 lineas Python [8]; Terraform con 15 recursos GCP y Workload Identity (sin llave guardada) [9]; SBOM, OpenVEX, cosign en tags de Devpost [10]</td></tr><tr><td>Diseno 20%</td><td><span class="v v-fuerte">fuerte</span></td><td>9 etapas con un mapa en el issue; 3 corridas sin mano humana en 23, 21 y 26 min segun README [11]; 12 MRs <code>fix/</code> mergeados</td></tr><tr><td>Impacto 20%</td><td><span class="v v-cumple">cumple</span></td><td>cambios de seguridad en un servicio chico (notes-api); 2 pipelines rojos en main, ambos explicados y arreglados en !46 [11][12]</td></tr><tr><td>Innovacion 20%</td><td><span class="v v-fuerte">fuerte</span></td><td>benchmark sellado con SHA-256: 3 corridas, el red team atrapa 13 de 16 errores plantados y publica sus falsos positivos [11]</td></tr><tr><td>Presentacion 20%</td><td><span class="v v-cumple">cumple</span></td><td>video 2:53 + pagina &quot;probalo vos&quot; con 6 ataques como botones; demo en frio 4.18 s, consola detras de login [3][4]</td></tr><tr><td>Bonus Google Cloud</td><td><span class="v v-fuerte">fuerte</span></td><td>Cloud Run vivo 200, 15 recursos Terraform, scripts <code>ci/*.sh</code> en el repo [3][9]</td></tr><tr><td>Calidad de codigo</td><td><span class="v v-fuerte">fuerte</span></td><td>ruff 0.16.7 y pytest 9.1.1 pineados, deps de la app con <code>==</code> [8]</td></tr><tr><td>Seguridad</td><td><span class="v v-cumple">cumple</span></td><td>sin <code>.env</code>/<code>.pem</code>/credenciales en el arbol [13]; <code>gate-guard</code> impide que el agente toque sus propias puertas [11]</td></tr></tbody></table></div>
+<p><strong>Lo mas <span class="v v-fuerte">fuerte</span>:</strong> prueba medida, no declarada: 13 de 16 errores atrapados con gates verdes y falsos positivos publicados [11].</p>
+<p><strong>Donde se cae:</strong> el servicio sobre el que trabaja es una app de notas de juguete; la pagina de la consola exige login [3].</p>
+<p><strong><span class="v v-sin-evidencia">sin evidencia</span>:</strong> si el video muestra el flujo real; commits totales; lo que ve el jurado en la consola.</p>
+</details>
+<hr>
+<h2>Donde queda tu proyecto</h2>
+<div class='wrap'><table><thead><tr><th>Criterio</th><th>Plumb</th><th><code>Dongjo</code></th></tr></thead><tbody><tr><td>Pipelines (total / <code>duo_workflow</code>)</td><td>239 / 43 [2]</td><td>397 / 40 [2]</td></tr><tr><td>MRs mergeados (de ellos <code>fix/</code>)</td><td>12 (11) [14]</td><td>47 (12) [14]</td></tr><tr><td>Tests / asserts</td><td>54 tests, 151 lineas con assert/expect [8]</td><td>113 tests, 351 asserts [8]</td></tr><tr><td>Infra como codigo (Terraform)</td><td><span class="v v-ausente">ausente</span> [9]</td><td>15 recursos [9]</td></tr><tr><td>Flows publicados</td><td>1 (<code>triage-flow.yml</code>, 124 lineas)</td><td>2 (377 lineas el principal) [7]</td></tr><tr><td>Demo vivo</td><td>Cloud Run 200 en 0.31 s [3]</td><td>Cloud Run 200 en 4.18 s [3]</td></tr><tr><td>Video</td><td>2:23</td><td>2:53</td></tr><tr><td>Pagina del proyecto</td><td>302 a login [3]</td><td>302 a login [3]</td></tr><tr><td>Cobertura del ciclo</td><td>1 tramo (rojo → arreglo → deploy)</td><td>9 etapas (issue → release)</td></tr></tbody></table></div>
+<h3>Notas 1-5 por criterio (misma vara para los dos)</h3>
+<div class='wrap'><table><thead><tr><th>Criterio</th><th>Dongjo</th><th>Plumb</th><th>Evidencia</th></tr></thead><tbody><tr><td>Technological Implementation</td><td>5</td><td>4</td><td>Dongjo: 351 asserts, Terraform, WIF, firma y VEX [8][9][10]. Plumb: 54 tests, WIF, sin IaC, app con estado en memoria [8][9]</td></tr><tr><td>Design</td><td>5</td><td>4</td><td>Dongjo: 9 etapas de issue a release [11]. Plumb: un tramo, sin planificacion previa del issue</td></tr><tr><td>Potential Impact</td><td>4</td><td>4</td><td>Dongjo: app de juguete pero ciclo general [11]. Plumb: segundo proyecto (epic-stack) donde las 2 correcciones no sostuvieron (27/50, 30/50) segun <code>docs/JUDGING-MOCK.md</code></td></tr><tr><td>Innovation/Idea</td><td>5</td><td>4</td><td>Dongjo: benchmark sellado con falsos positivos medidos [11]. Plumb: probar el arreglo 50 veces es <span class="v v-fuerte">fuerte</span>, pero &quot;CI decide, Duo arregla&quot; es la misma tesis que Dongjo (&quot;CI computes, LLM decides&quot;)</td></tr><tr><td>Presentation</td><td>4</td><td>4</td><td>ambos con video publico y demo vivo; Dongjo tiene la pagina interactiva, Plumb una pagina bilingue; las dos consolas dan 302 [3][4]</td></tr><tr><td>Promedio</td><td>4.6</td><td>4.0</td><td></td></tr><tr><td>Bonus Google Cloud (+0.2)</td><td>+0.2</td><td>+0.2</td><td>los dos con Cloud Run vivo y codigo de deploy en el repo [3][9]</td></tr></tbody></table></div>
+<p>Las notas de Plumb son mas bajas que las de <code>docs/JUDGING-MOCK.md</code> (4.6): esa pasada la escribio el propio equipo; aca se aplico la misma vara que a Dongjo.</p>
+<h3>Sugerencias</h3>
+<p>El concurso cerro el 2026-10-27: cualquier cambio de codigo ya no entra en juicio. Las que siguen son para ficha, pagina y el siguiente evento.</p>
+<div class='wrap'><table><thead><tr><th>#</th><th>Sugerencia</th><th>Por que importa</th><th>Criterio (peso)</th><th>Origen</th><th>Evidencia</th><th>Esfuerzo</th><th>Mueve nota</th></tr></thead><tbody><tr><td>S-01</td><td>Publicar una medicion de falsos positivos y aciertos del flow (por ejemplo, N arreglos plantados)</td><td>Dongjo vende lo que mide de si mismo y Plumb solo lo que acierta</td><td>Innovacion (20%)</td><td>brecha</td><td>Dongjo publica 13/16 atrapados y sus falsos positivos [11]; Plumb no tiene serie equivalente</td><td>alto</td><td>si</td></tr><tr><td>S-02</td><td>Cubrir el tramo previo al codigo (plan o criterios de aceptacion antes del fix)</td><td>el jurado de Diseno premia el ciclo, no un tramo</td><td>Diseno (20%)</td><td>brecha</td><td>Dongjo: 9 etapas desde el issue [11]</td><td>alto</td><td>si</td></tr><tr><td>S-03</td><td>Poner infra como codigo para Cloud Run (Terraform)</td><td>el bonus pide codigo de deploy y Tecnologia mide reproducibilidad</td><td>Tecnologia (20%)</td><td>brecha</td><td>Dongjo: 15 recursos Terraform [9]; Plumb: ninguno</td><td>medio</td><td>si</td></tr><tr><td>S-04</td><td>Verificar que la pagina de Plumb se abra sin login para el jurado</td><td>las dos paginas dan 302; si la de Plumb queda abierta es ventaja</td><td>Presentacion (20%)</td><td>hueco</td><td>ambas <code>302</code> a <code>projects.gitlab.io/auth</code> [3]</td><td>bajo</td><td>si</td></tr><tr><td>S-05</td><td>Subir a 100+ tests unitarios sobre la logica de los flows</td><td>351 asserts de Dongjo contra 151</td><td>Tecnologia (20%)</td><td>brecha</td><td>[8]</td><td>medio</td><td>si</td></tr><tr><td>S-06</td><td>Mejorar topics, estrellas del repo</td><td>ningun criterio lo pondera</td><td>—</td><td>—</td><td>—</td><td>bajo</td><td><strong>cosmetico</strong></td></tr></tbody></table></div>
+<blockquote><p>Control de sesgo: Plumb se midio con las mismas sondas y salio peor en 4 de 5 criterios; no es la firma del sesgo propio. Las tres celdas mas comodas (Impacto, Presentacion, Bonus) se revisaron y quedaron empatadas.</p></blockquote>
+<hr>
+<details><summary>Apendice — como se midio</summary>
+<div class='wrap'><table><thead><tr><th>Ref</th><th>Comando</th></tr></thead><tbody><tr><td>[1]</td><td><code>glab api -i &quot;projects/87802146/pipelines?source=duo_workflow&amp;per_page=1&quot; \| grep -i x-total:</code> (40; Plumb, proyecto 87376478: 43)</td></tr><tr><td>[2]</td><td><code>glab api &quot;projects/87802146/repository/commits?per_page=100&amp;all=true&quot; \| jq -r &#x27;.[].author_name&#x27;</code> (cuenta de servicio <code>Dongjo red team</code>)</td></tr><tr><td>[3]</td><td><code>curl -s -o /dev/null -w &#x27;%{http_code} %{time_total}s&#x27; &lt;url&gt;</code> sobre run.app, <code>/version</code>, y las dos paginas gitlab.io</td></tr><tr><td>[4]</td><td><code>curl -s -A &#x27;Mozilla/5.0&#x27; https://devpost.com/software/dongjo</code> (video YouTube y tags) y <code>curl</code> al link de YouTube (200)</td></tr><tr><td>[5]</td><td><code>glab api projects/gitlab-ai-hackathon%2Ftranscend-october-2026%2F43486598%2Fshowcase</code> (<code>created_at</code>) y <code>head -5 LICENSE</code> en el clone</td></tr><tr><td>[6]</td><td><code>glab api &quot;projects/87802146/repository/commits?per_page=1&amp;all=true&amp;until=2026-10-18T00:00:00Z&quot;</code> (null)</td></tr><tr><td>[7]</td><td><code>glab api &quot;projects/87802146/repository/files/flows%2Fdongjo.yaml/raw?ref=HEAD&quot; \| wc -l</code></td></tr><tr><td>[8]</td><td>clone <code>--depth 50</code>: <code>grep -rhE &#x27;^\s*def test_&#x27; tests \| wc -l</code>; <code>grep -rcE &#x27;assert &#x27; tests</code>; <code>git ls-files \| grep -E &#x27;\.py$&#x27; \| xargs wc -l</code> (clone borrado); en Plumb <code>grep -rhE &#x27;^\s*(test\|it)\(&#x27; tests/unit \| wc -l</code></td></tr><tr><td>[9]</td><td><code>glab api &quot;projects/87802146/repository/files/infra%2Fterraform%2Fmain.tf/raw?ref=HEAD&quot; \| grep -c &#x27;resource &quot;&#x27;</code></td></tr><tr><td>[10]</td><td>tags <code>cosign</code>, <code>cyclonedx</code>, <code>openvex</code> en la ficha de Devpost; <code>grep</code> de <code>sbom</code>/<code>vex</code> en <code>.gitlab-ci.yml</code></td></tr><tr><td>[11]</td><td><code>grep</code> de las cifras del README crudo (<code>repository/files/README.md/raw</code>)</td></tr><tr><td>[12]</td><td><code>glab api &quot;projects/87802146/pipelines?per_page=100&quot; \| jq -r &#x27;.[].status&#x27; \| sort \| uniq -c</code> (2 failed, 98 success)</td></tr><tr><td>[13]</td><td><code>grep -iE &#x27;\.env$\|\.pem$\|credentials\|serviceaccount&#x27; &lt;arbol&gt;</code> (sin resultados)</td></tr><tr><td>[14]</td><td><code>glab api -i &quot;projects/&lt;id&gt;/merge_requests?state=merged&amp;per_page=1&quot; \| grep -i x-total:</code> y ramas de origen por prefijo</td></tr></tbody></table></div>
+</details>
+<p class='pie'>Generado desde el .md por hackathon-review-competitor. El .md es la fuente: este archivo no se edita a mano.</p>
+</main>
+<script>
+const RANK = {"sin evidencia":0,"ausente":1,"flojo":2,"cumple":3,"fuerte":4,
+              "baja":0,"media":1,"alta":2};
+const key = (td) => {
+  const raw = td.textContent.trim();
+  const low = raw.toLowerCase();
+  for (const word in RANK) if (low.includes(word)) return [0, RANK[word]];
+  const num = parseFloat(raw.replace(",", "."));
+  if (!isNaN(num) && /^[\d.,\s/]+$/.test(raw)) return [0, num];
+  return [1, low];
+};
+document.querySelectorAll("table.sortable th").forEach((th, i) => {
+  th.addEventListener("click", () => {
+    const table = th.closest("table");
+    const body = table.tBodies[0];
+    const desc = !th.classList.contains("desc");
+    table.querySelectorAll("th").forEach(o => o.classList.remove("asc", "desc"));
+    th.classList.add(desc ? "desc" : "asc");
+    [...body.rows]
+      .sort((a, b) => {
+        const [ka, va] = key(a.cells[i]), [kb, vb] = key(b.cells[i]);
+        if (ka !== kb) return ka - kb;
+        const cmp = typeof va === "number" ? va - vb : String(va).localeCompare(String(vb), "es");
+        return desc ? -cmp : cmp;
+      })
+      .forEach(row => body.appendChild(row));
+  });
+});
+</script>
+</body>
+</html>

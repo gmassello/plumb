@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang='es'>
+<head>
+<meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<title>Competidores — GitLab Transcend &quot;Life After Code&quot;: Joule Thief</title>
+<style>
+:root {
+  --bg: #fbfaf8; --fg: #1a1b1e; --dim: #62656b; --line: #e2e0dc; --card: #ffffff;
+  --fuerte: #1f7a4d; --fuerte-bg: #e6f4ec;
+  --cumple: #2f6f9f; --cumple-bg: #e7f0f8;
+  --flojo: #9a6212; --flojo-bg: #fbf0dd;
+  --ausente: #a13b32; --ausente-bg: #fbeae8;
+  --sin: #6b3fa0; --sin-bg: #f0e9f9;
+}
+* { box-sizing: border-box; }
+html { color-scheme: light; }
+body {
+  margin: 0; padding: 32px 16px 64px; background: var(--bg); color: var(--fg);
+  font: 15px/1.6 ui-sans-serif, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+}
+main { max-width: 1040px; margin: 0 auto; }
+h1 { font-size: 1.7rem; margin: 0 0 4px; letter-spacing: -0.01em; }
+h2 { font-size: 1.15rem; margin: 36px 0 10px; }
+h3 { font-size: 1rem; margin: 24px 0 8px; color: var(--dim); }
+p { margin: 10px 0; }
+hr { border: 0; border-top: 1px solid var(--line); margin: 28px 0; }
+a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+code {
+  font: 0.86em ui-monospace, SFMono-Regular, Menlo, monospace;
+  background: var(--card); border: 1px solid var(--line); border-radius: 4px; padding: 1px 5px;
+}
+blockquote {
+  margin: 16px 0; padding: 12px 16px; border-left: 3px solid var(--sin);
+  background: var(--sin-bg); border-radius: 0 6px 6px 0;
+}
+blockquote p { margin: 0; }
+.wrap { overflow-x: auto; margin: 14px 0; border: 1px solid var(--line); border-radius: 8px; }
+table { border-collapse: separate; border-spacing: 0; width: 100%; font-size: 0.9rem; background: var(--card); }
+th, td { border-bottom: 1px solid var(--line); padding: 6px 10px; text-align: left; vertical-align: top; }
+td + td, th + th { border-left: 1px solid var(--line); }
+tbody tr:last-child td { border-bottom: 0; }
+th {
+  position: sticky; top: 0; z-index: 1; background: #f1eee9;
+  font-weight: 600; white-space: nowrap; border-bottom: 2px solid var(--line);
+}
+tbody tr:nth-child(even) { background: #f7f5f2; }
+tbody tr:hover { background: #eef4fb; }
+table.sortable th { cursor: pointer; user-select: none; }
+table.sortable th::after { content: " \2195"; color: var(--dim); font-size: 0.8em; }
+table.sortable th.asc::after { content: " \2191"; color: var(--fg); }
+table.sortable th.desc::after { content: " \2193"; color: var(--fg); }
+.v { font-weight: 600; border-radius: 4px; padding: 1px 7px; white-space: nowrap; display: inline-block; }
+.v-fuerte { color: var(--fuerte); background: var(--fuerte-bg); }
+.v-cumple { color: var(--cumple); background: var(--cumple-bg); }
+.v-flojo { color: var(--flojo); background: var(--flojo-bg); }
+.v-ausente { color: var(--ausente); background: var(--ausente-bg); }
+.v-sin-evidencia { color: var(--sin); background: var(--sin-bg); outline: 1px dashed var(--sin); }
+details {
+  border: 1px solid var(--line); border-radius: 8px; margin: 12px 0;
+  padding: 0 16px; background: var(--card);
+}
+details[open] { padding-bottom: 12px; }
+summary {
+  cursor: pointer; padding: 12px 0; font-size: 1.05rem; font-weight: 600; list-style-position: outside;
+}
+.pie { color: var(--dim); font-size: 0.85rem; margin-top: 40px; }
+@media print {
+  body { background: #fff; color: #000; padding: 0; }
+  details { break-inside: avoid; }
+  details:not([open]) > *:not(summary) { display: revert; }
+  table.sortable th { cursor: auto; }
+}
+</style>
+</head>
+<body>
+<main>
+<h1>Competidores — GitLab Transcend &quot;Life After Code&quot;: Joule Thief</h1>
+<div class='wrap'><table><thead><tr><th></th><th></th></tr></thead><tbody><tr><td>Fecha</td><td>2026-11-17 (concurso ya cerrado; se mide el estado final)</td></tr><tr><td>Modo</td><td>hackathon</td></tr><tr><td>Evaluados</td><td>1 (+ Plumb como control) · clonados 1 · <strong>nada se ejecuto</strong></td></tr><tr><td>Ventana</td><td>submissions 2026-10-05 → 2026-10-27 13:00 UTC</td></tr></tbody></table></div>
+<h2>En criollo</h2>
+<ul><li><strong>Que se miro:</strong> el repo de Joule Thief en GitLab, su ficha de Devpost, su demo en vivo y sus agentes de Duo, con las mismas sondas que Plumb.</li><li><strong>Quien es la amenaza:</strong> Joule Thief, alta. Tiene 4 flujos de Duo contra 1 de Plumb, un ciclo de punta a punta (de la tarea al deploy firmado) y un demo en Google Cloud que responde.</li><li><strong>Como estamos:</strong> Plumb es mas profundo en un solo problema (arreglar tests inestables y probarlo 50 veces); Joule Thief cubre mas terreno y gana en 3 de 5 criterios.</li><li><strong>Que conviene hacer:</strong> el concurso ya cerro; lo util es arreglar lo que el jurado todavia pueda ver: la pagina del proyecto de Plumb pide iniciar sesion en GitLab (403 anonimo) [13].</li></ul>
+<p><strong>Pesos del jurado</strong> (<code>docs/judging.tsv</code>; Stage One es pasa/no pasa y el bonus de Google Cloud suma +0.2):</p>
+<div class='wrap'><table><thead><tr><th>Criterio</th><th>Peso</th><th>Secciones que lo responden</th></tr></thead><tbody><tr><td>Technological Implementation</td><td>20%</td><td>4, 5, 6, 10</td></tr><tr><td>Design</td><td>20%</td><td>4, 6</td></tr><tr><td>Potential Impact</td><td>20%</td><td>1, 6</td></tr><tr><td>Innovation/Idea</td><td>20%</td><td>7, 4</td></tr><tr><td>Presentation</td><td>20%</td><td>1, 8</td></tr><tr><td>Google Cloud bonus</td><td>+0.2</td><td>9, 11</td></tr></tbody></table></div>
+<p><strong>Lo que no se pudo ver</strong> — el margen de error de todo lo que sigue:</p>
+<ul><li>Duracion y contenido real del video de Joule Thief: YouTube respondio 303 y no se miro el video [7]. Beneficio de la duda para el rival.</li><li>Si Joule Thief marco el premio &quot;Most Environmentally Impactful&quot; en el formulario: no es publico. Su METHODOLOGY dice que es &quot;la base de ese write-up&quot; [10].</li><li>Los numeros de energia son modelados con coeficientes estandar, no medidos con medidor: el propio repo lo dice (<code>measured: true\|false</code>, &quot;todo el cloud energy es modelado&quot;) [10]. No se reprodujo ninguno porque no se ejecuta codigo ajeno.</li></ul>
+<hr>
+<h2>Tabla comparativa</h2>
+<p>Escala: <code><span class="v v-fuerte">fuerte</span></code> · <code><span class="v v-cumple">cumple</span></code> · <code><span class="v v-flojo">flojo</span></code> · <code><span class="v v-ausente">ausente</span></code> (se miro y no esta) · <code><span class="v v-sin-evidencia">sin evidencia</span></code> (no se pudo ver).</p>
+<div class='wrap'><table class="sortable"><thead><tr><th>Proyecto</th><th>Nicho</th><th>Technological Implementation</th><th>Design</th><th>Impact</th><th>Innovation</th><th>Presentation</th><th>Nota</th><th>Amenaza</th></tr></thead><tbody><tr><td><code>joule-thief</code></td><td>Agentes que esperan energia limpia, ciclo de 9 etapas</td><td><span class="v v-fuerte">fuerte</span></td><td><span class="v v-fuerte">fuerte</span></td><td><span class="v v-cumple">cumple</span></td><td><span class="v v-fuerte">fuerte</span></td><td><span class="v v-fuerte">fuerte</span></td><td>4.8/5</td><td>alta</td></tr><tr><td>Plumb (propio)</td><td>Arregla un <code>main</code> rojo por tests inestables y lo prueba 50 veces</td><td><span class="v v-cumple">cumple</span></td><td><span class="v v-cumple">cumple</span></td><td><span class="v v-cumple">cumple</span></td><td><span class="v v-fuerte">fuerte</span></td><td><span class="v v-cumple">cumple</span></td><td>4.2/5</td><td>—</td></tr></tbody></table></div>
+<p><strong>Amenaza</strong> es contra Plumb: los dos compiten por el mismo premio unico de US$5.000 en Path A, Hands-off. Joule Thief no se pisa en el nicho (energia, no tests inestables), pero un jurado compara ambos en los mismos 5 criterios.</p>
+<hr>
+<details><summary><code>gitlab-ai-hackathon/transcend-october-2026/39253963/joule-thief</code> — Joule Thief</summary>
+<p><strong>Que hace:</strong> agentes de Duo que toman tareas diferibles (actualizar dependencias, refactors, escaneos) y las lanzan solo cuando la red electrica tiene energia limpia sobrante, sin humano, con el plazo de la tarea como tope.</p>
+<div class='wrap'><table><thead><tr><th></th><th></th></tr></thead><tbody><tr><td>Repo</td><td>proyecto 87421067 · creado 2026-10-09 · Python · MIT · publico · no es fork [1]</td></tr><tr><td>Demo</td><td><code>joule-thief-l27mx24tga-lz.a.run.app</code> · 200 en 4.54 s (arranque en frio) [7]</td></tr><tr><td>Devpost</td><td><code>joule-thief</code> · video si (YouTube <code>We71EiCPS_U</code>, no visto) [14]</td></tr><tr><td>Equipo</td><td>1 persona (Marc Donovici, 50 commits) + cuenta del flow <code>surge-worker</code> (27) [5]</td></tr><tr><td>Historial</td><td>primer commit 2026-10-06 (posterior a la apertura) · 77 commits · previos al evento: no [5]</td></tr></tbody></table></div>
+<div class='wrap'><table><thead><tr><th>Criterio</th><th>Veredicto</th><th>Evidencia</th></tr></thead><tbody><tr><td>Stage One (usa Duo)</td><td><strong>pasa, <span class="v v-fuerte">fuerte</span></strong></td><td>4 flujos + 2 agentes + MCP en <code>.gitlab/duo/</code> [2]; 55 pipelines <code>duo_workflow</code>, 55 en verde [3]</td></tr><tr><td>Technological Implementation 20%</td><td><span class="v v-fuerte">fuerte</span></td><td>98 tests en 13 archivos, 8.493 lineas Python sin datos [8]; 530 de 564 pipelines en verde, 22 rojos [4]; escaneos SAST, secretos, dependencias, ZAP y 20.000 casos de fuzz [9]</td></tr><tr><td>Design 20%</td><td><span class="v v-fuerte">fuerte</span></td><td>ciclo issue → MR → compuertas → recibo firmado (Sigstore) → canary → deploy → nota &quot;Shipped&quot; [9]; MR !1 mergeado 09:08 con pipeline <code>success</code> [6]</td></tr><tr><td>Potential Impact 20%</td><td><span class="v v-cumple">cumple</span></td><td>-85% J/request medido en !1; replays: -20 a -30% carbono, 0 plazos perdidos [9]; el propio README admite que en vivo &quot;el trabajo movio de hora, no la electricidad&quot; y que sin runner propio el balance es &quot;cerca de neutral&quot; [10]</td></tr><tr><td>Innovation 20%</td><td><span class="v v-fuerte">fuerte</span></td><td>agenda por senal marginal de la red con solver CP-SAT y plazo duro; es un enfoque que Plumb no toca [9]</td></tr><tr><td>Presentation 20%</td><td><span class="v v-fuerte">fuerte</span></td><td>README con linea de tiempo enlazada a objetos reales, 6 imagenes, sala de control en vivo [2][7]; video sin ver</td></tr><tr><td>Google Cloud bonus</td><td>+0.2</td><td>Cloud Run con <code>gcloud run deploy</code> en <code>.gitlab-ci.yml</code> y OpenTofu en <code>infra/terraform/</code> (231 lineas) [2][7]</td></tr><tr><td>Cuantificacion SCI (premio ambiental)</td><td><span class="v v-cumple">cumple</span>, con limite</td><td>ISO/IEC 21031:2024 y SCI for AI, rangos bajo/probable/alto, energia modelada [10]; la ventaja de agenda no se realiza en vivo [10]</td></tr><tr><td>Seguridad</td><td><span class="v v-cumple">cumple</span></td><td>0 archivos <code>.env</code>/<code>.pem</code> en el historial, 0 patrones de credencial en el arbol [11]</td></tr></tbody></table></div>
+<p><strong>Lo mas <span class="v v-fuerte">fuerte</span>:</strong> 4 flujos de Duo que reaccionan a disparadores reales (issue creado, pipeline fallido) y 55 corridas en verde [3].</p>
+<p><strong>Donde se cae:</strong> el ahorro de carbono &quot;en vivo&quot; no ocurre (runners en us-east1, red espanola leida); el numero <span class="v v-fuerte">fuerte</span> son replays con datos sinteticos [10].</p>
+<p><strong><span class="v v-sin-evidencia">sin evidencia</span>:</strong> contenido del video y si se anoto al premio ambiental.</p>
+<p><strong>Prueba de que Duo trabajo y no un humano:</strong> 27 commits firmados por <code>surge-worker</code> [5]; !1 lo mergeo la cuenta <code>ai-surge-worker</code> con un job de CI en <code>success</code> antes del <code>merged_at</code> [6]. Los 14 MR figuran con autor humano <code>Marc_DVCI</code>, que solo prueba quien disparo el flow [6].</p>
+</details>
+<hr>
+<h2>Donde queda Plumb</h2>
+<div class='wrap'><table><thead><tr><th>Criterio</th><th>Plumb</th><th><code>joule-thief</code></th></tr></thead><tbody><tr><td>Flujos Duo propios</td><td>1 (<code>triage-flow.yml</code>) [12]</td><td>4 + 2 agentes + MCP [2]</td></tr><tr><td>Pipelines <code>duo_workflow</code></td><td>43; de 239 pipelines del proyecto, 197 en verde y 41 rojos a proposito (suite inestable) [12]</td><td>55, todos en verde [3]</td></tr><tr><td>Tests</td><td>59 casos, 13 archivos [12]</td><td>98 casos, 13 archivos [8]</td></tr><tr><td>Codigo (lineas JS/TS/PY/YML)</td><td>2.636 [12]</td><td>8.493 (solo Python) [8]</td></tr><tr><td>Commits</td><td>160 (137 humano, 20 flow) [12]</td><td>77 (50 humano, 27 flow) [5]</td></tr><tr><td>Demo en vivo</td><td>Cloud Run 200 en 0.31 s [12]</td><td>Cloud Run 200 en 4.54 s [7]</td></tr><tr><td>Pagina del proyecto</td><td><strong>403 sin sesion</strong> [13]</td><td>no tiene (README)</td></tr><tr><td>Prueba cuantitativa propia</td><td>50 de 50 corridas, 33/50 de control negativo [12]</td><td>-85% J/request, replays [9]</td></tr></tbody></table></div>
+<p>Notas 1-5 por criterio (Joule Thief / Plumb), con la misma vara:</p>
+<div class='wrap'><table><thead><tr><th>Criterio</th><th>Joule Thief</th><th>Plumb</th><th>Evidencia que la sostiene</th></tr></thead><tbody><tr><td>Technological Implementation</td><td>5</td><td>4</td><td>98 vs 59 tests; 4 flujos vs 1; 530/564 verde [3][4][8][12]</td></tr><tr><td>Design</td><td>5</td><td>4</td><td>9 etapas con recibo firmado vs bucle rojo → fix → deploy de un solo problema [9][12]</td></tr><tr><td>Potential Impact</td><td>4</td><td>4</td><td>JT admite balance &quot;cerca de neutral&quot; sin runner propio [10]; Plumb cita 84% de transiciones inestables en Google, 9 min 47 s sin humano [12]</td></tr><tr><td>Innovation/Idea</td><td>5</td><td>5</td><td>JT agenda por senal de red; Plumb arregla y prueba en vez de reintentar [9][12]</td></tr><tr><td>Presentation</td><td>5</td><td>4</td><td>JT: README con linea de tiempo y demo vivo; Plumb: video 2:23 pero pagina del proyecto en 403 [13]</td></tr><tr><td>Bonus Google Cloud</td><td>+0.2</td><td>+0.2</td><td>ambos con deploy a Cloud Run vivo (200) y codigo de deploy en el repo [7][12]</td></tr></tbody></table></div>
+<p>Total sin bonus: Joule Thief 24/25 (4.8), Plumb 21/25 (4.2). Nota: <code>docs/JUDGING-MOCK.md</code> da 4.6 a Plumb; con las sondas de este informe baja porque 59 tests y 1 flujo no son &quot;<span class="v v-fuerte">fuerte</span>&quot; frente a 98 tests y 4 flujos, y porque la pagina del proyecto no abre sin sesion.</p>
+<h3>Sugerencias</h3>
+<div class='wrap'><table><thead><tr><th>#</th><th>Sugerencia</th><th>Por que importa</th><th>Criterio (peso)</th><th>Origen</th><th>Evidencia</th><th>Esfuerzo</th><th>Mueve nota</th></tr></thead><tbody><tr><td>S-01</td><td>Dejar publica la pagina <code>showcase-8b103c.gitlab.io</code> (Pages: visibilidad &quot;Everyone&quot;)</td><td>Un jurado que la abre cae en el login de GitLab</td><td>Presentation (20%)</td><td>brecha</td><td>Plumb: 403 tras redirigir a <code>sign_in</code> [13]</td><td>bajo</td><td>si</td></tr><tr><td>S-02</td><td>Sumar tests a <code>tools/</code> y a <code>ci/</code> y publicar el conteo en el README</td><td>El rival muestra 98 casos y plumb 59</td><td>Technological Implementation (20%)</td><td>brecha</td><td>98 vs 59 [8][12]</td><td>medio</td><td>si</td></tr><tr><td>S-03</td><td>Evaluar un segundo flujo o agente de Duo para otro paso del ciclo (hoy solo reacciona a pipeline rojo)</td><td>JT muestra 4 flujos que cubren plan, verificar y reparar; Plumb 1</td><td>Technological Implementation (20%)</td><td>brecha</td><td>4 vs 1 [2][12]</td><td>alto</td><td>si</td></tr><tr><td>S-04</td><td>Subir a las primeras 40 lineas del README la cifra de costo por incidente (mediana 9.5 min de CI, de <code>docs/RESULTS.md</code>)</td><td>JT abre con &quot;-85%&quot; y &quot;~2 Wh&quot;</td><td>Potential Impact (20%)</td><td>brecha</td><td>README de JT, primeras 40 lineas [9]</td><td>bajo</td><td>si</td></tr><tr><td>S-05</td><td>Destacar en el README el uso de Plumb en un segundo proyecto (epic-stack, un solo <code>include: project</code>)</td><td>JT tiene un componente para cualquier proyecto</td><td>Potential Impact (20%)</td><td>brecha</td><td><code>templates/grid-window</code> en JT [2]</td><td>bajo</td><td>si</td></tr><tr><td>S-06</td><td>Subir estrellas o topics</td><td>ninguno pondera el jurado</td><td>—</td><td>—</td><td>JT tiene 0 estrellas [1]</td><td>bajo</td><td><strong>cosmetico</strong></td></tr></tbody></table></div>
+<blockquote><p>Control de sesgo: Plumb se midio con las mismas sondas y salio peor que el rival en 4 de 6 filas del cuadro. Las tres celdas mas comodas para Plumb (Innovation, bonus Google Cloud, demo vivo) se re-midieron: 200 en 0.31 s contra 200 en 4.54 s [7][12].</p></blockquote>
+<hr>
+<details><summary>Apendice — como se midio</summary>
+<p>Ruta del scratchpad: <code>$S</code>. <code>P</code> = <code>gitlab-ai-hackathon%2Ftranscend-october-2026%2F39253963%2Fjoule-thief</code>; <code>I</code> = 87421067 (el 39253963 del path es el usuario, no el proyecto: da 404 como <code>projects/39253963</code>).</p>
+<div class='wrap'><table><thead><tr><th>Ref</th><th>Comando</th></tr></thead><tbody><tr><td>[1]</td><td><code>glab api &quot;projects/$P&quot; \| jq &#x27;{id,created_at,last_activity_at,visibility,forked_from_project,star_count}&#x27;</code></td></tr><tr><td>[2]</td><td><code>glab api &quot;projects/$I/repository/tree?recursive=true&amp;per_page=100&quot; --paginate \| jq -r &#x27;.[].path&#x27;</code> (169 rutas)</td></tr><tr><td>[3]</td><td><code>glab api -i &quot;projects/$I/pipelines?source=duo_workflow&amp;per_page=100&quot;</code> (X-Total 55) y <code>jq &#x27;[.[]\|select(.status!=&quot;success&quot;)]\|length&#x27;</code> (0)</td></tr><tr><td>[4]</td><td><code>glab api &quot;projects/$I/pipelines?per_page=100&quot; --paginate \| jq -r &#x27;.[].status&#x27; \| sort \| uniq -c</code> (530 success, 22 failed, 9 canceled, 3 skipped)</td></tr><tr><td>[5]</td><td><code>glab api &quot;projects/$I/repository/commits?all=true&amp;per_page=100&quot; --paginate \| jq -r &#x27;.[].author_name&#x27; \| sort \| uniq -c</code></td></tr><tr><td>[6]</td><td><code>glab api &quot;projects/$I/merge_requests/1&quot;</code> y <code>.../merge_requests/1/pipelines</code> y <code>.../merge_requests/1/commits</code></td></tr><tr><td>[7]</td><td><code>curl -s -o /dev/null -w &#x27;%{http_code} %{time_total}s&#x27; https://joule-thief-l27mx24tga-lz.a.run.app</code> (200, 4.54 s); <code>curl ... https://youtu.be/We71EiCPS_U</code> (303)</td></tr><tr><td>[8]</td><td>en el clone <code>--depth 50</code>: <code>grep -rcE &#x27;^\s*(async )?def test_&#x27; tests/*.py \| awk -F: &#x27;{s+=$2} END{print s}&#x27;</code> y <code>git ls-files &#x27;*.py&#x27; \| xargs wc -l \| tail -1</code></td></tr><tr><td>[9]</td><td><code>glab api &quot;projects/$I/repository/files/README.md/raw?ref=HEAD&quot;</code> y lectura de <code>.gitlab-ci.yml</code> con <code>grep -nE &#x27;google\|Cloud Run\|tofu\|deploy&#x27;</code></td></tr><tr><td>[10]</td><td>lectura de <code>docs/METHODOLOGY.md</code> y de la seccion &quot;Measured on the live project&quot; del README; <code>grep -n &#x27;measured&#x27; docs/METHODOLOGY.md</code></td></tr><tr><td>[11]</td><td>clone: <code>git log --all --diff-filter=A --name-only --format= \| grep -iE &#x27;\.env$\|\.pem$\|\.p12$\|credentials&#x27;</code> y <code>grep -rlE &#x27;AKIA...\|BEGIN (RSA\|EC )?PRIVATE KEY\|glpat-...&#x27; --exclude-dir=.git .</code> (ambos vacios)</td></tr><tr><td>[12]</td><td>Plumb, mismas sondas sobre <code>projects/87376478</code>: pipelines, commits, tests por <code>grep -rcE &#x27;^\s*(test\|it)\(&#x27; tests/unit tests/e2e</code>, <code>curl</code> a <code>booking-vic4jyzsha-uc.a.run.app</code></td></tr><tr><td>[13]</td><td><code>curl -sL -o /dev/null -D - https://showcase-8b103c.gitlab.io/ \| grep -iE &#x27;^(HTTP\|location)&#x27;</code> (302 → <code>gitlab.com/users/sign_in</code> → 403)</td></tr><tr><td>[14]</td><td><code>curl -s -A &#x27;Mozilla/5.0&#x27; https://devpost.com/software/joule-thief</code> y lectura del texto y del &quot;Built With&quot; (<code>gitlab-duo-agent-platform</code>, <code>google-cloud-run</code>, <code>sigstore</code>, <code>or-tools</code>)</td></tr></tbody></table></div>
+</details>
+<p class='pie'>Generado desde el .md por hackathon-review-competitor. El .md es la fuente: este archivo no se edita a mano.</p>
+</main>
+<script>
+const RANK = {"sin evidencia":0,"ausente":1,"flojo":2,"cumple":3,"fuerte":4,
+              "baja":0,"media":1,"alta":2};
+const key = (td) => {
+  const raw = td.textContent.trim();
+  const low = raw.toLowerCase();
+  for (const word in RANK) if (low.includes(word)) return [0, RANK[word]];
+  const num = parseFloat(raw.replace(",", "."));
+  if (!isNaN(num) && /^[\d.,\s/]+$/.test(raw)) return [0, num];
+  return [1, low];
+};
+document.querySelectorAll("table.sortable th").forEach((th, i) => {
+  th.addEventListener("click", () => {
+    const table = th.closest("table");
+    const body = table.tBodies[0];
+    const desc = !th.classList.contains("desc");
+    table.querySelectorAll("th").forEach(o => o.classList.remove("asc", "desc"));
+    th.classList.add(desc ? "desc" : "asc");
+    [...body.rows]
+      .sort((a, b) => {
+        const [ka, va] = key(a.cells[i]), [kb, vb] = key(b.cells[i]);
+        if (ka !== kb) return ka - kb;
+        const cmp = typeof va === "number" ? va - vb : String(va).localeCompare(String(vb), "es");
+        return desc ? -cmp : cmp;
+      })
+      .forEach(row => body.appendChild(row));
+  });
+});
+</script>
+</body>
+</html>

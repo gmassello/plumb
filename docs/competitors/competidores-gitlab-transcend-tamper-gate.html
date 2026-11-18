@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang='es'>
+<head>
+<meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<title>Competidores — GitLab Transcend &quot;Life After Code&quot;</title>
+<style>
+:root {
+  --bg: #fbfaf8; --fg: #1a1b1e; --dim: #62656b; --line: #e2e0dc; --card: #ffffff;
+  --fuerte: #1f7a4d; --fuerte-bg: #e6f4ec;
+  --cumple: #2f6f9f; --cumple-bg: #e7f0f8;
+  --flojo: #9a6212; --flojo-bg: #fbf0dd;
+  --ausente: #a13b32; --ausente-bg: #fbeae8;
+  --sin: #6b3fa0; --sin-bg: #f0e9f9;
+}
+* { box-sizing: border-box; }
+html { color-scheme: light; }
+body {
+  margin: 0; padding: 32px 16px 64px; background: var(--bg); color: var(--fg);
+  font: 15px/1.6 ui-sans-serif, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+}
+main { max-width: 1040px; margin: 0 auto; }
+h1 { font-size: 1.7rem; margin: 0 0 4px; letter-spacing: -0.01em; }
+h2 { font-size: 1.15rem; margin: 36px 0 10px; }
+h3 { font-size: 1rem; margin: 24px 0 8px; color: var(--dim); }
+p { margin: 10px 0; }
+hr { border: 0; border-top: 1px solid var(--line); margin: 28px 0; }
+a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+code {
+  font: 0.86em ui-monospace, SFMono-Regular, Menlo, monospace;
+  background: var(--card); border: 1px solid var(--line); border-radius: 4px; padding: 1px 5px;
+}
+blockquote {
+  margin: 16px 0; padding: 12px 16px; border-left: 3px solid var(--sin);
+  background: var(--sin-bg); border-radius: 0 6px 6px 0;
+}
+blockquote p { margin: 0; }
+.wrap { overflow-x: auto; margin: 14px 0; border: 1px solid var(--line); border-radius: 8px; }
+table { border-collapse: separate; border-spacing: 0; width: 100%; font-size: 0.9rem; background: var(--card); }
+th, td { border-bottom: 1px solid var(--line); padding: 6px 10px; text-align: left; vertical-align: top; }
+td + td, th + th { border-left: 1px solid var(--line); }
+tbody tr:last-child td { border-bottom: 0; }
+th {
+  position: sticky; top: 0; z-index: 1; background: #f1eee9;
+  font-weight: 600; white-space: nowrap; border-bottom: 2px solid var(--line);
+}
+tbody tr:nth-child(even) { background: #f7f5f2; }
+tbody tr:hover { background: #eef4fb; }
+table.sortable th { cursor: pointer; user-select: none; }
+table.sortable th::after { content: " \2195"; color: var(--dim); font-size: 0.8em; }
+table.sortable th.asc::after { content: " \2191"; color: var(--fg); }
+table.sortable th.desc::after { content: " \2193"; color: var(--fg); }
+.v { font-weight: 600; border-radius: 4px; padding: 1px 7px; white-space: nowrap; display: inline-block; }
+.v-fuerte { color: var(--fuerte); background: var(--fuerte-bg); }
+.v-cumple { color: var(--cumple); background: var(--cumple-bg); }
+.v-flojo { color: var(--flojo); background: var(--flojo-bg); }
+.v-ausente { color: var(--ausente); background: var(--ausente-bg); }
+.v-sin-evidencia { color: var(--sin); background: var(--sin-bg); outline: 1px dashed var(--sin); }
+details {
+  border: 1px solid var(--line); border-radius: 8px; margin: 12px 0;
+  padding: 0 16px; background: var(--card);
+}
+details[open] { padding-bottom: 12px; }
+summary {
+  cursor: pointer; padding: 12px 0; font-size: 1.05rem; font-weight: 600; list-style-position: outside;
+}
+.pie { color: var(--dim); font-size: 0.85rem; margin-top: 40px; }
+@media print {
+  body { background: #fff; color: #000; padding: 0; }
+  details { break-inside: avoid; }
+  details:not([open]) > *:not(summary) { display: revert; }
+  table.sortable th { cursor: auto; }
+}
+</style>
+</head>
+<body>
+<main>
+<h1>Competidores — GitLab Transcend &quot;Life After Code&quot;</h1>
+<div class='wrap'><table><thead><tr><th></th><th></th></tr></thead><tbody><tr><td>Fecha</td><td>2026-11-17</td></tr><tr><td>Modo</td><td>hackathon</td></tr><tr><td>Evaluados</td><td>1 (+ Plumb, el proyecto propio) · clonados 0 · <strong>nada se ejecuto</strong></td></tr><tr><td>Ventana</td><td>submissions 2026-10-05 → 2026-10-27 13:00 UTC (ya cerrada)</td></tr></tbody></table></div>
+<h2>En criollo</h2>
+<ul><li><strong>Que se miro:</strong> Tamper Gate, el rival mas cercano a Plumb, por la API publica de GitLab y su ficha de Devpost. Sin clonar nada.</li><li><strong>Quien es la amenaza:</strong> Tamper Gate, alta. Vigila lo opuesto a Plumb: que un agente no &quot;arregle&quot; un pipeline debilitando las pruebas. Mide su acierto con 175 casos y lo publica.</li><li><strong>Como estamos:</strong> Plumb gana en flujo completo (del pipeline rojo al deploy) y en el bonus de Google Cloud. Tamper Gate empata en casi todo lo demas y es mas riguroso al medir.</li><li><strong>Que conviene hacer:</strong> si las reglas aun dejan tocar la ficha, nombrar a Tamper Gate de frente y cerrar el hueco de Plumb: nada en el codigo impide que su arreglo debilite una prueba.</li></ul>
+<p><strong>Pesos del jurado</strong> (<code>docs/judging.tsv</code>): los cinco criterios valen 20% cada uno; Stage One es pasa/no pasa; Google Cloud suma +0.2.</p>
+<div class='wrap'><table><thead><tr><th>Criterio</th><th>Peso</th><th>Secciones que lo responden</th></tr></thead><tbody><tr><td>Technological Implementation</td><td>20%</td><td>4, 5, 6, 10</td></tr><tr><td>Design</td><td>20%</td><td>1, 4</td></tr><tr><td>Potential Impact</td><td>20%</td><td>1, 6</td></tr><tr><td>Innovation/Idea</td><td>20%</td><td>7, 4</td></tr><tr><td>Presentation</td><td>20%</td><td>1, 8</td></tr><tr><td>Stage One (usa Duo)</td><td>pasa/no</td><td>2</td></tr><tr><td>Bonus Google Cloud</td><td>+0.2</td><td>9, 11</td></tr></tbody></table></div>
+<p><strong>Lo que no se pudo ver</strong> — el margen de error de todo lo que sigue:</p>
+<ul><li>Hoy es 2026-11-17, con el concurso cerrado: no se sabe si se puede editar algo en la etapa de jurado.</li><li>Los dos videos no se vieron (solo titulo y duracion declarada); lo que muestran es <code>sin evidencia</code>.</li><li>Si los tests de Tamper Gate pasan y cuantos asserts tienen: no se clono ni se ejecuto [9].</li><li>La pagina de Plumb y el dashboard de Tamper Gate piden sesion de GitLab para un anonimo [8]: no se sabe que ve un jurado con cuenta.</li><li>Si hay otros rivales con la misma idea: no se barrio el evento, solo este repo.</li></ul>
+<hr>
+<h2>Tabla comparativa</h2>
+<p>Escala: <code><span class="v v-fuerte">fuerte</span></code> · <code><span class="v v-cumple">cumple</span></code> · <code><span class="v v-flojo">flojo</span></code> · <code><span class="v v-ausente">ausente</span></code> (se miro y no esta) · <code><span class="v v-sin-evidencia">sin evidencia</span></code> (no se pudo ver).</p>
+<div class='wrap'><table class="sortable"><thead><tr><th>Proyecto</th><th>Nicho</th><th>Technological</th><th>Design</th><th>Impact</th><th>Innovation</th><th>Presentation</th><th>Stage One</th><th>Google Cloud</th><th>Nota</th><th>Amenaza</th></tr></thead><tbody><tr><td><code>43143384/tamper-gate</code></td><td>guardia de MRs de agentes</td><td><span class="v v-fuerte">fuerte</span></td><td><span class="v v-cumple">cumple</span></td><td><span class="v v-cumple">cumple</span></td><td><span class="v v-fuerte">fuerte</span></td><td><span class="v v-cumple">cumple</span></td><td><span class="v v-cumple">cumple</span></td><td><span class="v v-ausente">ausente</span></td><td>4.4/5</td><td>alta</td></tr><tr><td>Plumb (propio)</td><td>arreglar el main rojo</td><td><span class="v v-fuerte">fuerte</span></td><td><span class="v v-fuerte">fuerte</span></td><td><span class="v v-cumple">cumple</span></td><td><span class="v v-fuerte">fuerte</span></td><td><span class="v v-cumple">cumple</span></td><td><span class="v v-fuerte">fuerte</span></td><td><span class="v v-fuerte">fuerte</span></td><td>4.6/5 +0.2</td><td>—</td></tr></tbody></table></div>
+<p><strong>Amenaza</strong> es contra *tu* entrada: Tamper Gate comparte la categoria (Path A, Hands-off), la idea de que &quot;verde debe significar algo&quot; y el mismo premio unico.</p>
+<hr>
+<details><summary><code>43143384/tamper-gate</code> — Tamper Gate</summary>
+<p><strong>Que hace:</strong> revisa cada cambio que un agente propone y lo frena si hace mas facil pasar las pruebas en vez de arreglar el codigo (tests borrados, saltados, valores esperados editados, umbrales bajados, escaneos de seguridad apagados).</p>
+<div class='wrap'><table><thead><tr><th></th><th></th></tr></thead><tbody><tr><td>Repo</td><td>gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43143384/tamper-gate · creado 2026-10-08 · Python (solo PyYAML) · MIT [1]</td></tr><tr><td>Demo</td><td>no hay sitio vivo; video de 2:40 en YouTube; dashboard en Pages solo para miembros [8]</td></tr><tr><td>Devpost</td><td><code>tamper-gate</code> · video si [2]</td></tr><tr><td>Equipo</td><td>1 persona (93 de 98 commits; los otros 5 los titula el flow) [3]</td></tr><tr><td>Historial</td><td>commit mas antiguo 2026-10-07 · 98 commits · 0 antes de la apertura [3]</td></tr></tbody></table></div>
+<div class='wrap'><table><thead><tr><th>Criterio</th><th>Veredicto</th><th>Evidencia</th></tr></thead><tbody><tr><td>Stage One (Duo)</td><td><span class="v v-cumple">cumple</span></td><td>3 flows propios en <code>flows/</code>; 6 pipelines <code>duo_workflow</code>, todos el 2026-10-08 [4]; 5 commits titulados por el flow [3]</td></tr><tr><td>Technological 20%</td><td><span class="v v-fuerte">fuerte</span></td><td>26 reglas, compara tests con <code>ast</code>; 100 de 100 pipelines de <code>main</code> en verde [5]; 14 archivos de test, 3 corpus [6]</td></tr><tr><td>Design 20%</td><td><span class="v v-cumple">cumple</span></td><td>issue → rama <code>duo/</code> → MR → gate → merge, pero los flows no pueden mergear: lo hace un job programado cada 15 min con el token de una persona [7]</td></tr><tr><td>Impact 20%</td><td><span class="v v-cumple">cumple</span></td><td>problema actual y citado (agentes que tocan tests); es un componente CI reutilizable; solo analiza tests Python con AST [2]</td></tr><tr><td>Innovation 20%</td><td><span class="v v-fuerte">fuerte</span></td><td>&quot;controlar los controles&quot;: corpus ciegos escritos por otros agentes; v2 ciego 59 de 60 tras arreglos, 81,7% antes [6]</td></tr><tr><td>Presentation 20%</td><td><span class="v v-cumple">cumple</span></td><td>video 2:40 publico [2]; capturas de MRs reales; contenido del video <code><span class="v v-sin-evidencia">sin evidencia</span></code></td></tr><tr><td>Google Cloud</td><td><span class="v v-ausente">ausente</span></td><td>0 menciones de Cloud Run o gcloud en README, CI y ficha [5]</td></tr><tr><td>Calidad de codigo</td><td><span class="v v-cumple">cumple</span></td><td>14 archivos de test y ruff configurado; que pasen, <code><span class="v v-sin-evidencia">sin evidencia</span></code> [9]</td></tr><tr><td>Seguridad</td><td><span class="v v-cumple">cumple</span></td><td>0 archivos <code>.env</code> o claves en el arbol [9]; SAST y Secret Detection en el CI</td></tr></tbody></table></div>
+<p><strong>Lo mas <span class="v v-fuerte">fuerte</span>:</strong> mide su propio acierto con 175 casos y publica los fallos: v1 ciego 46,0% antes, 90,0% despues; v2 ciego 98,3% [6].</p>
+<p><strong>Donde se cae:</strong> Duo corrio un solo dia (2026-10-08, 6 pipelines) contra 43 de Plumb entre 2026-10-10 y 2026-10-26 [4]; sin deploy ni nube [5]; el MR !15 sigue abierto con pipeline rojo (es su demo del bloqueo) [7].</p>
+<p><strong><span class="v v-sin-evidencia">sin evidencia</span>:</strong> contenido del video, tests que pasen, si &quot;Assign&quot; a un issue cuenta como &quot;hands-off&quot; para el jurado.</p>
+</details>
+<hr>
+<h2>Donde queda tu proyecto</h2>
+<p>Mismas sondas sobre Plumb. Notas 1-5 por criterio, con la evidencia que las sostiene.</p>
+<div class='wrap'><table><thead><tr><th>Criterio (20% c/u)</th><th>Plumb</th><th>Tamper Gate</th><th>Evidencia</th></tr></thead><tbody><tr><td>Technological Implementation</td><td>5</td><td>5</td><td>Plumb: 43 corridas Duo, 170 pipelines en <code>main</code>, prueba de 50 corridas, deploy y checks en vivo [4][10]. TG: 26 reglas, 3 corpus, 100/100 verdes [5][6]</td></tr><tr><td>Design</td><td>5</td><td>4</td><td>Plumb: rojo → veredicto → fix → prueba → merge → deploy → nota [10]. TG: sin deploy, merge via job programado con token humano [7]</td></tr><tr><td>Potential Impact</td><td>4</td><td>4</td><td>Plumb: segundo proyecto (epic-stack) donde ningun arreglo se sostuvo [10]. TG: solo Python, riesgo de agentes que ya es tema [2]</td></tr><tr><td>Innovation/Idea</td><td>5</td><td>5</td><td>Plumb: arreglar y probar 50 de 50 en vez de reintentar o aislar [10]. TG: corpus ciegos, controlar los controles [6]</td></tr><tr><td>Presentation</td><td>4</td><td>4</td><td>Plumb: video 2:23 con presentador de IA, pagina que pide sesion a un anonimo [8][10]. TG: video 2:40, dashboard solo miembros [2][8]</td></tr><tr><td><strong>Promedio</strong></td><td><strong>4.6</strong></td><td><strong>4.4</strong></td><td>23/5 y 22/5</td></tr><tr><td>Bonus Google Cloud</td><td>+0.2</td><td>0</td><td>Plumb: Cloud Run responde 200 en 0.30 s, deploy en <code>.gitlab-ci.yml</code> [10]. TG: 0 menciones [5]</td></tr></tbody></table></div>
+<div class='wrap'><table><thead><tr><th>Medicion</th><th>Plumb</th><th><code>tamper-gate</code></th></tr></thead><tbody><tr><td>Corridas de Duo en el proyecto</td><td>43, de 2026-10-10 a 2026-10-26 [4]</td><td>6, todas 2026-10-08 [4]</td></tr><tr><td>Casos de evaluacion publicados</td><td>12 de 12 (QA-06, 4 escenarios, no ciego) [10]</td><td>175 casos, dos conjuntos ciegos [6]</td></tr><tr><td>Tests</td><td>54 unitarios + 5 e2e [10]</td><td>14 archivos, resultado <code><span class="v v-sin-evidencia">sin evidencia</span></code> [9]</td></tr><tr><td>Commits / personas</td><td>50 / 1 [10]</td><td>98 / 1 [3]</td></tr><tr><td>Endpoint desplegado</td><td>Cloud Run, 200 en 0.30 s [10]</td><td>no hay [5]</td></tr><tr><td>Control sobre debilitar tests</td><td>solo en el texto del prompt [11]</td><td>codigo, 26 reglas [6]</td></tr></tbody></table></div>
+<h3>Sugerencias</h3>
+<p>El concurso cerro el 2026-10-27: cada una vale solo si las reglas dejan editar en la etapa de jurado.</p>
+<div class='wrap'><table><thead><tr><th>#</th><th>Sugerencia</th><th>Por que importa</th><th>Criterio (peso)</th><th>Origen</th><th>Evidencia</th><th>Esfuerzo</th><th>Mueve nota</th></tr></thead><tbody><tr><td>S-01</td><td>Chequear en codigo que un fix de Plumb no baje asserts ni agregue skip antes de mergear</td><td>Hoy &quot;no debilitar la prueba&quot; es solo una frase al modelo; un fix debil pasa 50 de 50</td><td>Technological (20%)</td><td>brecha</td><td>TG lo hace con 26 reglas [6]; en Plumb solo aparece en el prompt del flow [11]</td><td>medio</td><td>si</td></tr><tr><td>S-02</td><td>Verificar que un anonimo o un miembro del grupo ve la pagina de Plumb, y avisar en la ficha si no</td><td>La pagina redirige a inicio de sesion (403 anonimo) y Presentation pesa 20%</td><td>Presentation (20%)</td><td>hueco</td><td><code>curl -L</code> termina en <code>users/sign_in</code> 403 [8]</td><td>bajo</td><td>si</td></tr><tr><td>S-03</td><td>Nombrar a Tamper Gate en la ficha: Plumb prueba que el arreglo es real, TG vigila que no sea trampa</td><td>Un jurado que vea los dos los junta; conviene que el cruce lo escriba Plumb</td><td>Innovation (20%)</td><td>brecha</td><td>la ficha de Plumb nombra a FlakeHunter y no a TG [11]</td><td>bajo</td><td>si</td></tr><tr><td>S-04</td><td>Publicar una evaluacion ciega del veredicto de flaky, no solo QA-06</td><td>TG convierte su rigor en puntos de Innovation y Technological</td><td>Technological (20%)</td><td>brecha</td><td>175 casos con dos conjuntos ciegos contra 12 de 12 en 4 escenarios [6][10]</td><td>alto</td><td>si</td></tr><tr><td>S-05</td><td>Subir estrellas o topics</td><td>Ningun criterio los mide</td><td>—</td><td>—</td><td>—</td><td>bajo</td><td><strong>cosmetico</strong></td></tr></tbody></table></div>
+<blockquote><p>Control de sesgo: Plumb no sale mejor en todo. Empata en 3 de 5 criterios, pierde en rigor de evaluacion y su pagina tiene el mismo problema de acceso que el dashboard rival. Se revisaron las tres celdas mas comodas (Tech, Design, Impact): Design se bajo a 4 para TG por evidencia, no por simpatia. El mock propio daba 5 a Design y Tech; aqui Plumb queda 4.6 con la vara aplicada a ambos.</p></blockquote>
+<hr>
+<details><summary>Apendice — como se midio</summary>
+<div class='wrap'><table><thead><tr><th>Ref</th><th>Comando</th></tr></thead><tbody><tr><td>[1]</td><td><code>glab api projects/&lt;id&gt;</code> (creado, licencia nula) y <code>glab api projects/&lt;id&gt;/repository/files/LICENSE/raw?ref=main</code> (texto MIT)</td></tr><tr><td>[2]</td><td><code>curl -A &lt;navegador&gt; https://devpost.com/software/tamper-gate</code> y <code>curl &#x27;https://www.youtube.com/oembed?url=https://youtu.be/MuFV0CgFGCc&amp;format=json&#x27;</code></td></tr><tr><td>[3]</td><td><code>glab api &quot;projects/&lt;id&gt;/repository/commits?per_page=100&amp;all=true&quot;</code> y <code>glab api projects/&lt;id&gt;/repository/contributors</code>; <code>commits?until=2026-10-05</code> devuelve 0</td></tr><tr><td>[4]</td><td><code>glab api -i &quot;projects/&lt;id&gt;/pipelines?source=duo_workflow&amp;per_page=100&quot;</code> (X-Total, <code>created_at</code> en cliente); Plumb 43, TG 6</td></tr><tr><td>[5]</td><td><code>glab api &quot;projects/&lt;id&gt;/pipelines?ref=main&amp;per_page=100&quot;</code> y <code>grep -ciE &#x27;cloud run\|gcloud&#x27;</code> sobre <code>.gitlab-ci.yml</code>, README y ficha</td></tr><tr><td>[6]</td><td><code>glab api .../repository/files/eval%2Fresults.md/raw</code> y <code>heldout-v2-after.md</code>; README secciones corpus (65, 50, 60 casos)</td></tr><tr><td>[7]</td><td><code>glab api projects/&lt;id&gt;/merge_requests?state=all</code> y <code>merge_requests/15</code>; <code>docs/duo.md</code> secciones Merge control y Tested on GitLab.com</td></tr><tr><td>[8]</td><td><code>curl -sL -o /dev/null -w &#x27;%{http_code} %{url_effective}&#x27; https://showcase-8b103c.gitlab.io/</code> (403, <code>users/sign_in</code>); README de TG lineas 318-323</td></tr><tr><td>[9]</td><td><code>glab api .../repository/tree?recursive=true</code> filtrado a blobs: <code>grep -ciE &#x27;\.env$\|credentials\|\.pem$&#x27;</code> = 0, <code>grep -c tests/</code> = 14 archivos</td></tr><tr><td>[10]</td><td><code>glab api -i</code> sobre Plumb: duo_workflow 43, <code>ref=main</code> 170, MRs mergeados 12; <code>curl -o /dev/null -w &#x27;%{http_code} %{time_total}s&#x27;</code> a la URL de Cloud Run; <code>grep -rcE</code> de tests en <code>tests/unit</code></td></tr><tr><td>[11]</td><td><code>grep -niE &#x27;tamper\|fixme\|\.skip\|weaken&#x27; README.md docs/submission.md ci/plumb.gitlab-ci.yml tools/*.mjs</code>: solo el prompt de <code>.gitlab/duo/triage-flow.yml</code> lo menciona</td></tr></tbody></table></div>
+</details>
+<p class='pie'>Generado desde el .md por hackathon-review-competitor. El .md es la fuente: este archivo no se edita a mano.</p>
+</main>
+<script>
+const RANK = {"sin evidencia":0,"ausente":1,"flojo":2,"cumple":3,"fuerte":4,
+              "baja":0,"media":1,"alta":2};
+const key = (td) => {
+  const raw = td.textContent.trim();
+  const low = raw.toLowerCase();
+  for (const word in RANK) if (low.includes(word)) return [0, RANK[word]];
+  const num = parseFloat(raw.replace(",", "."));
+  if (!isNaN(num) && /^[\d.,\s/]+$/.test(raw)) return [0, num];
+  return [1, low];
+};
+document.querySelectorAll("table.sortable th").forEach((th, i) => {
+  th.addEventListener("click", () => {
+    const table = th.closest("table");
+    const body = table.tBodies[0];
+    const desc = !th.classList.contains("desc");
+    table.querySelectorAll("th").forEach(o => o.classList.remove("asc", "desc"));
+    th.classList.add(desc ? "desc" : "asc");
+    [...body.rows]
+      .sort((a, b) => {
+        const [ka, va] = key(a.cells[i]), [kb, vb] = key(b.cells[i]);
+        if (ka !== kb) return ka - kb;
+        const cmp = typeof va === "number" ? va - vb : String(va).localeCompare(String(vb), "es");
+        return desc ? -cmp : cmp;
+      })
+      .forEach(row => body.appendChild(row));
+  });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang='es'>
+<head>
+<meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<title>Competidores — GitLab Transcend &quot;Life After Code&quot; (post-mortem de ShakeFix)</title>
+<style>
+:root {
+  --bg: #fbfaf8; --fg: #1a1b1e; --dim: #62656b; --line: #e2e0dc; --card: #ffffff;
+  --fuerte: #1f7a4d; --fuerte-bg: #e6f4ec;
+  --cumple: #2f6f9f; --cumple-bg: #e7f0f8;
+  --flojo: #9a6212; --flojo-bg: #fbf0dd;
+  --ausente: #a13b32; --ausente-bg: #fbeae8;
+  --sin: #6b3fa0; --sin-bg: #f0e9f9;
+}
+* { box-sizing: border-box; }
+html { color-scheme: light; }
+body {
+  margin: 0; padding: 32px 16px 64px; background: var(--bg); color: var(--fg);
+  font: 15px/1.6 ui-sans-serif, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+}
+main { max-width: 1040px; margin: 0 auto; }
+h1 { font-size: 1.7rem; margin: 0 0 4px; letter-spacing: -0.01em; }
+h2 { font-size: 1.15rem; margin: 36px 0 10px; }
+h3 { font-size: 1rem; margin: 24px 0 8px; color: var(--dim); }
+p { margin: 10px 0; }
+hr { border: 0; border-top: 1px solid var(--line); margin: 28px 0; }
+a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+code {
+  font: 0.86em ui-monospace, SFMono-Regular, Menlo, monospace;
+  background: var(--card); border: 1px solid var(--line); border-radius: 4px; padding: 1px 5px;
+}
+blockquote {
+  margin: 16px 0; padding: 12px 16px; border-left: 3px solid var(--sin);
+  background: var(--sin-bg); border-radius: 0 6px 6px 0;
+}
+blockquote p { margin: 0; }
+.wrap { overflow-x: auto; margin: 14px 0; border: 1px solid var(--line); border-radius: 8px; }
+table { border-collapse: separate; border-spacing: 0; width: 100%; font-size: 0.9rem; background: var(--card); }
+th, td { border-bottom: 1px solid var(--line); padding: 6px 10px; text-align: left; vertical-align: top; }
+td + td, th + th { border-left: 1px solid var(--line); }
+tbody tr:last-child td { border-bottom: 0; }
+th {
+  position: sticky; top: 0; z-index: 1; background: #f1eee9;
+  font-weight: 600; white-space: nowrap; border-bottom: 2px solid var(--line);
+}
+tbody tr:nth-child(even) { background: #f7f5f2; }
+tbody tr:hover { background: #eef4fb; }
+table.sortable th { cursor: pointer; user-select: none; }
+table.sortable th::after { content: " \2195"; color: var(--dim); font-size: 0.8em; }
+table.sortable th.asc::after { content: " \2191"; color: var(--fg); }
+table.sortable th.desc::after { content: " \2193"; color: var(--fg); }
+.v { font-weight: 600; border-radius: 4px; padding: 1px 7px; white-space: nowrap; display: inline-block; }
+.v-fuerte { color: var(--fuerte); background: var(--fuerte-bg); }
+.v-cumple { color: var(--cumple); background: var(--cumple-bg); }
+.v-flojo { color: var(--flojo); background: var(--flojo-bg); }
+.v-ausente { color: var(--ausente); background: var(--ausente-bg); }
+.v-sin-evidencia { color: var(--sin); background: var(--sin-bg); outline: 1px dashed var(--sin); }
+details {
+  border: 1px solid var(--line); border-radius: 8px; margin: 12px 0;
+  padding: 0 16px; background: var(--card);
+}
+details[open] { padding-bottom: 12px; }
+summary {
+  cursor: pointer; padding: 12px 0; font-size: 1.05rem; font-weight: 600; list-style-position: outside;
+}
+.pie { color: var(--dim); font-size: 0.85rem; margin-top: 40px; }
+@media print {
+  body { background: #fff; color: #000; padding: 0; }
+  details { break-inside: avoid; }
+  details:not([open]) > *:not(summary) { display: revert; }
+  table.sortable th { cursor: auto; }
+}
+</style>
+</head>
+<body>
+<main>
+<h1>Competidores — GitLab Transcend &quot;Life After Code&quot; (post-mortem de ShakeFix)</h1>
+<div class='wrap'><table><thead><tr><th></th><th></th></tr></thead><tbody><tr><td>Fecha</td><td>2026-11-18</td></tr><tr><td>Modo</td><td>hackathon (post-mortem: ShakeFix ganó &quot;Path A | Best Hands-off Agent&quot;, Plumb no)</td></tr><tr><td>Evaluados</td><td>1 (<code>nxt-spacenos-global/shakefix</code>) + Plumb como control · clonados 1 · <strong>nada se ejecutó</strong></td></tr><tr><td>Ventana</td><td>apertura 2026-10-05 → cierre 2026-10-27 13:00 UTC</td></tr></tbody></table></div>
+<h2>En criollo</h2>
+<ul><li><strong>Qué se miró:</strong> el repo de ShakeFix en GitLab, su ficha de Devpost, su video y sus sitios publicados, con las mismas sondas que Plumb.</li><li><strong>Por qué ganó:</strong> ShakeFix tiene una persona concreta (Margaret, 78 años, cobrada de más) y 4 casos reales con minutos medidos (18m 34s, 24m 51s) en un video de 2:52.</li><li><strong>Dónde Plumb queda atrás:</strong> más cantidad de prueba (1781 chequeos de test contra 148), nube como código (10 archivos Terraform contra 0) y un sitio que sigue abierto a anónimos [1][7].</li><li><strong>Dónde Plumb no queda atrás:</strong> la idea y el cierre completo del ciclo (merge, deploy, resumen) son del mismo nivel; la brecha es de alcance y de cómo se cuenta.</li><li><strong>Qué conviene hacer:</strong> para el próximo evento, contar el número humano en el título del video y publicar la prueba fuera del grupo del evento.</li></ul>
+<p><strong>Pesos del jurado</strong> (<code>docs/judging.tsv</code>; &quot;equally-weighted&quot;, final 1 a 5.2):</p>
+<div class='wrap'><table><thead><tr><th>Criterio</th><th>Peso</th><th>Secciones que lo responden</th></tr></thead><tbody><tr><td>Technological Implementation</td><td>20%</td><td>4, 5, 9, 10</td></tr><tr><td>Design (flujo completo)</td><td>20%</td><td>3, 6</td></tr><tr><td>Potential Impact</td><td>20%</td><td>1, 6</td></tr><tr><td>Innovation/Idea</td><td>20%</td><td>7</td></tr><tr><td>Presentation</td><td>20%</td><td>1, 8</td></tr><tr><td>Google Cloud (bonus)</td><td>+0.2</td><td>9, 11</td></tr><tr><td>Stage One: usa Duo (aprobado / reprobado)</td><td>—</td><td>2</td></tr></tbody></table></div>
+<p><strong>Lo que no se pudo ver</strong> — el margen de error de todo lo que sigue:</p>
+<ul><li>Las notas reales del jurado: no se publican. Las notas 1–5 de abajo son mi lectura con la evidencia medida, no las del jurado.</li><li>El contenido del video de ShakeFix: solo se midió duración (172 s) y título [12]. No se vio qué muestra.</li><li>Si el sitio de Plumb ya estaba cerrado a anónimos cuando juzgó el jurado: hoy pide login [7], antes no se sabe.</li></ul>
+<hr>
+<h2>Tabla comparativa</h2>
+<p>Escala: <code><span class="v v-fuerte">fuerte</span></code> · <code><span class="v v-cumple">cumple</span></code> · <code><span class="v v-flojo">flojo</span></code> · <code><span class="v v-ausente">ausente</span></code> (se miró y no está) · <code><span class="v v-sin-evidencia">sin evidencia</span></code> (no se pudo ver). Nota 1–5 por criterio.</p>
+<div class='wrap'><table class="sortable"><thead><tr><th>Proyecto</th><th>Nicho</th><th>Tecnología 20%</th><th>Diseño 20%</th><th>Impacto 20%</th><th>Innovación 20%</th><th>Presentación 20%</th><th>Nube +0.2</th><th>Nota</th><th>Amenaza</th></tr></thead><tbody><tr><td><code>nxt-spacenos-global/shakefix</code></td><td>reporte de bug por sacudida del celular</td><td><span class="v v-fuerte">fuerte</span> 5</td><td><span class="v v-fuerte">fuerte</span> 5</td><td><span class="v v-fuerte">fuerte</span> 5</td><td><span class="v v-fuerte">fuerte</span> 5</td><td><span class="v v-fuerte">fuerte</span> 5</td><td><span class="v v-fuerte">fuerte</span></td><td>5.0/5</td><td>alta</td></tr><tr><td>Plumb (propio)</td><td>test inestable en CI</td><td><span class="v v-cumple">cumple</span> 4</td><td><span class="v v-fuerte">fuerte</span> 5</td><td><span class="v v-cumple">cumple</span> 4</td><td><span class="v v-fuerte">fuerte</span> 5</td><td><span class="v v-cumple">cumple</span> 4</td><td><span class="v v-cumple">cumple</span></td><td>4.4/5</td><td>—</td></tr></tbody></table></div>
+<p><strong>Amenaza</strong> es contra el premio al que competía Plumb. Alta: mismo premio, mismo jurado, ShakeFix cubre las 9 etapas de DevSecOps y suma capas que Plumb no tiene.</p>
+<hr>
+<details><summary><code>nxt-spacenos-global/shakefix</code> — ShakeFix</summary>
+<p><strong>Qué hace:</strong> una persona sacude el celular y un flujo de Duo con 4 agentes escribe la prueba que falla, arregla, compara producción contra el arreglo y publica; la persona confirma con un pulgar.</p>
+<div class='wrap'><table><thead><tr><th></th><th></th></tr></thead><tbody><tr><td>Repo</td><td><a href="https://gitlab.com/nxt-spacenos-global/shakefix">https://gitlab.com/nxt-spacenos-global/shakefix</a> · creado 2026-10-10 · JavaScript · MIT (archivo <code>LICENSE</code>, la API no lo detecta) [1][13]</td></tr><tr><td>Demo</td><td><code>judges.html</code> 200 en 0.70 s a anónimos; CareRx 200 en 0.36 s [7]</td></tr><tr><td>Devpost</td><td><code>shakefix</code> · video sí, 172 s, título con &quot;18m 34s, 0 humans&quot; [6][12]</td></tr><tr><td>Equipo</td><td>2 personas + 2 bots · reparto 105/45 humanos (de 189 commits) [4]</td></tr><tr><td>Historial</td><td>primer commit 2026-10-12 · 189 commits · previos a la apertura: no [4]</td></tr></tbody></table></div>
+<div class='wrap'><table><thead><tr><th>Criterio</th><th>Veredicto</th><th>Evidencia</th></tr></thead><tbody><tr><td>Tecnología 20%</td><td><span class="v v-fuerte">fuerte</span></td><td>445 archivos, 114 de test, 1781 chequeos; 27 jobs de CI con SAST, dependencias y secretos; 10 .tf [2][5][10]</td></tr><tr><td>Diseño 20%</td><td><span class="v v-fuerte">fuerte</span></td><td>11 etapas desde la sacudida hasta &quot;sigue arreglado tras cada deploy&quot;; MR !12 mergeado por bot con 9 jobs en verde antes del merge [8][9]</td></tr><tr><td>Impacto 20%</td><td><span class="v v-fuerte">fuerte</span></td><td>Margaret, 4 bugs sembrados con caso real y cifra citada; 4 casos con minutos medidos (18m 34s a 37m 55s) [6][14]</td></tr><tr><td>Innovación 20%</td><td><span class="v v-fuerte">fuerte</span></td><td>Segunda Opinión (compara pantalla, API y base entre <code>main</code> y el arreglo) y voz (transcripción y llamada) [6]</td></tr><tr><td>Presentación 20%</td><td><span class="v v-fuerte">fuerte</span></td><td>Devpost 1381 palabras, 16 etiquetas, video 2:52 (&lt; 3:00), páginas para jurado y &quot;pruébalo vos&quot; [6][12]</td></tr><tr><td>Nube +0.2</td><td><span class="v v-fuerte">fuerte</span></td><td>Cloud Run, Firestore, Artifact Registry y Workload Identity en Terraform; CareRx vivo 200 [7][10]</td></tr><tr><td>Calidad de código</td><td><span class="v v-fuerte">fuerte</span></td><td>12 de 12 MRs de control con el veredicto esperado, escrito antes de correr [8]</td></tr><tr><td>Seguridad</td><td><span class="v v-cumple">cumple</span></td><td>sin <code>.env</code> en el árbol; no se escaneó el historial completo [2]</td></tr></tbody></table></div>
+<p><strong>Lo más <span class="v v-fuerte">fuerte</span>:</strong> los 12 controles con respuesta commiteada antes de correr: 12 de 12 coinciden [8].</p>
+<p><strong>Dónde se cae:</strong> el eval gradado solo tiene 1 arreglo corrido (1/1) y &quot;mediana sacudida a MR: not run&quot; [15]; <code>docs/sci.md</code> es un esqueleto con TODO [15].</p>
+<p><strong><span class="v v-sin-evidencia">sin evidencia</span>:</strong> qué muestra el video; si el jurado abrió los certificados firmados.</p>
+</details>
+<hr>
+<h2>Donde queda tu proyecto</h2>
+<div class='wrap'><table><thead><tr><th>Medición</th><th>Plumb</th><th>ShakeFix</th></tr></thead><tbody><tr><td>Archivos de test / chequeos</td><td>13 / 148 [5]</td><td>114 / 1781 [5]</td></tr><tr><td>Commits (primero)</td><td>147 (2026-10-17) [4]</td><td>189 (2026-10-12) [4]</td></tr><tr><td>Pipelines / de Duo</td><td>239 / 43 [3]</td><td>204 / 52 [3]</td></tr><tr><td>MRs mergeados / total</td><td>12 / 17 [3]</td><td>9 / 26 [3]</td></tr><tr><td>Terraform</td><td>0 archivos [10]</td><td>10 archivos [10]</td></tr><tr><td>Escaneos de seguridad en CI</td><td>SAST + secretos [10]</td><td>SAST + dependencias + secretos [10]</td></tr><tr><td>Video</td><td>143 s [12]</td><td>172 s [12]</td></tr><tr><td>Sitio público a anónimos</td><td>pide login (grupo archivado) [7]</td><td>200 en 0.70 s [7]</td></tr><tr><td>Nube en vivo</td><td>200 en 0.31 s [7]</td><td>200 en 0.36 s [7]</td></tr><tr><td>Número humano en el título del video</td><td>no (&quot;a hands-off GitLab Duo flow…&quot;) [12]</td><td>sí (&quot;live run, 18m 34s, 0 humans&quot;) [12]</td></tr></tbody></table></div>
+<p>Pipelines y MRs son del mismo orden: no los separó el volumen de corridas, sino lo que cada una cuenta.</p>
+<h3>Sugerencias</h3>
+<p>Ordenadas por peso del criterio. Se grepeó Plumb antes: cada fila dice si ya lo tiene.</p>
+<div class='wrap'><table><thead><tr><th>#</th><th>Sugerencia</th><th>Por qué importa</th><th>Criterio (peso)</th><th>Origen</th><th>Evidencia</th><th>Esfuerzo</th><th>Mueve nota</th></tr></thead><tbody><tr><td>S-01</td><td>Poner la cifra humana en el título del video y de la ficha: Plumb ya mide 9 min 47 s sin humano (<code>docs/submission.md:42</code>), solo falta decirlo arriba</td><td>El jurado puede juzgar solo por texto y video; ShakeFix lo hizo y su video lleva el número en el título</td><td>Presentación (20%)</td><td>brecha</td><td>ShakeFix: &quot;18m 34s, 0 humans&quot; en el título; Plumb: sin número [12]</td><td>bajo</td><td>si</td></tr><tr><td>S-02</td><td>Pre-registrar un lote de controles: veredicto esperado commiteado antes de correr, tabla de aciertos</td><td>Prueba que el árbitro no se ajustó después; Plumb tiene 1 control negativo (33/50) pero no una tabla de varios</td><td>Tecnología (20%)</td><td>brecha</td><td>ShakeFix 12/12 [8]; en Plumb <code>grep</code> de pre-registro en <code>docs/submission.md</code>: 0</td><td>medio</td><td>si</td></tr><tr><td>S-03</td><td>Persona con nombre y costo en plata, no solo &quot;el developer de guardia&quot;. Plumb ya tiene un destinatario y 1 incidente medido (<code>docs/submission.md:27,43</code>): hay que contarlo con una persona</td><td>Impacto pide &quot;problema real, audiencia real&quot;; ShakeFix 5 por una persona y 4 cifras citadas</td><td>Impacto (20%)</td><td>brecha</td><td>ShakeFix: 4 bugs con caso real citado [6]; Plumb mock Impacto 4 por no probar el arreglo fuera de la demo</td><td>medio</td><td>si</td></tr><tr><td>S-04</td><td>Publicar el sitio y la prueba fuera del grupo del evento (o un espejo): al archivarse el grupo, el sitio pide login</td><td>Quien revise después del cierre no ve nada de Plumb</td><td>Presentación (20%)</td><td>brecha</td><td>ShakeFix 200 a anónimos; Plumb redirige a <code>sign_in</code> [7]</td><td>bajo</td><td>si (no demostrado que moviera el fallo)</td></tr><tr><td>S-05</td><td>Nube como código: pasar el despliegue de <code>gcloud run deploy</code> a Terraform con presupuesto y roles</td><td>El bonus pide código de despliegue en el repo; ShakeFix muestra 10 archivos</td><td>Nube (+0.2)</td><td>brecha</td><td>ShakeFix 10 .tf; Plumb 0 [10]</td><td>medio</td><td>si (hasta +0.2)</td></tr><tr><td>S-06</td><td>Más pruebas por componente: 148 chequeos frente a 1781 pesa en &quot;código y pipeline reflejan esfuerzo real&quot;</td><td>El jurado lee la cantidad de tests como señal de trabajo no trivial</td><td>Tecnología (20%)</td><td>brecha</td><td>13 archivos de test contra 114 [5]</td><td>alto</td><td>si</td></tr><tr><td>S-07</td><td>Etiquetas de Devpost: 5 contra 16</td><td>Casi nunca las pondera un jurado</td><td>—</td><td>—</td><td>5 contra 16 [6]</td><td>bajo</td><td><strong>cosmético</strong></td></tr></tbody></table></div>
+<blockquote><p>Control de sesgo: Plumb salió peor en 4 de 6 criterios y empató en Diseño e Innovación. Las celdas más cómodas que se revisaron fueron Diseño e Innovación (notas 5 y 5): se mantienen porque ShakeFix no tiene más &quot;decisión por código&quot; que el proof de 50 corridas de Plumb; la diferencia ahí es de público, no de ingeniería.</p></blockquote>
+<hr>
+<details><summary>Apéndice — como se midió</summary>
+<div class='wrap'><table><thead><tr><th>Ref</th><th>Comando</th></tr></thead><tbody><tr><td>[1]</td><td><code>glab api projects/nxt-spacenos-global%2Fshakefix</code> (id 87458663: <code>created_at</code>, <code>license</code>, <code>archived</code>, <code>forked_from_project</code>)</td></tr><tr><td>[2]</td><td><code>glab api &quot;projects/87458663/repository/tree?recursive=true&amp;per_page=100&amp;page=N&quot;</code> paginado, solo blobs: 445; sin <code>node_modules/</code> ni <code>.env</code></td></tr><tr><td>[3]</td><td><code>glab api &quot;projects/&lt;id&gt;/pipelines?per_page=1&quot; -i</code> y <code>?source=duo_workflow</code>, <code>merge_requests?state=all</code>, <code>?state=merged</code>, leyendo <code>X-Total</code> (ShakeFix 87458663; Plumb 87376478)</td></tr><tr><td>[4]</td><td><code>glab api &quot;projects/&lt;id&gt;/repository/commits?per_page=100&amp;page=N&amp;all=true&quot;</code> ordenado por <code>authored_date</code>; <code>repository/contributors</code></td></tr><tr><td>[5]</td><td><code>grep -rcE &#x27;\bassert[.(]\|expect\(&#x27; $(git ls-files \| grep -E &#x27;\.(test\|spec)\.&#x27;)</code> sumado, en el clone y en el repo propio</td></tr><tr><td>[6]</td><td><code>curl -s -A &#x27;Mozilla/5.0&#x27; https://devpost.com/software/shakefix</code> (y <code>plumb-t69qx1</code>), texto de <code>app-details-left</code> y etiquetas</td></tr><tr><td>[7]</td><td><code>curl -s -o /dev/null -w &#x27;%{http_code} %{time_total}s&#x27;</code> sobre <code>shakefix-bdb22c.gitlab.io/judges.html</code>, <code>carerx-pzd4uebegq-uc.a.run.app</code>, <code>showcase-8b103c.gitlab.io</code> (con <code>-L</code>: termina en <code>gitlab.com/users/sign_in</code>), <code>booking-vic4jyzsha-uc.a.run.app</code></td></tr><tr><td>[8]</td><td><code>controls/RESULTS.md</code> del clone: &quot;12 of 12 verdicts match&quot;, expectativas commiteadas antes</td></tr><tr><td>[9]</td><td><code>glab api projects/87458663/merge_requests/12</code> y <code>.../pipelines/2937755328/jobs</code>: autor <code>cto.spacenos</code>, mergeado por bot, 9 jobs <code>success</code> con <code>finished_at</code> ≤ <code>merged_at</code> (08:34:00)</td></tr><tr><td>[10]</td><td>clone <code>--depth 50</code> en el scratchpad: <code>ls infra/*.tf</code>, <code>grep template: .gitlab-ci.yml</code>, y las mismas sondas sobre el repo propio (<code>git ls-files \| grep -ciE &#x27;\.tf$&#x27;</code>)</td></tr><tr><td>[12]</td><td><code>curl</code> de la página de YouTube: <code>lengthSeconds</code> 172 (ShakeFix <code>SOZXeF82qZ0</code>) y 143 (Plumb <code>I6_9prWib8Q</code>), más el <code>&lt;title&gt;</code></td></tr><tr><td>[13]</td><td><code>glab api &quot;projects/87458663/repository/files/LICENSE/raw?ref=HEAD&quot;</code>: &quot;MIT License&quot;</td></tr><tr><td>[14]</td><td>ficha de Devpost, sección &quot;Accomplishments&quot;: tiempos tomados del certificado de cada caso (no se recalcularon)</td></tr><tr><td>[15]</td><td><code>evals/results/2026-10-10.md</code> y <code>docs/sci.md</code> del clone</td></tr></tbody></table></div>
+</details>
+<p class='pie'>Generado desde el .md por hackathon-review-competitor. El .md es la fuente: este archivo no se edita a mano.</p>
+</main>
+<script>
+const RANK = {"sin evidencia":0,"ausente":1,"flojo":2,"cumple":3,"fuerte":4,
+              "baja":0,"media":1,"alta":2};
+const key = (td) => {
+  const raw = td.textContent.trim();
+  const low = raw.toLowerCase();
+  for (const word in RANK) if (low.includes(word)) return [0, RANK[word]];
+  const num = parseFloat(raw.replace(",", "."));
+  if (!isNaN(num) && /^[\d.,\s/]+$/.test(raw)) return [0, num];
+  return [1, low];
+};
+document.querySelectorAll("table.sortable th").forEach((th, i) => {
+  th.addEventListener("click", () => {
+    const table = th.closest("table");
+    const body = table.tBodies[0];
+    const desc = !th.classList.contains("desc");
+    table.querySelectorAll("th").forEach(o => o.classList.remove("asc", "desc"));
+    th.classList.add(desc ? "desc" : "asc");
+    [...body.rows]
+      .sort((a, b) => {
+        const [ka, va] = key(a.cells[i]), [kb, vb] = key(b.cells[i]);
+        if (ka !== kb) return ka - kb;
+        const cmp = typeof va === "number" ? va - vb : String(va).localeCompare(String(vb), "es");
+        return desc ? -cmp : cmp;
+      })
+      .forEach(row => body.appendChild(row));
+  });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang='es'>
+<head>
+<meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<title>Competidores — GitLab Transcend &quot;Life After Code&quot; · Offbrief</title>
+<style>
+:root {
+  --bg: #fbfaf8; --fg: #1a1b1e; --dim: #62656b; --line: #e2e0dc; --card: #ffffff;
+  --fuerte: #1f7a4d; --fuerte-bg: #e6f4ec;
+  --cumple: #2f6f9f; --cumple-bg: #e7f0f8;
+  --flojo: #9a6212; --flojo-bg: #fbf0dd;
+  --ausente: #a13b32; --ausente-bg: #fbeae8;
+  --sin: #6b3fa0; --sin-bg: #f0e9f9;
+}
+* { box-sizing: border-box; }
+html { color-scheme: light; }
+body {
+  margin: 0; padding: 32px 16px 64px; background: var(--bg); color: var(--fg);
+  font: 15px/1.6 ui-sans-serif, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+}
+main { max-width: 1040px; margin: 0 auto; }
+h1 { font-size: 1.7rem; margin: 0 0 4px; letter-spacing: -0.01em; }
+h2 { font-size: 1.15rem; margin: 36px 0 10px; }
+h3 { font-size: 1rem; margin: 24px 0 8px; color: var(--dim); }
+p { margin: 10px 0; }
+hr { border: 0; border-top: 1px solid var(--line); margin: 28px 0; }
+a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+code {
+  font: 0.86em ui-monospace, SFMono-Regular, Menlo, monospace;
+  background: var(--card); border: 1px solid var(--line); border-radius: 4px; padding: 1px 5px;
+}
+blockquote {
+  margin: 16px 0; padding: 12px 16px; border-left: 3px solid var(--sin);
+  background: var(--sin-bg); border-radius: 0 6px 6px 0;
+}
+blockquote p { margin: 0; }
+.wrap { overflow-x: auto; margin: 14px 0; border: 1px solid var(--line); border-radius: 8px; }
+table { border-collapse: separate; border-spacing: 0; width: 100%; font-size: 0.9rem; background: var(--card); }
+th, td { border-bottom: 1px solid var(--line); padding: 6px 10px; text-align: left; vertical-align: top; }
+td + td, th + th { border-left: 1px solid var(--line); }
+tbody tr:last-child td { border-bottom: 0; }
+th {
+  position: sticky; top: 0; z-index: 1; background: #f1eee9;
+  font-weight: 600; white-space: nowrap; border-bottom: 2px solid var(--line);
+}
+tbody tr:nth-child(even) { background: #f7f5f2; }
+tbody tr:hover { background: #eef4fb; }
+table.sortable th { cursor: pointer; user-select: none; }
+table.sortable th::after { content: " \2195"; color: var(--dim); font-size: 0.8em; }
+table.sortable th.asc::after { content: " \2191"; color: var(--fg); }
+table.sortable th.desc::after { content: " \2193"; color: var(--fg); }
+.v { font-weight: 600; border-radius: 4px; padding: 1px 7px; white-space: nowrap; display: inline-block; }
+.v-fuerte { color: var(--fuerte); background: var(--fuerte-bg); }
+.v-cumple { color: var(--cumple); background: var(--cumple-bg); }
+.v-flojo { color: var(--flojo); background: var(--flojo-bg); }
+.v-ausente { color: var(--ausente); background: var(--ausente-bg); }
+.v-sin-evidencia { color: var(--sin); background: var(--sin-bg); outline: 1px dashed var(--sin); }
+details {
+  border: 1px solid var(--line); border-radius: 8px; margin: 12px 0;
+  padding: 0 16px; background: var(--card);
+}
+details[open] { padding-bottom: 12px; }
+summary {
+  cursor: pointer; padding: 12px 0; font-size: 1.05rem; font-weight: 600; list-style-position: outside;
+}
+.pie { color: var(--dim); font-size: 0.85rem; margin-top: 40px; }
+@media print {
+  body { background: #fff; color: #000; padding: 0; }
+  details { break-inside: avoid; }
+  details:not([open]) > *:not(summary) { display: revert; }
+  table.sortable th { cursor: auto; }
+}
+</style>
+</head>
+<body>
+<main>
+<h1>Competidores — GitLab Transcend &quot;Life After Code&quot; · Offbrief</h1>
+<div class='wrap'><table><thead><tr><th></th><th></th></tr></thead><tbody><tr><td>Fecha</td><td>2026-11-17</td></tr><tr><td>Modo</td><td>hackathon</td></tr><tr><td>Evaluados</td><td>1 (+ Plumb como control) · clonados 0 · <strong>nada se ejecutó</strong></td></tr><tr><td>Ventana</td><td>submissions 2026-10-05 → 2026-10-27 (13:00 UTC)</td></tr></tbody></table></div>
+<h2>En criollo</h2>
+<ul><li><strong>Qué se miró:</strong> Offbrief, el rival más parecido a Plumb: también desconfía del &quot;verde&quot; que escribe el mismo agente. Todo por la API de GitLab, la ficha de Devpost y dos sitios en vivo; sin bajar ni correr nada.</li><li><strong>Quién es la amenaza:</strong> Offbrief, y alta. Hace la misma apuesta (el agente no corrige su propia nota), con mucho más aparato: 5 agentes de Duo, 79 corridas de Duo, 41 archivos de infraestructura, un benchmark de 24 casos con intervalos de confianza y un video de 2:55.</li><li><strong>Cómo estamos:</strong> Plumb gana en foco y claridad (un problema, una frase, 50 corridas como prueba); Offbrief gana en profundidad técnica y en cantidad de evidencia pública. Los dos tienen el bonus de Google Cloud.</li><li><strong>Qué conviene hacer:</strong> no competir en volumen. Decir en la ficha, con números, qué resuelve Plumb que Offbrief no (tests intermitentes del propio proyecto, probados en 50 corridas) y cuidar que el jurado entienda Plumb en 30 segundos, algo que el README de Offbrief (6.143 palabras) no logra.</li></ul>
+<p><strong>Pesos del jurado</strong> (<code>docs/judging.tsv</code>; texto en <code>docs/HACKATHON.md</code> §4):</p>
+<div class='wrap'><table><thead><tr><th>Criterio</th><th>Peso</th><th>Secciones que lo responden</th></tr></thead><tbody><tr><td>Technological Implementation</td><td>20%</td><td>2, 4, 5, 9, 10</td></tr><tr><td>Design</td><td>20%</td><td>1, 6, 8</td></tr><tr><td>Potential Impact</td><td>20%</td><td>1, 7</td></tr><tr><td>Innovation/Idea</td><td>20%</td><td>7</td></tr><tr><td>Presentation</td><td>20%</td><td>1, 8</td></tr><tr><td>Stage One (pass/fail: usa GitLab Duo Agent Platform)</td><td>pasa o no</td><td>2</td></tr><tr><td>Bonus Google Cloud</td><td>+0.2</td><td>9, 11</td></tr></tbody></table></div>
+<p><strong>Lo que no se pudo ver</strong> — el margen de error de todo lo que sigue:</p>
+<ul><li>El sitio de GitLab Pages de ambos redirige a login tras el cierre (afecta a todos por igual); la sesión de cada flow tampoco se ve sin iniciar sesión, solo sus pipelines.</li><li>Los 2.489 tests de Offbrief son lo que dice su README [10]; no se contaron ni se corrieron.</li><li>Hay 10 commits de &quot;Mario Gutierrez&quot; junto a 76 de <code>terrizoaguimor</code>: no se pudo saber si es la misma persona con otra identidad de git.</li></ul>
+<hr>
+<h2>Tabla comparativa</h2>
+<p>Escala: <code><span class="v v-fuerte">fuerte</span></code> · <code><span class="v v-cumple">cumple</span></code> · <code><span class="v v-flojo">flojo</span></code> · <code><span class="v v-ausente">ausente</span></code> (se miró y no está) · <code><span class="v v-sin-evidencia">sin evidencia</span></code> (no se pudo ver).</p>
+<div class='wrap'><table class="sortable"><thead><tr><th>Proyecto</th><th>Nicho</th><th>Tecnología 20%</th><th>Diseño 20%</th><th>Impacto 20%</th><th>Innovación 20%</th><th>Presentación 20%</th><th>Nota</th><th>Amenaza</th></tr></thead><tbody><tr><td><code>offbrief</code> (rival)</td><td>Puerta de calidad por tráfico real grabado</td><td><span class="v v-fuerte">fuerte</span> (4.5)</td><td><span class="v v-cumple">cumple</span> (4)</td><td><span class="v v-cumple">cumple</span> (4)</td><td><span class="v v-fuerte">fuerte</span> (4.5)</td><td><span class="v v-cumple">cumple</span> (4)</td><td>21/25 +0.2</td><td>alta</td></tr><tr><td><code>plumb</code> (propio)</td><td>Puerta de calidad para tests intermitentes</td><td><span class="v v-cumple">cumple</span> (4)</td><td><span class="v v-cumple">cumple</span> (4)</td><td><span class="v v-cumple">cumple</span> (4)</td><td><span class="v v-fuerte">fuerte</span> (4.5)</td><td><span class="v v-cumple">cumple</span> (4)</td><td>20.5/25 +0.2</td><td>—</td></tr></tbody></table></div>
+<p><strong>Amenaza</strong> es contra *tu* entrada, no calidad absoluta. Las notas de Plumb son la base consolidada de otros revisores; no se cambiaron.</p>
+<hr>
+<details><summary><code>gitlab-ai-hackathon/.../43106822/offbrief</code> — Offbrief</summary>
+<p><strong>Qué hace:</strong> antes de aceptar un cambio hecho por un agente en una API de pacientes (sintética), vuelve a reproducir tráfico real grabado contra la versión estable y la nueva, y decide con una puerta de 12 chequeos si se publica.</p>
+<div class='wrap'><table><thead><tr><th></th><th></th></tr></thead><tbody><tr><td>Repo</td><td><a href="https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43106822/offbrief">https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43106822/offbrief</a> · creado 2026-10-07 · Python · MIT (archivo <code>LICENSE</code>; el campo de licencia de GitLab figura vacío) · archivado [1]</td></tr><tr><td>Demo</td><td>API en Google Cloud Run: <code>curl</code> 200 en 4.37 s (arranque en frío) y <code>/docs</code> 200 en 0.29 s; página de recibos 200 en 4.75 s [2]</td></tr><tr><td>Devpost</td><td><code>offbrief</code> · video sí (<a href="https://youtu.be/kjYJZfcc33U,">https://youtu.be/kjYJZfcc33U,</a> 2:55) [3]</td></tr><tr><td>Equipo</td><td>1 persona según la ficha (&quot;solo build&quot;) · 76/10/14 commits: <code>terrizoaguimor</code> / &quot;Mario Gutierrez&quot; / cuentas de servicio de Duo [4]</td></tr><tr><td>Historial</td><td>proyecto creado 2026-10-07 (posterior a la apertura del 2026-10-05) · 199 commits · previos al evento: no [1][4]</td></tr></tbody></table></div>
+<div class='wrap'><table><thead><tr><th>Criterio</th><th>Veredicto</th><th>Evidencia</th></tr></thead><tbody><tr><td>Technological Implementation 20%</td><td><span class="v v-fuerte">fuerte</span></td><td>5 flows de Duo en <code>flows/</code>, 79 corridas <code>duo_workflow</code> (78 ok, 1 fallida), 199 commits, 41 archivos <code>.tf</code> (infraestructura como código), 137 archivos de test [4][5][6]</td></tr><tr><td>Design 20%</td><td><span class="v v-cumple">cumple</span></td><td>un único disparador (issue con etiqueta) y recibos encadenados con hash; pero el README tiene 6.143 palabras y 299 líneas, con jerga densa en las primeras 40 líneas [7]</td></tr><tr><td>Potential Impact 20%</td><td><span class="v v-cumple">cumple</span></td><td>público claro (equipos con agentes sobre datos regulados), pero el demo es una API sintética de pacientes; la brecha admitida (<code>c6-raw-ip-miss</code>) está documentada [8]</td></tr><tr><td>Innovation/Idea 20%</td><td><span class="v v-fuerte">fuerte</span></td><td>&quot;el tráfico de producción es el único testigo que el agente no escribió&quot;: 3 réplicas, marcas honeytoken por corrida y canary; benchmark de 24 casos: tests del agente 0/18, puerta determinista 17/18, 0/6 falsos positivos [8]</td></tr><tr><td>Presentation 20%</td><td><span class="v v-cumple">cumple</span></td><td>video de 2:55 con apertura en frío (30/30 tests del agente contra la puerta en FAIL) y ficha larga; la ficha no es fácil de seguir sin glosar el vocabulario propio [3][7]</td></tr><tr><td>Stage One (Duo)</td><td><span class="v v-cumple">cumple</span></td><td>5 flows definidos y 79 pipelines <code>duo_workflow</code> en 2026-10 [5][6]</td></tr><tr><td>Bonus Google Cloud</td><td><span class="v v-fuerte">fuerte</span></td><td>despliegue vivo en Cloud Run 200 + 41 <code>.tf</code> y <code>deploy.yml</code> con <code>gcloud</code>/Cloud Run en el repo [2][9]</td></tr><tr><td>Calidad de código</td><td><span class="v v-fuerte">fuerte</span></td><td>README afirma 2.489 tests (no verificado); 137 archivos de test; deps con <code>uv.lock</code> y 14 <code>.lock</code> [7][10]</td></tr><tr><td>Seguridad</td><td><span class="v v-cumple">cumple</span></td><td>sin <code>.env</code> ni <code>.pem</code> en el árbol; el proyecto es en sí un escáner de fuga de datos; honeytokens sintéticos [11]</td></tr><tr><td>CI/CD</td><td><span class="v v-cumple">cumple</span></td><td>100 pipelines recientes: 86 ok / 14 fallidos (4 de ellos de <code>api</code>, 5 de MR); el conductor de MR !10 terminó verde (12:43:51) antes del merge (12:45:53), lo que sostiene un merge por el pipeline y no manual [12]</td></tr></tbody></table></div>
+<p><strong>Lo más <span class="v v-fuerte">fuerte</span>:</strong> profundidad y evidencia pública verificable: 79 corridas de Duo, benchmark de 24 casos con intervalo de confianza y 41 archivos <code>.tf</code> [4][5][6].</p>
+<p><strong>Dónde se cae:</strong> legibilidad (README de 6.143 palabras), demo sobre datos inventados, y una brecha propia (<code>c6-raw-ip-miss</code>) que el benchmark reconoce [7][8].</p>
+<p><strong><span class="v v-sin-evidencia">sin evidencia</span>:</strong> los 2.489 tests (solo el README los afirma), el contenido de las sesiones de Duo y si &quot;Mario Gutierrez&quot; es otra persona.</p>
+</details>
+<hr>
+<h2>Donde queda tu proyecto</h2>
+<div class='wrap'><table><thead><tr><th>Criterio</th><th>Plumb</th><th><code>offbrief</code></th></tr></thead><tbody><tr><td>Corridas de Duo (<code>duo_workflow</code>)</td><td>43 [5]</td><td>79 [5]</td></tr><tr><td>Pipelines totales</td><td>239 [5]</td><td>100 listados (86 ok) [12]</td></tr><tr><td>Flows de Duo</td><td>1 (<code>.gitlab/duo/triage-flow.yml</code>)</td><td>5</td></tr><tr><td>Tests</td><td>8 archivos de test unitario + 5 e2e a propósito intermitentes</td><td>137 archivos de test; 2.489 afirmados [10]</td></tr><tr><td>Infraestructura como código</td><td>0 <code>.tf</code>; despliegue con <code>run deploy</code> en <code>.gitlab-ci.yml</code> [9]</td><td>41 <code>.tf</code> [9]</td></tr><tr><td>Endpoint desplegado</td><td><code>curl</code> 200 en 0.29 s [2]</td><td>200 en 4.37 s en frío / 0.29 s [2]</td></tr><tr><td>Video</td><td>sí, 2:23</td><td>sí, 2:55</td></tr><tr><td>Palabras del README</td><td>ver <code>wc -w README.md</code> en Plumb (~152 líneas)</td><td>6.143 [7]</td></tr></tbody></table></div>
+<h3>Sugerencias</h3>
+<div class='wrap'><table><thead><tr><th>#</th><th>Sugerencia</th><th>Por qué importa</th><th>Criterio (peso)</th><th>Origen</th><th>Evidencia</th><th>Esfuerzo</th><th>Mueve nota</th></tr></thead><tbody><tr><td>S-01</td><td>En la ficha y el video, contrastar de frente con &quot;puerta por tráfico grabado&quot;: Plumb prueba con 50 corridas que un rojo es intermitente y lo arregla; Offbrief no atiende tests intermitentes del propio proyecto</td><td>El jurado va a ver los dos juntos (misma categoría, un solo premio) y necesita saber en 10 segundos qué hace Plumb que el otro no</td><td>Innovation (20%)</td><td>brecha</td><td><code>offbrief</code> 4.5 vs Plumb 4.5 en la misma idea [8]</td><td>bajo</td><td>sí</td></tr><tr><td>S-02</td><td>Poner en la ficha la cifra de corridas de Duo propias (43 en este proyecto) al lado del número de pipelines</td><td>Offbrief muestra 79 corridas y recibos; Plumb no muestra cuántas veces corrió su agente</td><td>Technological Implementation (20%)</td><td>brecha</td><td>79 vs 43 [5]</td><td>bajo</td><td>sí</td></tr><tr><td>S-03</td><td>Primer párrafo del README y de la ficha en una frase sin jerga, y mantenerlo</td><td>La puntuación de Presentación se juega en 30 s; el README rival tiene 6.143 palabras y vocabulario propio, la ventaja de Plumb es ser corto</td><td>Presentation (20%)</td><td>brecha</td><td>README rival: 6.143 palabras, 299 líneas [7]</td><td>bajo</td><td>sí</td></tr><tr><td>S-04</td><td>Nombrar en la ficha los límites conocidos de Plumb con su número, como hace el rival con su caso <code>c6</code></td><td>La honestidad sobre lo que no funciona ya está en el brief; el rival la usa de argumento</td><td>Potential Impact (20%)</td><td>brecha</td><td><code>offbrief</code> publica 17/18 con el caso fallido nombrado [8]</td><td>medio</td><td>sí</td></tr><tr><td>S-05</td><td>Agregar archivos de infraestructura (por ejemplo <code>.tf</code>) del despliegue a Cloud Run</td><td>Probaría el bonus con &quot;código de deploy en el repo&quot;; hoy es un <code>run deploy</code> en el pipeline</td><td>Bonus Google Cloud (+0.2)</td><td>brecha</td><td><code>offbrief</code> 41 <code>.tf</code>; Plumb 0 [9]</td><td>alto</td><td><strong>cosmético</strong> (el bonus ya está)</td></tr></tbody></table></div>
+<blockquote><p>Control de sesgo: Plumb se midió con las mismas sondas (duo_workflow, pipelines, <code>curl</code>) y sale detrás en profundidad técnica (43 vs 79 corridas, 1 vs 5 flows, 0 vs 41 <code>.tf</code>); mejora solo en claridad. Se revisaron las tres celdas más cómodas (Innovación, Presentación y Cloud) y se mantuvieron sin subirlas.</p></blockquote>
+<hr>
+<details><summary>Apéndice — cómo se midió</summary>
+<div class='wrap'><table><thead><tr><th>Ref</th><th>Comando</th></tr></thead><tbody><tr><td>[1]</td><td><code>glab api &quot;projects/gitlab-ai-hackathon%2Ftranscend-october-2026%2F43106822%2Foffbrief&quot; \| jq &#x27;{id,created_at,archived,license,topics}&#x27;</code></td></tr><tr><td>[2]</td><td><code>curl -s -o /dev/null -w &#x27;%{http_code} %{time_total}s&#x27; -m 20 &lt;url&gt;</code> sobre <code>patient-api-...run.app/health</code>, <code>/docs</code>, la página de recibos y <code>booking-vic4jyzsha-uc.a.run.app/health</code> (Plumb)</td></tr><tr><td>[3]</td><td><code>curl -s -A &#x27;Mozilla/5.0&#x27; https://devpost.com/software/offbrief</code> y <code>grep -oiE &#x27;youtu[^&quot;&lt;&gt; ]+&#x27;</code></td></tr><tr><td>[4]</td><td><code>glab api &quot;projects/87345551/repository/commits?per_page=100&amp;all=true&quot; \| jq -r &#x27;.[].author_name&#x27; \| sort \| uniq -c</code> y <code>glab api -i &quot;.../commits?per_page=1&amp;all=true&quot;</code> (X-Total 199)</td></tr><tr><td>[5]</td><td><code>glab api -i &quot;projects/&lt;id&gt;/pipelines?source=duo_workflow&amp;per_page=1&quot;</code> (X-Total: Offbrief 79, Plumb 43)</td></tr><tr><td>[6]</td><td><code>glab api &quot;projects/87345551/repository/tree?recursive=true&amp;per_page=100&amp;page=N&quot;</code> y <code>grep -E &#x27;^flows/\|^\.gitlab/duo&#x27;</code>, <code>grep -c &#x27;\.tf$&#x27;</code> (41), <code>grep -cE &#x27;(^\|/)tests?/.*\.py$&#x27;</code> (137)</td></tr><tr><td>[7]</td><td><code>glab api &quot;.../repository/files/README.md/raw?ref=HEAD&quot; \| wc -lw</code> (299 líneas, 6.143 palabras)</td></tr><tr><td>[8]</td><td><code>glab api &quot;.../repository/files/docs%2Fbenchmark.md/raw?ref=HEAD&quot;</code> (tabla de filas 1–4)</td></tr><tr><td>[9]</td><td><code>glab api &quot;.../files/.gitlab%2Fci%2Fdeploy.yml/raw&quot; \| grep -ciE &#x27;gcloud\|cloud run\|run deploy&#x27;</code> y <code>grep -l &#x27;run deploy&#x27; .gitlab-ci.yml ci/*.yml</code> en Plumb</td></tr><tr><td>[10]</td><td>Línea &quot;2,489 tests collected&quot; del README del rival (afirmación; no se contó ni ejecutó)</td></tr><tr><td>[11]</td><td><code>grep -E &#x27;^\.env$\|\.pem$&#x27;</code> sobre el árbol: sin resultados</td></tr><tr><td>[12]</td><td><code>glab api &quot;projects/87345551/pipelines?per_page=100&quot; \| jq</code> por estado y fuente; <code>glab api projects/87345551/merge_requests/10</code> y <code>.../pipelines/2946852762/jobs</code> (<code>finished_at</code> 12:43:51 ≤ <code>merged_at</code> 12:45:53)</td></tr></tbody></table></div>
+</details>
+<p class='pie'>Generado desde el .md por hackathon-review-competitor. El .md es la fuente: este archivo no se edita a mano.</p>
+</main>
+<script>
+const RANK = {"sin evidencia":0,"ausente":1,"flojo":2,"cumple":3,"fuerte":4,
+              "baja":0,"media":1,"alta":2};
+const key = (td) => {
+  const raw = td.textContent.trim();
+  const low = raw.toLowerCase();
+  for (const word in RANK) if (low.includes(word)) return [0, RANK[word]];
+  const num = parseFloat(raw.replace(",", "."));
+  if (!isNaN(num) && /^[\d.,\s/]+$/.test(raw)) return [0, num];
+  return [1, low];
+};
+document.querySelectorAll("table.sortable th").forEach((th, i) => {
+  th.addEventListener("click", () => {
+    const table = th.closest("table");
+    const body = table.tBodies[0];
+    const desc = !th.classList.contains("desc");
+    table.querySelectorAll("th").forEach(o => o.classList.remove("asc", "desc"));
+    th.classList.add(desc ? "desc" : "asc");
+    [...body.rows]
+      .sort((a, b) => {
+        const [ka, va] = key(a.cells[i]), [kb, vb] = key(b.cells[i]);
+        if (ka !== kb) return ka - kb;
+        const cmp = typeof va === "number" ? va - vb : String(va).localeCompare(String(vb), "es");
+        return desc ? -cmp : cmp;
+      })
+      .forEach(row => body.appendChild(row));
+  });
+});
+</script>
+</body>
+</html>

@@ -16,7 +16,7 @@ Code status in one line: unit tests (48) and API checks green; every triage path
 |---|---|---|---|
 | Repo and CI | `gitlab-ai-hackathon/transcend-october-2026/43144947/showcase` @ `c31b3de` | ok — `main` = `origin/main`, clean (only untracked local plan files); push pipeline 2983439213 success; 11 `fix/` MRs merged; public; MIT | 2026-10-24 00:10 UTC |
 | Site | https://showcase-8b103c.gitlab.io/ | ok — `index.html`, `app.js`, `text.js` and `styles.css` match `origin/main` (c31b3de, no-cache); every link answers 200 except the two font `preconnect` hosts (404 at the root, expected); stat card 3/3 and the epic-stack link live | 2026-10-24 00:10 UTC |
-| Demo app | https://booking-vic4jyzsha-uc.a.run.app | ok — serves "Book an appointment"; `deploy` and `live-checks` green on pipeline 2983124458, `live-health` green on schedule run 2983142614 | 2026-10-23 22:12 UTC |
+| Demo app | https://booking-vic4jyzsha-uc.a.run.app | down by design — project `showcase-flaky` deleted after the winners were announced; the README, `docs/submission.md` and `site/index.html` still link it | 2026-11-18 UTC |
 | Monitoring | schedule 4497507, every 6 h, job `live-health` | ok — green on schedule pipeline 2983441390 | 2026-10-24 00:10 UTC |
 | Submission | https://devpost.com/software/plumb-t69qx1 | ok — submitted to Life After Code; public page shows the tagline, video I6_9prWib8Q, 6 gallery images, 7 tags and the 4 Try it out links (anonymous curl) | 2026-10-24 00:40 UTC |
 | Gallery card | https://gitlab-transcend.devpost.com/project-gallery | not published yet — Devpost shows no cards at all (0 `gallery-item`) while submissions are open; check the card's thumbnail and tagline after 2026-10-27 13:00 UTC | 2026-10-24 UTC |
@@ -33,7 +33,7 @@ Shut down in `hackathon-retro`, once judging ends.
 
 | Resource | Provider | How to delete | Live until |
 |---|---|---|---|
-| project `showcase-flaky` (Cloud Run service `booking`, us-central1) | Google Cloud | `gcloud projects delete showcase-flaky` | 2026-11-16 |
+| project `showcase-flaky` (Cloud Run service `booking`, us-central1) | Google Cloud | `gcloud projects delete showcase-flaky` | deleted 2026-11-18 (`DELETE_REQUESTED`; restorable with `gcloud projects undelete` for 30 days) |
 
 ## Duplicated facts
 

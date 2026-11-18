@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang='es'>
+<head>
+<meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<title>Competidores — GitLab Transcend &quot;Life After Code&quot; (Earned Autonomy)</title>
+<style>
+:root {
+  --bg: #fbfaf8; --fg: #1a1b1e; --dim: #62656b; --line: #e2e0dc; --card: #ffffff;
+  --fuerte: #1f7a4d; --fuerte-bg: #e6f4ec;
+  --cumple: #2f6f9f; --cumple-bg: #e7f0f8;
+  --flojo: #9a6212; --flojo-bg: #fbf0dd;
+  --ausente: #a13b32; --ausente-bg: #fbeae8;
+  --sin: #6b3fa0; --sin-bg: #f0e9f9;
+}
+* { box-sizing: border-box; }
+html { color-scheme: light; }
+body {
+  margin: 0; padding: 32px 16px 64px; background: var(--bg); color: var(--fg);
+  font: 15px/1.6 ui-sans-serif, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+}
+main { max-width: 1040px; margin: 0 auto; }
+h1 { font-size: 1.7rem; margin: 0 0 4px; letter-spacing: -0.01em; }
+h2 { font-size: 1.15rem; margin: 36px 0 10px; }
+h3 { font-size: 1rem; margin: 24px 0 8px; color: var(--dim); }
+p { margin: 10px 0; }
+hr { border: 0; border-top: 1px solid var(--line); margin: 28px 0; }
+a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+code {
+  font: 0.86em ui-monospace, SFMono-Regular, Menlo, monospace;
+  background: var(--card); border: 1px solid var(--line); border-radius: 4px; padding: 1px 5px;
+}
+blockquote {
+  margin: 16px 0; padding: 12px 16px; border-left: 3px solid var(--sin);
+  background: var(--sin-bg); border-radius: 0 6px 6px 0;
+}
+blockquote p { margin: 0; }
+.wrap { overflow-x: auto; margin: 14px 0; border: 1px solid var(--line); border-radius: 8px; }
+table { border-collapse: separate; border-spacing: 0; width: 100%; font-size: 0.9rem; background: var(--card); }
+th, td { border-bottom: 1px solid var(--line); padding: 6px 10px; text-align: left; vertical-align: top; }
+td + td, th + th { border-left: 1px solid var(--line); }
+tbody tr:last-child td { border-bottom: 0; }
+th {
+  position: sticky; top: 0; z-index: 1; background: #f1eee9;
+  font-weight: 600; white-space: nowrap; border-bottom: 2px solid var(--line);
+}
+tbody tr:nth-child(even) { background: #f7f5f2; }
+tbody tr:hover { background: #eef4fb; }
+table.sortable th { cursor: pointer; user-select: none; }
+table.sortable th::after { content: " \2195"; color: var(--dim); font-size: 0.8em; }
+table.sortable th.asc::after { content: " \2191"; color: var(--fg); }
+table.sortable th.desc::after { content: " \2193"; color: var(--fg); }
+.v { font-weight: 600; border-radius: 4px; padding: 1px 7px; white-space: nowrap; display: inline-block; }
+.v-fuerte { color: var(--fuerte); background: var(--fuerte-bg); }
+.v-cumple { color: var(--cumple); background: var(--cumple-bg); }
+.v-flojo { color: var(--flojo); background: var(--flojo-bg); }
+.v-ausente { color: var(--ausente); background: var(--ausente-bg); }
+.v-sin-evidencia { color: var(--sin); background: var(--sin-bg); outline: 1px dashed var(--sin); }
+details {
+  border: 1px solid var(--line); border-radius: 8px; margin: 12px 0;
+  padding: 0 16px; background: var(--card);
+}
+details[open] { padding-bottom: 12px; }
+summary {
+  cursor: pointer; padding: 12px 0; font-size: 1.05rem; font-weight: 600; list-style-position: outside;
+}
+.pie { color: var(--dim); font-size: 0.85rem; margin-top: 40px; }
+@media print {
+  body { background: #fff; color: #000; padding: 0; }
+  details { break-inside: avoid; }
+  details:not([open]) > *:not(summary) { display: revert; }
+  table.sortable th { cursor: auto; }
+}
+</style>
+</head>
+<body>
+<main>
+<h1>Competidores — GitLab Transcend &quot;Life After Code&quot; (Earned Autonomy)</h1>
+<div class='wrap'><table><thead><tr><th></th><th></th></tr></thead><tbody><tr><td>Fecha</td><td>2026-11-18</td></tr><tr><td>Modo</td><td>hackathon (concurso cerrado: Earned Autonomy ganó &quot;Most Stages Covered&quot; por Path B; Plumb, Path A Hands-off, no ganó)</td></tr><tr><td>Evaluados</td><td>1 (Earned Autonomy) + el proyecto propio (Plumb) · clonados 0 · <strong>nada se ejecuto</strong></td></tr><tr><td>Ventana</td><td>submissions 2026-10-05 → 2026-10-27 13:00 UTC</td></tr></tbody></table></div>
+<h2>En criollo</h2>
+<ul><li><strong>Que se miro:</strong> el repo de Earned Autonomy en GitLab, su espejo de GitHub, su ficha de Devpost y su archivo de pruebas (<code>CLAIMS.md</code>), sin ejecutar nada. Plumb se midio con las mismas sondas.</li><li><strong>Quien es la amenaza:</strong> alta, y ya se confirmo: gano. Cubre las 9 etapas con 4 flows de Duo, 1575 corridas de agentes y 61 despliegues; Plumb cubre una sola cosa, el main en rojo, con 1 flow y 43 corridas.</li><li><strong>Como estamos:</strong> en foco y en rigor de prueba (50 corridas seguidas verdes, control negativo 33/50) Plumb esta a la par; en amplitud y en como se le muestra la evidencia al jurado, Earned Autonomy gana.</li><li><strong>Que conviene hacer:</strong> la diferencia que mas peso no fue el codigo sino la entrada: un link por afirmacion en las primeras 40 lineas, y una tabla etapa por etapa con una corrida real cada una. Plumb ya tiene casi todo ese material, pero esta mas abajo y en un formato de auditoria.</li></ul>
+<p><strong>Pesos del jurado</strong> (<code>docs/judging.tsv</code>; los cinco criterios pesan igual, 20% cada uno):</p>
+<div class='wrap'><table><thead><tr><th>Criterio</th><th>Peso</th><th>Secciones que lo responden</th></tr></thead><tbody><tr><td>Stage One: usa GitLab Duo Agent Platform</td><td>pasa/no pasa</td><td>2</td></tr><tr><td>Technological Implementation</td><td>20%</td><td>4, 5, 9, 10</td></tr><tr><td>Design</td><td>20%</td><td>3, 4, 6</td></tr><tr><td>Potential Impact</td><td>20%</td><td>1, 7</td></tr><tr><td>Innovation/Idea</td><td>20%</td><td>7</td></tr><tr><td>Presentation</td><td>20%</td><td>1, 8</td></tr><tr><td>Bonus Google Cloud</td><td>+0.2</td><td>9, 11</td></tr></tbody></table></div>
+<p><strong>Lo que no se pudo ver</strong> — el margen de error de todo lo que sigue:</p>
+<ul><li>El video de Devpost (YouTube <code>_FYzcQnvD9M</code>): se vio que existe, no su duracion ni su contenido [8].</li><li>Los transcripts de las sesiones de agentes y la pagina del ledger (<code>showcase-4900ab.gitlab.io</code>): piden login, <code>curl</code> da 302 [7]. Afecta a Plumb igual (302 [7]).</li><li>No se clono ni se corrio nada: &quot;62 pruebas de interfaz y 58 de backend&quot; es lo que dice su README, no algo que se contara pasando [5].</li></ul>
+<hr>
+<h2>Tabla comparativa</h2>
+<p>Escala: <code><span class="v v-fuerte">fuerte</span></code> · <code><span class="v v-cumple">cumple</span></code> · <code><span class="v v-flojo">flojo</span></code> · <code><span class="v v-ausente">ausente</span></code> (se miro y no esta) · <code><span class="v v-sin-evidencia">sin evidencia</span></code> (no se pudo ver).</p>
+<div class='wrap'><table class="sortable"><thead><tr><th>Proyecto</th><th>Nicho</th><th>Technological Implementation</th><th>Design</th><th>Impact</th><th>Innovation</th><th>Presentation</th><th>Nota</th><th>Amenaza</th></tr></thead><tbody><tr><td><code>43529136/showcase</code> Earned Autonomy</td><td>Decidir por cada cambio cuanta autonomia gana, con memoria por area (Path B, sobre un template de 46k estrellas)</td><td><span class="v v-fuerte">fuerte</span></td><td><span class="v v-fuerte">fuerte</span></td><td><span class="v v-cumple">cumple</span></td><td><span class="v v-fuerte">fuerte</span></td><td><span class="v v-cumple">cumple</span></td><td>4.6/5</td><td>alta</td></tr><tr><td><code>43144947/showcase</code> Plumb (propio)</td><td>Arreglar el main en rojo y tests inestables (Path A)</td><td><span class="v v-fuerte">fuerte</span></td><td><span class="v v-cumple">cumple</span></td><td><span class="v v-cumple">cumple</span></td><td><span class="v v-fuerte">fuerte</span></td><td><span class="v v-cumple">cumple</span></td><td>4.2/5</td><td>—</td></tr></tbody></table></div>
+<p><strong>Amenaza</strong> es contra Plumb: compitieron por el mismo premio de Most Stages Covered y los mismos jueces; el nicho es distinto (cero menciones de tests inestables en su README [6]).</p>
+<hr>
+<details><summary><code>43529136/showcase</code> — Earned Autonomy</summary>
+<p><strong>Que hace:</strong> a cada cambio (merge request) le calcula evidencia, riesgo y un nivel de autonomia (Hands-off, Supervised, Assisted, Blocked); cuatro flows de Duo suben el riesgo, arreglan dependencias, abren incidentes y deshacen en produccion; un registro de confianza por area recalibra el nivel despues de cada release.</p>
+<div class='wrap'><table><thead><tr><th></th><th></th></tr></thead><tbody><tr><td>Repo</td><td><a href="https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43529136/showcase">https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43529136/showcase</a> (archivado) · creado 2026-10-20 · Python/React sobre <code>fastapi/full-stack-fastapi-template</code> · MIT en el espejo de GitHub, la API de GitLab devuelve licencia vacia [1]</td></tr><tr><td>Demo</td><td><a href="https://api-prod-gkozang2ta-uc.a.run.app">https://api-prod-gkozang2ta-uc.a.run.app</a> · <code>curl</code> 200 en 17.68 s (arranque en frio; el README avisa ~25 s) [7]</td></tr><tr><td>Devpost</td><td><code>earned-autonomy-li8qxm</code> · video de YouTube si · ficha de 1149 palabras · &quot;Winner, Most Stages Covered&quot; [8]</td></tr><tr><td>Equipo</td><td>una persona con dos nombres (39 commits &quot;Shivansh Kalra&quot; + 77 &quot;shivansh193&quot;) + 2 de <code>ea-triage-agent</code>; el resto es historial heredado del template [2]</td></tr><tr><td>Historial</td><td>espejo creado 2026-10-22, 1656 commits porque trae el historial del template (desde 2019); 128 commits desde 2026-10-05, 1 anterior a esa fecha por el import [2]</td></tr></tbody></table></div>
+<div class='wrap'><table><thead><tr><th>Criterio</th><th>Veredicto</th><th>Evidencia</th></tr></thead><tbody><tr><td>Stage One (Duo)</td><td><code><span class="v v-fuerte">fuerte</span></code></td><td>4 flows en <code>.gitlab/duo/flows/</code> (83 a 189 lineas) con trigger por eventos de pipeline [3]; 1575 pipelines <code>duo_workflow</code> entre 2026-10-20 y 2026-10-27, 1572 en <code>success</code> y 2 fallidos [4]</td></tr><tr><td>Technological Implementation 20%</td><td><code><span class="v v-fuerte">fuerte</span></code></td><td>54 MRs (40 mergeados, 14 abiertos), 61 despliegues y 2 entornos registrados en GitLab, Terraform en <code>infra/</code> [4][9]; 6 archivos <code>.spec.ts</code> de la UI y 14 <code>test_*.py</code>, &quot;62 + 58 pruebas&quot; segun el README [5]</td></tr><tr><td>Design 20%</td><td><code><span class="v v-fuerte">fuerte</span></code></td><td>Cadena completa en un diagrama del README (evidencia, riesgo, nivel, promocion, monitoreo, ledger) y una tabla etapa por etapa con una corrida real por cada una de las 9 etapas [6][10]</td></tr><tr><td>Potential Impact 20%</td><td><code><span class="v v-cumple">cumple</span></code></td><td>Aplica a un template real y muy usado, y a una segunda app (VaultScope, 350 pruebas); sin cifra de adopcion ni tiempo ahorrado medido [6]</td></tr><tr><td>Innovation 20%</td><td><code><span class="v v-fuerte">fuerte</span></code></td><td>Confianza por area que baja tras un rollback (+0.30) y sube con releases limpios (umbral 0.20 a 0.30); los agentes solo pueden subir el riesgo [6]</td></tr><tr><td>Presentation 20%</td><td><code><span class="v v-cumple">cumple</span></code></td><td>Las primeras 40 lineas ya traen tres afirmaciones con link cada una, mas una tabla &quot;verificalo en 5 minutos&quot;; video sin ver; la pagina del ledger pide login [6][7][8]</td></tr><tr><td>Bonus Google Cloud</td><td><code><span class="v v-fuerte">fuerte</span></code></td><td>Cloud Run vivo 200, Terraform, imagen a Artifact Registry y despliegue por pipeline [7][9]</td></tr><tr><td>Calidad de codigo</td><td><code><span class="v v-cumple">cumple</span></code></td><td>36 archivos de prueba en <code>backend/tests</code> y <code>frontend/tests</code>; no se corrieron [5]</td></tr><tr><td>Seguridad</td><td><code><span class="v v-cumple">cumple</span></code></td><td><code>.env</code> en el arbol sin estar en <code>.gitignore</code>: es el del template, con 3 de 3 claves sensibles en el valor de ejemplo <code>changethis</code> (no se transcribe nada) [11]; no se revisaron commits viejos (sin clone)</td></tr></tbody></table></div>
+<p><strong>Lo mas <span class="v v-fuerte">fuerte</span>:</strong> 1575 corridas de agentes, 61 despliegues y una prueba de benchmark pre-registrada (esperados commiteados a las 20:16 UTC, antes de abrir los 12 MR de las 20:19) que publica sus 2 fallas: 10/12, luego 12/12 [6].</p>
+<p><strong>Donde se cae:</strong> el merge de TODOS los 40 MR figura a nombre de la dueña de la cuenta (<code>merged_by</code> = <code>shivansh193</code>), incluido el !52 que se presenta como &quot;sin pasos humanos&quot;; solo el job programado (cron cada 10 min) lo hace creible [12]. El README dice &quot;re-run as a person&quot; y el CLAIMS dice &quot;the system re-ran&quot;, sin conciliar.</p>
+<p><strong><span class="v v-sin-evidencia">sin evidencia</span>:</strong> video, transcripts de agentes, conteo real de pruebas, cuantas de las 1575 corridas son de Router sobre MR de benchmark.</p>
+</details>
+<hr>
+<h2>Donde queda tu proyecto</h2>
+<p>Mismas sondas sobre Plumb (<code>gitlab-ai-hackathon/transcend-october-2026/43144947/showcase</code>, id 87376478). <strong>Como presenta cada uno la evidencia:</strong></p>
+<div class='wrap'><table><thead><tr><th>Criterio</th><th>Plumb</th><th>Earned Autonomy</th></tr></thead><tbody><tr><td>Forma del archivo de claims</td><td>tabla de 27 filas: afirmacion, donde aparece, fuente, comando para chequear; 7 links unicos a corridas [13]</td><td>tabla de 8 afirmaciones + 9 etapas con un link cada una; 14 links unicos a corridas, sin comando [13]</td></tr><tr><td>Enlazado desde el README</td><td>1 mencion, en la linea 117 (abajo de todo) [13]</td><td>1 mencion + &quot;Judge TL;DR&quot; de 14 filas con link en las lineas 14-30 [13]</td></tr><tr><td>Seccion &quot;que hizo una persona y que no&quot;</td><td><code><span class="v v-ausente">ausente</span></code>: solo una mencion de &quot;merged by a human&quot; en la linea 41 [14]</td><td><code><span class="v v-cumple">cumple</span></code>: seccion propia en el CLAIMS que lista que hizo la persona [13]</td></tr><tr><td>Mapa por etapa con una corrida real cada una</td><td><code><span class="v v-flojo">flojo</span></code>: &quot;9 etapas&quot; en CLAIMS/submission, el mapa esta en <code>docs/ARCHITECTURE.md</code>, sin link por etapa [14]</td><td><code><span class="v v-fuerte">fuerte</span></code>: tabla de 9 etapas, un link por etapa [13]</td></tr><tr><td>Pipelines <code>duo_workflow</code></td><td>43 (43 <code>success</code>) [4]</td><td>1575 (1572 <code>success</code>, 2 fallidos) [4]</td></tr><tr><td>Flows de Duo</td><td>1 (<code>triage-flow</code>)</td><td>4 [3]</td></tr><tr><td>MRs mergeados / quien</td><td>12; 11 <code>fix/</code> mergeados por el job <code>merge-gate</code>, con prueba de CI verde antes del merge (CLAIMS)</td><td>40; todos con <code>merged_by</code> = la dueña; merge por job programado [12]</td></tr><tr><td>Despliegues registrados (API de GitLab)</td><td>0, sin <code>environment:</code> en el CI (<code><span class="v v-ausente">ausente</span></code>) [9][14]</td><td>61, con 2 entornos [9]</td></tr><tr><td>Prueba de &quot;el arreglo funciona&quot;</td><td>50 corridas seguidas verdes, con control negativo (33/50 no se mergea)</td><td>benchmark pre-registrado de 12 casos, 10/12 luego 12/12 [6]</td></tr><tr><td>Benchmark con esperados commiteados antes de correr</td><td><code><span class="v v-ausente">ausente</span></code> (0 coincidencias de &quot;pre-register&quot; o &quot;committed before&quot;) [14]</td><td><code><span class="v v-fuerte">fuerte</span></code> [6]</td></tr><tr><td>Sitio publico sin login</td><td><code><span class="v v-flojo">flojo</span></code>: 302 [7]</td><td><code><span class="v v-flojo">flojo</span></code>: 302 [7]</td></tr><tr><td>Cloud Run vivo</td><td>200 en 0.31 s [7]</td><td>200 en 17.68 s en frio [7]</td></tr><tr><td>Commits propios</td><td>160 (API, todas las ramas) [2]</td><td>128 desde el 2026-10-05, mezclados con bots [2]</td></tr></tbody></table></div>
+<h3>Sugerencias</h3>
+<p>El concurso cerro: valen como aprendizaje para el proximo evento o para el retro. Cada una se chequeo contra el repo propio.</p>
+<div class='wrap'><table><thead><tr><th>#</th><th>Sugerencia</th><th>Por que importa</th><th>Criterio (peso)</th><th>Origen</th><th>Evidencia</th><th>Esfuerzo</th><th>Mueve nota</th></tr></thead><tbody><tr><td>S-01</td><td>Poner arriba del README una tabla &quot;verificalo en 5 minutos&quot;: una afirmacion, un link a la corrida. Plumb ya tiene los links (31 en el README, linea 88 en adelante); falta subirlos y contarlos como tabla</td><td>El jurado lee las primeras 40 lineas; Earned Autonomy tiene alli 3 afirmaciones con link y 14 filas con link, Plumb tiene un video y los comandos [13]</td><td>Presentation (20%)</td><td>brecha</td><td>14 filas con link a la linea 14-30 contra 0 en las primeras 40 lineas de Plumb [13]</td><td>bajo</td><td>si</td></tr><tr><td>S-02</td><td>Agregar a <code>docs/CLAIMS.md</code> una columna &quot;Corrida&quot; con el link de cada una de las 27 filas, sin quitar la columna de comando</td><td>Plumb gana en auditabilidad (comando por fila), Earned Autonomy en clic directo; lo ideal es tener ambos</td><td>Presentation (20%)</td><td>brecha</td><td>7 links unicos contra 14, y 0 columnas de link contra 1 [13]</td><td>bajo</td><td>si</td></tr><tr><td>S-03</td><td>Escribir en <code>docs/CLAIMS.md</code> y en el README una seccion &quot;que hizo una persona y que no&quot;, con la prueba del merge (job <code>merge-gate</code> en <code>success</code> antes de <code>merged_at</code>)</td><td>La atribucion de merge (<code>merged_by</code>) enganya igual en los dos; quien la explica primero se lleva la confianza del jurado</td><td>Technological Implementation (20%)</td><td>brecha</td><td>seccion presente en su CLAIMS, <span class="v v-ausente">ausente</span> en Plumb [13][14]</td><td>bajo</td><td>si</td></tr><tr><td>S-04</td><td>Contar &quot;las 9 etapas&quot; con una tabla etapa a etapa y una corrida real por etapa; el mapa ya existe en <code>docs/ARCHITECTURE.md</code>, no hay que inventarlo</td><td>Earned Autonomy gano el premio de etapas con esa tabla; Plumb afirma 9 etapas sin link por etapa [10][14]</td><td>Design (20%)</td><td>brecha</td><td>9 de 9 etapas con link contra 0 [13][14]</td><td>bajo</td><td>si</td></tr><tr><td>S-05</td><td>Registrar el despliegue a Cloud Run como <code>environment:</code> con deployment en GitLab</td><td>El jurado que mire &quot;Deployments&quot; ve 61 en un lado y 0 en Plumb, aunque Plumb despliega con <code>gcloud run deploy</code></td><td>Technological Implementation (20%) y bonus Google Cloud</td><td>brecha</td><td>61 contra 0 despliegues, 0 <code>environment:</code> en el CI propio [9][14]</td><td>bajo</td><td>si</td></tr><tr><td>S-06</td><td>Pre-registrar la expectativa antes de correr cada escenario de prueba (commit con el resultado esperado y su fecha), y publicar la tabla esperado/obtenido</td><td>Convierte &quot;12 de 12&quot; en una afirmacion que no depende de la palabra del autor</td><td>Innovation (20%)</td><td>brecha</td><td>benchmark con esperados antes de correr contra 0 coincidencias [6][14]</td><td>medio</td><td>si</td></tr><tr><td>S-07</td><td>Sumar al menos un segundo flow (por ejemplo revisar el riesgo del MR del arreglo) y con eso mas corridas publicas</td><td>El jurado de Most Stages cuenta flows y corridas: 1 contra 4, 43 contra 1575</td><td>Technological Implementation (20%)</td><td>brecha</td><td>1 flow contra 4; 43 contra 1575 corridas [3][4]</td><td>alto</td><td>si</td></tr><tr><td>S-08</td><td>Estrellas, topics y tamano del README: no tocar</td><td>No los pondera ninguno de los 5 criterios</td><td>—</td><td>—</td><td><code>docs/judging.tsv</code></td><td>—</td><td><strong>cosmetico</strong></td></tr></tbody></table></div>
+<blockquote><p>Control de sesgo: Plumb salio peor o igual en la mayoria de las 13 filas; las celdas mas comodas (benchmark, &quot;forma del claims&quot;) se rechequearon con <code>grep</code> en el repo propio y con el conteo de links unicos de cada archivo [13][14]. Una aclaracion que favorece a Earned Autonomy: 1575 pipelines <code>duo_workflow</code> son corridas, no incidentes distintos: el Router corre en cada pipeline de MR, asi que el numero mide volumen de uso, no 1575 casos.</p></blockquote>
+<hr>
+<details><summary>Notas 1–5 por criterio</summary>
+<div class='wrap'><table><thead><tr><th>Criterio</th><th>Earned Autonomy</th><th>Plumb</th><th>Evidencia</th></tr></thead><tbody><tr><td>Technological Implementation</td><td>5</td><td>4</td><td>1575 vs 43 corridas de Duo, 4 vs 1 flows, 61 vs 0 despliegues, Terraform vs ninguno [3][4][9]</td></tr><tr><td>Design</td><td>5</td><td>4</td><td>Earned Autonomy cubre las 9 etapas con un link por etapa; Plumb un solo bucle muy bien probado sin mapa por etapa [13]</td></tr><tr><td>Potential Impact</td><td>4</td><td>4</td><td>Template de 46k estrellas y segunda app (VaultScope) contra el 84 % de fallos pasa-a-falla que son flaky (cita de Google) y 9 min 47 s; ninguno mide adopcion [6]</td></tr><tr><td>Innovation/Idea</td><td>5</td><td>5</td><td>Confianza por area que baja y sube, y esperados pre-registrados contra &quot;arreglar y probar con 50 corridas, con control negativo&quot; [6]</td></tr><tr><td>Presentation</td><td>4</td><td>4</td><td>Earned Autonomy: pitch con links en las primeras 40 lineas, video sin ver; Plumb: video de 2:23 y pagina con login; ambos con la pagina publica detras de login [7][8]</td></tr><tr><td><strong>Promedio</strong></td><td><strong>4.6</strong></td><td><strong>4.2</strong></td><td></td></tr><tr><td>Bonus Google Cloud</td><td>+0.2</td><td>+0.2</td><td>Ambos: Cloud Run vivo 200 y codigo de deploy en el repo; Earned Autonomy ademas Terraform y despliegues registrados [7][9]</td></tr></tbody></table></div>
+<p><strong>Total:</strong> Earned Autonomy 4.8/5.2, Plumb 4.4/5.2. Las notas son de esta revision y usan la misma vara que <code>competidores-gitlab-transcend-shipyard.md</code> (4.4 para Plumb); <code>docs/JUDGING-MOCK.md</code> le daba 4.6. <strong>La diferencia que mas peso:</strong> amplitud medida (9 etapas, 4 flows, 1575 corridas, 61 despliegues) mostrada con un link por afirmacion en la entrada, mientras que Plumb tenia la prueba pero repartida y mas abajo.</p>
+</details>
+<hr>
+<details><summary>Apendice — como se midio</summary>
+<div class='wrap'><table><thead><tr><th>Ref</th><th>Comando</th></tr></thead><tbody><tr><td>[1]</td><td><code>glab api &quot;projects/gitlab-ai-hackathon%2Ftranscend-october-2026%2F43529136%2Fshowcase&quot;</code> (id 87857306) y <code>gh api repos/shivansh193/earned-autonomy</code> (<code>fork</code> false, <code>license</code> MIT)</td></tr><tr><td>[2]</td><td><code>gh api &quot;repos/shivansh193/earned-autonomy/commits?since=2026-10-05T00:00:00Z&quot; --paginate --jq &#x27;.[].commit.author.name&#x27; \| sort \| uniq -c</code>; <code>glab api &quot;projects/87857306/repository/commits?since=2026-10-20T00:00:00Z&amp;per_page=100&quot;</code>; Plumb: <code>glab api &quot;projects/87376478/repository/commits?per_page=100&amp;page=N&amp;all=true&quot;</code> (3 paginas)</td></tr><tr><td>[3]</td><td><code>gh api repos/shivansh193/earned-autonomy/contents/.gitlab/duo/flows/&lt;flow&gt;.yaml -H &quot;Accept: application/vnd.github.raw&quot; \| wc -l</code> (4 archivos: 189, 83, 90, 104 lineas) y <code>grep -n Trigger</code> en la cabecera de cada uno</td></tr><tr><td>[4]</td><td><code>glab api &quot;projects/87857306/pipelines?source=duo_workflow&amp;per_page=1&amp;status=&lt;success\|failed&gt;&quot; -i \| grep -i x-total</code> (total 1575, rango 2026-10-20 a 2026-10-27); Plumb: igual sobre 87376478 (43)</td></tr><tr><td>[5]</td><td><code>grep -cE &#x27;\.spec\.ts$&#x27; &lt;scratchpad&gt;/eagh.tree</code> y <code>grep -cE &#x27;(^\|/)test_.*\.py$&#x27;</code> (6 y 14) sobre el arbol del espejo</td></tr><tr><td>[6]</td><td><code>head -60 &lt;scratchpad&gt;/eagh.readme</code> (pitch y &quot;Judge TL;DR&quot;); <code>gh api repos/shivansh193/earned-autonomy/contents/benchmark/RESULTS.md -H &quot;Accept: application/vnd.github.raw&quot;</code>; <code>grep -ci &#x27;flaky&#x27; &lt;scratchpad&gt;/eagh.readme</code></td></tr><tr><td>[7]</td><td><code>curl -s -o /dev/null -w &#x27;%{http_code} %{time_total}s&#x27; &lt;url&gt;</code>: <code>api-prod-gkozang2ta-uc.a.run.app/api/v1/utils/health-check/</code> 200 17.68 s; <code>showcase-4900ab.gitlab.io</code> 302 0.73 s; <code>showcase-8b103c.gitlab.io</code> (Plumb) 302 0.53 s; <code>booking-vic4jyzsha-uc.a.run.app</code> (Plumb) 200 0.31 s</td></tr><tr><td>[8]</td><td><code>curl -s -A &#x27;Mozilla/5.0&#x27; https://devpost.com/software/earned-autonomy-li8qxm</code> (200, 136982 bytes; <code>&lt;title&gt;</code>, embed de YouTube, &quot;Winner, Most Stages Covered&quot;)</td></tr><tr><td>[9]</td><td><code>glab api &quot;projects/&lt;id&gt;/deployments?per_page=1&quot; -i \| grep -i x-total</code> y <code>glab api &quot;projects/&lt;id&gt;/environments&quot; \| jq length</code>: 61 y 2 (EA), 0 y 0 (Plumb); <code>rtk proxy grep -n &#x27;environment:&#x27; .gitlab-ci.yml ci/plumb.gitlab-ci.yml</code> en Plumb: 0</td></tr><tr><td>[10]</td><td><code>sed -n 26,40p &lt;scratchpad&gt;/ea.claims</code> (tabla &quot;Every stage, with a real run&quot;) y <code>gh api repos/shivansh193/earned-autonomy/contents/docs/stages.md</code> (34 lineas)</td></tr><tr><td>[11]</td><td><code>gh api repos/shivansh193/earned-autonomy/contents/.env -H &quot;Accept: application/vnd.github.raw&quot; \| grep -E &#x27;^(SECRET_KEY\|FIRST_SUPERUSER_PASSWORD\|POSTGRES_PASSWORD)=&#x27; \| grep -c changethis</code> (3) y <code>grep -n &#x27;^\.env&#x27;</code> sobre su <code>.gitignore</code> (0)</td></tr><tr><td>[12]</td><td><code>glab api &quot;projects/87857306/merge_requests?state=all&amp;per_page=100&quot;</code> (merged_by); <code>.../pipelines/2992647202/jobs</code> (job <code>hands-off-merge</code> 03:54:23 a 03:54:38, merge a las 03:54:36.96); <code>.../pipeline_schedules</code> (<code>*/10 * * * *</code>)</td></tr><tr><td>[13]</td><td><code>grep -o &#x27;https://gitlab.com[^) ]*&#x27; &lt;archivo&gt; \| sort -u \| wc -l</code> sobre <code>ea.claims</code> (14) y <code>docs/CLAIMS.md</code> (7); <code>grep -n CLAIMS README.md</code> (Plumb: linea 117; EA: 1 mencion arriba)</td></tr><tr><td>[14]</td><td><code>rtk proxy grep -niE &#x27;a person\|by a human\|human&#x27; README.md</code>; <code>rtk proxy grep -rniE &#x27;pre-?regist\|committed before&#x27; docs/*.md README.md</code> (0); <code>rtk proxy grep -n &#x27;environment:&#x27; .gitlab-ci.yml ci/plumb.gitlab-ci.yml</code> (0); <code>grep -n &#x27;R7&#x27; docs/ARCHITECTURE.md</code></td></tr></tbody></table></div>
+</details>
+<p class='pie'>Generado desde el .md por hackathon-review-competitor. El .md es la fuente: este archivo no se edita a mano.</p>
+</main>
+<script>
+const RANK = {"sin evidencia":0,"ausente":1,"flojo":2,"cumple":3,"fuerte":4,
+              "baja":0,"media":1,"alta":2};
+const key = (td) => {
+  const raw = td.textContent.trim();
+  const low = raw.toLowerCase();
+  for (const word in RANK) if (low.includes(word)) return [0, RANK[word]];
+  const num = parseFloat(raw.replace(",", "."));
+  if (!isNaN(num) && /^[\d.,\s/]+$/.test(raw)) return [0, num];
+  return [1, low];
+};
+document.querySelectorAll("table.sortable th").forEach((th, i) => {
+  th.addEventListener("click", () => {
+    const table = th.closest("table");
+    const body = table.tBodies[0];
+    const desc = !th.classList.contains("desc");
+    table.querySelectorAll("th").forEach(o => o.classList.remove("asc", "desc"));
+    th.classList.add(desc ? "desc" : "asc");
+    [...body.rows]
+      .sort((a, b) => {
+        const [ka, va] = key(a.cells[i]), [kb, vb] = key(b.cells[i]);
+        if (ka !== kb) return ka - kb;
+        const cmp = typeof va === "number" ? va - vb : String(va).localeCompare(String(vb), "es");
+        return desc ? -cmp : cmp;
+      })
+      .forEach(row => body.appendChild(row));
+  });
+});
+</script>
+</body>
+</html>

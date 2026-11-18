@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang='es'>
+<head>
+<meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<title>Competidores — GitLab Transcend &quot;Life After Code&quot; (post-mortem de Lookback)</title>
+<style>
+:root {
+  --bg: #fbfaf8; --fg: #1a1b1e; --dim: #62656b; --line: #e2e0dc; --card: #ffffff;
+  --fuerte: #1f7a4d; --fuerte-bg: #e6f4ec;
+  --cumple: #2f6f9f; --cumple-bg: #e7f0f8;
+  --flojo: #9a6212; --flojo-bg: #fbf0dd;
+  --ausente: #a13b32; --ausente-bg: #fbeae8;
+  --sin: #6b3fa0; --sin-bg: #f0e9f9;
+}
+* { box-sizing: border-box; }
+html { color-scheme: light; }
+body {
+  margin: 0; padding: 32px 16px 64px; background: var(--bg); color: var(--fg);
+  font: 15px/1.6 ui-sans-serif, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+}
+main { max-width: 1040px; margin: 0 auto; }
+h1 { font-size: 1.7rem; margin: 0 0 4px; letter-spacing: -0.01em; }
+h2 { font-size: 1.15rem; margin: 36px 0 10px; }
+h3 { font-size: 1rem; margin: 24px 0 8px; color: var(--dim); }
+p { margin: 10px 0; }
+hr { border: 0; border-top: 1px solid var(--line); margin: 28px 0; }
+a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+code {
+  font: 0.86em ui-monospace, SFMono-Regular, Menlo, monospace;
+  background: var(--card); border: 1px solid var(--line); border-radius: 4px; padding: 1px 5px;
+}
+blockquote {
+  margin: 16px 0; padding: 12px 16px; border-left: 3px solid var(--sin);
+  background: var(--sin-bg); border-radius: 0 6px 6px 0;
+}
+blockquote p { margin: 0; }
+.wrap { overflow-x: auto; margin: 14px 0; border: 1px solid var(--line); border-radius: 8px; }
+table { border-collapse: separate; border-spacing: 0; width: 100%; font-size: 0.9rem; background: var(--card); }
+th, td { border-bottom: 1px solid var(--line); padding: 6px 10px; text-align: left; vertical-align: top; }
+td + td, th + th { border-left: 1px solid var(--line); }
+tbody tr:last-child td { border-bottom: 0; }
+th {
+  position: sticky; top: 0; z-index: 1; background: #f1eee9;
+  font-weight: 600; white-space: nowrap; border-bottom: 2px solid var(--line);
+}
+tbody tr:nth-child(even) { background: #f7f5f2; }
+tbody tr:hover { background: #eef4fb; }
+table.sortable th { cursor: pointer; user-select: none; }
+table.sortable th::after { content: " \2195"; color: var(--dim); font-size: 0.8em; }
+table.sortable th.asc::after { content: " \2191"; color: var(--fg); }
+table.sortable th.desc::after { content: " \2193"; color: var(--fg); }
+.v { font-weight: 600; border-radius: 4px; padding: 1px 7px; white-space: nowrap; display: inline-block; }
+.v-fuerte { color: var(--fuerte); background: var(--fuerte-bg); }
+.v-cumple { color: var(--cumple); background: var(--cumple-bg); }
+.v-flojo { color: var(--flojo); background: var(--flojo-bg); }
+.v-ausente { color: var(--ausente); background: var(--ausente-bg); }
+.v-sin-evidencia { color: var(--sin); background: var(--sin-bg); outline: 1px dashed var(--sin); }
+details {
+  border: 1px solid var(--line); border-radius: 8px; margin: 12px 0;
+  padding: 0 16px; background: var(--card);
+}
+details[open] { padding-bottom: 12px; }
+summary {
+  cursor: pointer; padding: 12px 0; font-size: 1.05rem; font-weight: 600; list-style-position: outside;
+}
+.pie { color: var(--dim); font-size: 0.85rem; margin-top: 40px; }
+@media print {
+  body { background: #fff; color: #000; padding: 0; }
+  details { break-inside: avoid; }
+  details:not([open]) > *:not(summary) { display: revert; }
+  table.sortable th { cursor: auto; }
+}
+</style>
+</head>
+<body>
+<main>
+<h1>Competidores — GitLab Transcend &quot;Life After Code&quot; (post-mortem de Lookback)</h1>
+<div class='wrap'><table><thead><tr><th></th><th></th></tr></thead><tbody><tr><td>Fecha</td><td>2026-11-18</td></tr><tr><td>Modo</td><td>hackathon (post-mortem: el concurso cerró)</td></tr><tr><td>Evaluados</td><td>1 rival (Lookback) + el proyecto propio (Plumb) · clonados 1 (Lookback, superficial, borrado) · <strong>nada se ejecutó</strong></td></tr><tr><td>Ventana</td><td>submissions 2026-10-05 → 2026-10-27</td></tr></tbody></table></div>
+<h2>En criollo</h2>
+<ul><li><strong>Qué se miró:</strong> Lookback, ganador de &quot;Path A: Start Fresh \| Best Supervised Agent&quot; [1], contra Plumb, que no ganó, con los mismos cinco criterios del jurado.</li><li><strong>Quién es la amenaza:</strong> Lookback, y ya ganó. Toma una apelación ganada por una persona, corrige el error del software y calcula cuánta plata se le debe a las otras 413 familias perjudicadas ($25.861) [2].</li><li><strong>Cómo estamos:</strong> en lo técnico y en el diseño Plumb queda cerca. Se separa en Impacto y Presentación: Lookback muestra daño a personas con datos públicos reales, y Plumb mide minutos de CI en una app de prueba.</li><li><strong>Qué conviene hacer:</strong> la próxima vez, abrir el pitch con una persona y una cifra real, dejar algo que el jurado pueda tocar sin cuenta, y una página &quot;para jurados&quot;.</li></ul>
+<p><strong>Pesos del jurado</strong> (<code>docs/judging.tsv</code>; <code>docs/HACKATHON.md</code> §4): cinco criterios al 20 % más Stage One pasa/falla y +0,2 por Google Cloud.</p>
+<div class='wrap'><table><thead><tr><th>Criterio</th><th>Peso</th><th>Secciones que lo responden</th></tr></thead><tbody><tr><td>Technological Implementation</td><td>20 %</td><td>4, 5, 9, 10</td></tr><tr><td>Design (flujo completo)</td><td>20 %</td><td>4, 6</td></tr><tr><td>Potential Impact</td><td>20 %</td><td>1, 6</td></tr><tr><td>Innovation/Idea</td><td>20 %</td><td>7</td></tr><tr><td>Presentation</td><td>20 %</td><td>1, 8</td></tr><tr><td>Google Cloud</td><td>+0,2</td><td>9, 11</td></tr></tbody></table></div>
+<p><strong>Lo que no se pudo ver</strong> — el margen de error:</p>
+<ul><li>El video de Lookback (2:50): solo se verificó que existe y responde 200 [3]. Si el presentador es una persona o un avatar: <code>sin evidencia</code>.</li><li>La nota real que dio el jurado: no es pública. Las notas de abajo son estimaciones mías con la rúbrica del evento, no resultados.</li><li>Lookback es un solo rival: la conclusión &quot;esto pesó&quot; no se contrastó con los otros ganadores.</li></ul>
+<hr>
+<h2>Tabla comparativa</h2>
+<p>Escala: <code><span class="v v-fuerte">fuerte</span></code> · <code><span class="v v-cumple">cumple</span></code> · <code><span class="v v-flojo">flojo</span></code> · <code><span class="v v-ausente">ausente</span></code> (se miró y no está) · <code><span class="v v-sin-evidencia">sin evidencia</span></code> (no se pudo ver). Nota 1–5 por criterio.</p>
+<div class='wrap'><table class="sortable"><thead><tr><th>Proyecto</th><th>Nicho</th><th>Tecnología 20 %</th><th>Diseño 20 %</th><th>Impacto 20 %</th><th>Innovación 20 %</th><th>Presentación 20 %</th><th>Nota</th><th>Amenaza</th></tr></thead><tbody><tr><td><code>Lookback</code> (gana)</td><td>Beneficios públicos: reparación tras una apelación</td><td><span class="v v-fuerte">fuerte</span> 5</td><td><span class="v v-fuerte">fuerte</span> 5</td><td><span class="v v-fuerte">fuerte</span> 5</td><td><span class="v v-fuerte">fuerte</span> 5</td><td><span class="v v-fuerte">fuerte</span> 5</td><td>5,0</td><td>alta</td></tr><tr><td><code>Plumb</code> (propio)</td><td>Tests inestables en CI</td><td><span class="v v-cumple">cumple</span> 4</td><td><span class="v v-fuerte">fuerte</span> 5</td><td><span class="v v-cumple">cumple</span> 4</td><td><span class="v v-fuerte">fuerte</span> 5</td><td><span class="v v-cumple">cumple</span> 4</td><td>4,4</td><td>—</td></tr></tbody></table></div>
+<p><strong>Amenaza</strong> es contra *tu* entrada: Lookback compite por los mismos criterios con otra historia.</p>
+<hr>
+<details><summary><code>gitlab-ai-hackathon/.../38491653/showcase</code> — Lookback</summary>
+<p><strong>Qué hace:</strong> cuando alguien gana una apelación por un error del software, arregla el error, encuentra a todos los demás afectados y calcula qué se le debe a cada uno; solo puede actuar a favor de la persona.</p>
+<div class='wrap'><table><thead><tr><th></th><th></th></tr></thead><tbody><tr><td>Repo</td><td>proyecto 87291075 · creado 2026-10-06 · Python 64 % + Astro 29 % · <code>LICENSE</code> MIT en el repo, pero la API dice <code>license: null</code> [4] · archivado</td></tr><tr><td>Demo</td><td>sitio en Cloud Run: 200 en 0.80 s; API <code>/docs</code>: 200 en 7.83 s (arranque en frío); video YouTube: 200 [3]</td></tr><tr><td>Devpost</td><td><code>lookback-k98qr5</code> · &quot;Winner, Path A: Start Fresh | Best Supervised Agent&quot; · video sí [1]</td></tr><tr><td>Equipo</td><td>1 persona con dos identidades de git: 94 + 11 de 113 commits, más 2 bots de Duo [5]</td></tr><tr><td>Historial</td><td>primer commit 2026-10-08, posterior a la apertura (2026-10-05) · 113 commits · previos al evento: no [5]</td></tr></tbody></table></div>
+<div class='wrap'><table><thead><tr><th>Criterio</th><th>Veredicto</th><th>Evidencia</th></tr></thead><tbody><tr><td>Tecnología 20 %</td><td><span class="v v-fuerte">fuerte</span></td><td>3 flujos Duo + 1 agente de chat + servidor MCP con 6 herramientas; 4 escáneres de seguridad, imagen firmada, Cloud Run por WIF (acceso sin claves); 86 funciones de prueba, 9.295 líneas [6]</td></tr><tr><td>Diseño 20 %</td><td><span class="v v-fuerte">fuerte</span></td><td>Apelación → MR → merge humano → bisección → replay → remedio → release: 7 etapas en <code>.gitlab-ci.yml</code>; corrió 2 veces con links [7]</td></tr><tr><td>Impacto 20 %</td><td><span class="v v-fuerte">fuerte</span></td><td>Problema con fuente en las primeras líneas (0,2 % de apelaciones en Colorado, KFF 80,7 % ganan); 413 hogares y $25.861; 99,0 % de acuerdo con USDA sobre 42.327 hogares reales [8]</td></tr><tr><td>Innovación 20 %</td><td><span class="v v-fuerte">fuerte</span></td><td>&quot;Autonomía asimétrica&quot;: actúa solo a favor de la persona; 0 acciones adversas en 14.030 casos; 9 sobrepagos quedan en revisión humana [8]</td></tr><tr><td>Presentación 20 %</td><td><span class="v v-fuerte">fuerte</span></td><td>Pitch con una persona (Ana) y su vecino (Ben); tabla de enlaces con video, sitio, API y página &quot;For judges&quot;; <code>docs/CLAIMS.md</code> con 68 líneas [3][9]</td></tr><tr><td>Google Cloud +0,2</td><td><span class="v v-fuerte">fuerte</span></td><td>Cloud Run (sitio y API), Artifact Registry, Cloud Storage, WIF; sitio sigue en 200 el 2026-11-18 [3]</td></tr><tr><td>Calidad de código</td><td><span class="v v-cumple">cumple</span></td><td>14 archivos de test; CI con 90 push OK y 6 fallidos, 20 corridas programadas OK y 1 fallida [10]</td></tr><tr><td>Seguridad</td><td><span class="v v-cumple">cumple</span></td><td>Sin <code>.env</code> en el árbol; escaneo de secretos y de contenedor en CI [6]</td></tr></tbody></table></div>
+<p><strong>Lo más <span class="v v-fuerte">fuerte</span>:</strong> 413 hogares y $25.861 hallados en una corrida real, con dato público real (42.327 hogares).</p>
+<p><strong>Dónde se cae:</strong> una sola persona; las decisiones de apelación están escritas por ellos y lo dicen; el flujo C de MCP es un control que no funciona todavía [8].</p>
+<p><strong><span class="v v-sin-evidencia">sin evidencia</span>:</strong> el video; la nota real del jurado.</p>
+</details>
+<hr>
+<h2>Donde queda tu proyecto</h2>
+<div class='wrap'><table><thead><tr><th>Medición</th><th>Plumb</th><th>Lookback</th></tr></thead><tbody><tr><td>Primeras 40 líneas del README</td><td>video, estado, comandos; el problema no aparece [11]</td><td>problema, persona, cifras con fuente y tabla de 4 enlaces [3]</td></tr><tr><td>Cifra de impacto</td><td>84 % de flaky de Google; la propia entrada admite que &quot;la cifra es de Google, no nuestra&quot; [12]</td><td>413 hogares / $25.861 propios, medidos [8]</td></tr><tr><td>Datos reales</td><td>app de reservas con flakiness puesta a propósito + 1 copia de epic-stack [12]</td><td>42.327 hogares del USDA [8]</td></tr><tr><td>Algo que el jurado toque sin cuenta</td><td>sitio en gitlab.io: 403 hoy [13]; app de demo 200 en 1.64 s</td><td>sitio y API: 200, con subida de CSV propio [3]</td></tr><tr><td>Página &quot;para jurados&quot;</td><td><span class="v v-ausente">ausente</span> (0 archivos del sitio) [14]</td><td>existe, 200 en 0.33 s [3]</td></tr><tr><td>Flujos Duo / agentes</td><td>1 flujo</td><td>3 flujos + 1 agente + MCP [6]</td></tr><tr><td>Tests</td><td>59 <code>test(</code> + 5 e2e [15]</td><td>86 <code>def test_</code> [6]</td></tr><tr><td>Commits / contribuyentes</td><td>147 / 1 persona (+1 cuenta de flujo)</td><td>113 / 1 persona</td></tr><tr><td>Pipelines <code>duo_workflow</code> en éxito</td><td>43</td><td>40 [10]</td></tr></tbody></table></div>
+<h3>Sugerencias</h3>
+<p><code>S-0N</code> por <strong>peso del criterio</strong>. Todas las de &quot;mueve nota&quot; se grepearon antes en el repo propio.</p>
+<div class='wrap'><table><thead><tr><th>#</th><th>Sugerencia</th><th>Por qué importa</th><th>Criterio (peso)</th><th>Origen</th><th>Evidencia</th><th>Esfuerzo</th><th>Mueve nota</th></tr></thead><tbody><tr><td>S-01</td><td>Abrir README, ficha y video con una persona concreta y una cifra propia en plata o tiempo: &quot;en N incidentes, M horas de CI y de lectura de logs&quot;</td><td>El jurado premió el daño a personas medido; Plumb solo cita a Google</td><td>Impacto (20 %)</td><td>brecha</td><td>Lookback: 413 hogares / $25.861 [8]; Plumb: cifra ajena, ya admitida [12]</td><td>medio</td><td>sí</td></tr><tr><td>S-02</td><td>Medir el costo del flaky en un proyecto real y público (no sembrado) y publicar el número</td><td>Plumb ya tiene epic-stack, pero ahí ningún fix pasó la prueba; no demuestra el impacto</td><td>Impacto (20 %)</td><td>brecha</td><td>Lookback: 99,0 % sobre 42.327 hogares reales [8]; Plumb: 3 pipelines en epic-stack, 0 fixes que valieran [12]</td><td>alto</td><td>sí</td></tr><tr><td>S-03</td><td>Contar lo que ya existe: <code>include: project</code> para usar Plumb en otro proyecto, con las 3 líneas visibles al inicio del README</td><td>Lookback ofrece &quot;traé tus datos&quot;; Plumb ya lo tiene pero está en la línea 57 y el sitio no lo menciona (0 <code>include</code>) [14]</td><td>Impacto (20 %)</td><td>brecha</td><td>README línea 57; <code>grep -c include site/index.html</code> = 0</td><td>bajo</td><td>sí</td></tr><tr><td>S-04</td><td>Una página &quot;para jurados&quot;: cada criterio con su evidencia y enlace</td><td>Lookback la tiene; en Plumb solo existe <code>docs/JUDGING-MOCK.md</code>, no publicada</td><td>Presentación (20 %)</td><td>brecha</td><td><code>site/src/pages/judges.astro</code> en Lookback [3]; 0 en Plumb [14]</td><td>bajo</td><td>sí</td></tr><tr><td>S-05</td><td>Algo que el jurado use sin cuenta ni login, fuera de gitlab.io</td><td>El sitio de Plumb da 403 anónimo hoy; el de Lookback, 200 en Cloud Run</td><td>Presentación (20 %)</td><td>brecha</td><td>Plumb 403, Lookback 200 [3][13]</td><td>medio</td><td>sí</td></tr><tr><td>S-06</td><td>Reemplazar o complementar el avatar de IA por una persona real en cámara (o dejar claro en pantalla qué es real)</td><td>Plumb lo declara y lo etiqueta YouTube; el mock ya lo señalaba como el hueco para el 5</td><td>Presentación (20 %)</td><td>brecha</td><td><code>docs/AI_DISCLOSURE.md:7</code>; Lookback: <code><span class="v v-sin-evidencia">sin evidencia</span></code></td><td>alto</td><td>sí</td></tr><tr><td>S-07</td><td>Más piezas de Duo: un agente de chat o MCP para explicar un veredicto</td><td>Lookback: 3 flujos + chat + MCP; Plumb: 1 flujo</td><td>Tecnología (20 %)</td><td>brecha</td><td>[6]</td><td>alto</td><td>sí</td></tr><tr><td>S-08</td><td>Sacar <code>license: null</code> de la API poniendo la licencia en la raíz, no solo en <code>LICENSE</code></td><td>La regla pide MIT &quot;visible en About&quot;; ambos repos dan <code>null</code> [4]</td><td>Reglas (pasa/falla)</td><td>hueco</td><td><code>glab api projects/&lt;id&gt;</code> de los dos</td><td>bajo</td><td><strong>cosmético</strong> (ya no cambia nada: concurso cerrado)</td></tr></tbody></table></div>
+<blockquote><p>Control de sesgo: Plumb se midió con las mismas sondas. El mock propio le daba 5 en Tecnología y acá bajó a 4 por menos piezas de Duo (1 flujo contra 3 + agente + MCP) y menos código; Presentación e Impacto quedan en 4. Se miraron las tres celdas más cómodas: Diseño, Innovación y Google Cloud.</p></blockquote>
+<hr>
+<details><summary>Apéndice — cómo se midió</summary>
+<div class='wrap'><table><thead><tr><th>Ref</th><th>Comando</th></tr></thead><tbody><tr><td>[1]</td><td><code>curl -s -A &lt;UA&gt; https://devpost.com/software/lookback-k98qr5 \| grep -oE &#x27;Winner[^&lt;]{0,80}&#x27;</code></td></tr><tr><td>[2]</td><td><code>grep -n &#x27;Households owed&#x27; README.md</code> (en <code>glab api projects/.../repository/files/README.md/raw?ref=main</code>)</td></tr><tr><td>[3]</td><td><code>curl -s -o /dev/null -L -w &#x27;%{http_code} %{time_total}s&#x27; &lt;url&gt;</code> sobre sitio, <code>/judges/</code>, <code>/docs</code>, YouTube; <code>head -60</code> del README</td></tr><tr><td>[4]</td><td><code>glab api projects/&lt;ruta&gt; \| jq &#x27;{license,archived,created_at}&#x27;</code>; <code>head -3 LICENSE</code> en el clon</td></tr><tr><td>[5]</td><td><code>glab api projects/&lt;ruta&gt;/repository/commits?per_page=100&amp;all=true --paginate</code> y <code>git shortlog -sn</code></td></tr><tr><td>[6]</td><td><code>git clone --depth 50</code>; <code>grep -rhE &#x27;^\s*def test_&#x27; tests \| wc -l</code>; <code>wc -l .gitlab/duo/flows/*.yaml</code>; <code>grep -nE &#x27;^(stage\|include)&#x27; .gitlab-ci.yml</code></td></tr><tr><td>[7]</td><td><code>glab api projects/&lt;ruta&gt;/merge_requests?state=all</code> y <code>.../releases</code></td></tr><tr><td>[8]</td><td><code>sed -n 1,200p</code> del README y del cuerpo de la ficha de Devpost</td></tr><tr><td>[9]</td><td><code>wc -l docs/CLAIMS.md</code>; <code>grep -n judges</code> en el árbol</td></tr><tr><td>[10]</td><td><code>glab api projects/&lt;ruta&gt;/pipelines?per_page=100 --paginate \| jq -r &#x27;&quot;\(.source) \(.status)&quot;&#x27; \| sort \| uniq -c</code></td></tr><tr><td>[11]</td><td><code>head -45 README.md</code> (Plumb)</td></tr><tr><td>[12]</td><td><code>docs/submission.md</code> líneas 27–46 y <code>docs/CLAIMS.md</code></td></tr><tr><td>[13]</td><td><code>curl -s -o /dev/null -L -w &#x27;%{http_code}&#x27; https://showcase-8b103c.gitlab.io/</code></td></tr><tr><td>[14]</td><td><code>git ls-files \| xargs grep -il judges</code>; <code>grep -c include site/index.html</code></td></tr><tr><td>[15]</td><td><code>grep -rhoE &#x27;^\s*(test\|it)\(&#x27; tests tools \| wc -l</code></td></tr></tbody></table></div>
+</details>
+<p class='pie'>Generado desde el .md por hackathon-review-competitor. El .md es la fuente: este archivo no se edita a mano.</p>
+</main>
+<script>
+const RANK = {"sin evidencia":0,"ausente":1,"flojo":2,"cumple":3,"fuerte":4,
+              "baja":0,"media":1,"alta":2};
+const key = (td) => {
+  const raw = td.textContent.trim();
+  const low = raw.toLowerCase();
+  for (const word in RANK) if (low.includes(word)) return [0, RANK[word]];
+  const num = parseFloat(raw.replace(",", "."));
+  if (!isNaN(num) && /^[\d.,\s/]+$/.test(raw)) return [0, num];
+  return [1, low];
+};
+document.querySelectorAll("table.sortable th").forEach((th, i) => {
+  th.addEventListener("click", () => {
+    const table = th.closest("table");
+    const body = table.tBodies[0];
+    const desc = !th.classList.contains("desc");
+    table.querySelectorAll("th").forEach(o => o.classList.remove("asc", "desc"));
+    th.classList.add(desc ? "desc" : "asc");
+    [...body.rows]
+      .sort((a, b) => {
+        const [ka, va] = key(a.cells[i]), [kb, vb] = key(b.cells[i]);
+        if (ka !== kb) return ka - kb;
+        const cmp = typeof va === "number" ? va - vb : String(va).localeCompare(String(vb), "es");
+        return desc ? -cmp : cmp;
+      })
+      .forEach(row => body.appendChild(row));
+  });
+});
+</script>
+</body>
+</html>

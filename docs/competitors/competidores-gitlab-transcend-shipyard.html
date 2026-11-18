@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang='es'>
+<head>
+<meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<title>Competidores — GitLab Transcend &quot;Life After Code&quot; (Shipyard)</title>
+<style>
+:root {
+  --bg: #fbfaf8; --fg: #1a1b1e; --dim: #62656b; --line: #e2e0dc; --card: #ffffff;
+  --fuerte: #1f7a4d; --fuerte-bg: #e6f4ec;
+  --cumple: #2f6f9f; --cumple-bg: #e7f0f8;
+  --flojo: #9a6212; --flojo-bg: #fbf0dd;
+  --ausente: #a13b32; --ausente-bg: #fbeae8;
+  --sin: #6b3fa0; --sin-bg: #f0e9f9;
+}
+* { box-sizing: border-box; }
+html { color-scheme: light; }
+body {
+  margin: 0; padding: 32px 16px 64px; background: var(--bg); color: var(--fg);
+  font: 15px/1.6 ui-sans-serif, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+}
+main { max-width: 1040px; margin: 0 auto; }
+h1 { font-size: 1.7rem; margin: 0 0 4px; letter-spacing: -0.01em; }
+h2 { font-size: 1.15rem; margin: 36px 0 10px; }
+h3 { font-size: 1rem; margin: 24px 0 8px; color: var(--dim); }
+p { margin: 10px 0; }
+hr { border: 0; border-top: 1px solid var(--line); margin: 28px 0; }
+a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+code {
+  font: 0.86em ui-monospace, SFMono-Regular, Menlo, monospace;
+  background: var(--card); border: 1px solid var(--line); border-radius: 4px; padding: 1px 5px;
+}
+blockquote {
+  margin: 16px 0; padding: 12px 16px; border-left: 3px solid var(--sin);
+  background: var(--sin-bg); border-radius: 0 6px 6px 0;
+}
+blockquote p { margin: 0; }
+.wrap { overflow-x: auto; margin: 14px 0; border: 1px solid var(--line); border-radius: 8px; }
+table { border-collapse: separate; border-spacing: 0; width: 100%; font-size: 0.9rem; background: var(--card); }
+th, td { border-bottom: 1px solid var(--line); padding: 6px 10px; text-align: left; vertical-align: top; }
+td + td, th + th { border-left: 1px solid var(--line); }
+tbody tr:last-child td { border-bottom: 0; }
+th {
+  position: sticky; top: 0; z-index: 1; background: #f1eee9;
+  font-weight: 600; white-space: nowrap; border-bottom: 2px solid var(--line);
+}
+tbody tr:nth-child(even) { background: #f7f5f2; }
+tbody tr:hover { background: #eef4fb; }
+table.sortable th { cursor: pointer; user-select: none; }
+table.sortable th::after { content: " \2195"; color: var(--dim); font-size: 0.8em; }
+table.sortable th.asc::after { content: " \2191"; color: var(--fg); }
+table.sortable th.desc::after { content: " \2193"; color: var(--fg); }
+.v { font-weight: 600; border-radius: 4px; padding: 1px 7px; white-space: nowrap; display: inline-block; }
+.v-fuerte { color: var(--fuerte); background: var(--fuerte-bg); }
+.v-cumple { color: var(--cumple); background: var(--cumple-bg); }
+.v-flojo { color: var(--flojo); background: var(--flojo-bg); }
+.v-ausente { color: var(--ausente); background: var(--ausente-bg); }
+.v-sin-evidencia { color: var(--sin); background: var(--sin-bg); outline: 1px dashed var(--sin); }
+details {
+  border: 1px solid var(--line); border-radius: 8px; margin: 12px 0;
+  padding: 0 16px; background: var(--card);
+}
+details[open] { padding-bottom: 12px; }
+summary {
+  cursor: pointer; padding: 12px 0; font-size: 1.05rem; font-weight: 600; list-style-position: outside;
+}
+.pie { color: var(--dim); font-size: 0.85rem; margin-top: 40px; }
+@media print {
+  body { background: #fff; color: #000; padding: 0; }
+  details { break-inside: avoid; }
+  details:not([open]) > *:not(summary) { display: revert; }
+  table.sortable th { cursor: auto; }
+}
+</style>
+</head>
+<body>
+<main>
+<h1>Competidores — GitLab Transcend &quot;Life After Code&quot; (Shipyard)</h1>
+<div class='wrap'><table><thead><tr><th></th><th></th></tr></thead><tbody><tr><td>Fecha</td><td>2026-11-17</td></tr><tr><td>Modo</td><td>hackathon</td></tr><tr><td>Evaluados</td><td>1 (Shipyard) + el proyecto propio (Plumb) · clonados 0 · <strong>nada se ejecuto</strong></td></tr><tr><td>Ventana</td><td>submissions 2026-10-05 → 2026-10-27 13:00 UTC</td></tr></tbody></table></div>
+<h2>En criollo</h2>
+<ul><li><strong>Que se miro:</strong> el repo de Shipyard en GitLab, su ficha de Devpost, su sitio en vivo y su historial de corridas de Duo, sin ejecutar nada. Plumb se midio con las mismas sondas.</li><li><strong>Quien es la amenaza:</strong> Shipyard, alta. Compite por el mismo premio unico y cubre todo el ciclo (request, build, review, deploy, incidente) con 97 corridas de Duo y 255 deploys; Plumb cubre una sola cosa, el main en rojo.</li><li><strong>Como estamos:</strong> Plumb gana en foco y en una prueba muy concreta (50 corridas seguidas verdes antes de mergear), pero pierde en volumen de evidencia (43 corridas de Duo contra 97) y en amplitud.</li><li><strong>Que conviene hacer:</strong> no competir en amplitud; mostrar lo que Shipyard no tiene (arreglar tests inestables, &quot;flaky&quot;, con prueba medida) y subir el conteo de evidencia verificable.</li></ul>
+<p><strong>Pesos del jurado</strong> (<code>docs/judging.tsv</code>; los cinco criterios pesan igual, 20% cada uno):</p>
+<div class='wrap'><table><thead><tr><th>Criterio</th><th>Peso</th><th>Secciones que lo responden</th></tr></thead><tbody><tr><td>Stage One: usa GitLab Duo Agent Platform</td><td>pasa/no pasa</td><td>2</td></tr><tr><td>Technological Implementation</td><td>20%</td><td>4, 5, 9, 10</td></tr><tr><td>Design</td><td>20%</td><td>3, 4, 6</td></tr><tr><td>Potential Impact</td><td>20%</td><td>1, 7</td></tr><tr><td>Innovation/Idea</td><td>20%</td><td>7</td></tr><tr><td>Presentation</td><td>20%</td><td>1, 8</td></tr><tr><td>Bonus Google Cloud</td><td>+0.2</td><td>9, 11</td></tr></tbody></table></div>
+<p><strong>Lo que no se pudo ver</strong> — el margen de error de todo lo que sigue:</p>
+<ul><li>No se pudo ver el video: el link responde 303 [8] y no se midio su duracion; la regla pide menos de 3 min y Shipyard dice &quot;3 min&quot;.</li><li>Las sesiones de agentes piden login de GitLab: no se pudo leer ni un transcript de Shipyard.</li><li>No se clono ni se corrio nada: &quot;tiene 364 tests&quot; es lo que dice su ficha, no algo que se contara pasando [5].</li></ul>
+<hr>
+<h2>Tabla comparativa</h2>
+<p>Escala: <code><span class="v v-fuerte">fuerte</span></code> · <code><span class="v v-cumple">cumple</span></code> · <code><span class="v v-flojo">flojo</span></code> · <code><span class="v v-ausente">ausente</span></code> (se miro y no esta) · <code><span class="v v-sin-evidencia">sin evidencia</span></code> (no se pudo ver).</p>
+<div class='wrap'><table class="sortable"><thead><tr><th>Proyecto</th><th>Nicho</th><th>Technological Implementation</th><th>Design</th><th>Impact</th><th>Innovation</th><th>Presentation</th><th>Nota</th><th>Amenaza</th></tr></thead><tbody><tr><td><code>10182502/showcase</code> Shipyard</td><td>Entrega de software de punta a punta, la maneja el publico</td><td><span class="v v-fuerte">fuerte</span></td><td><span class="v v-fuerte">fuerte</span></td><td><span class="v v-cumple">cumple</span></td><td><span class="v v-fuerte">fuerte</span></td><td><span class="v v-cumple">cumple</span></td><td>4.6/5</td><td>alta</td></tr><tr><td><code>43144947/showcase</code> Plumb (propio)</td><td>Arreglar el main en rojo y tests inestables</td><td><span class="v v-fuerte">fuerte</span></td><td><span class="v v-cumple">cumple</span></td><td><span class="v v-cumple">cumple</span></td><td><span class="v v-fuerte">fuerte</span></td><td><span class="v v-cumple">cumple</span></td><td>4.2/5</td><td>—</td></tr></tbody></table></div>
+<p><strong>Amenaza</strong> es contra Plumb: Shipyard compite por el mismo premio y por los mismos jueces, aunque en otro nicho (cero menciones de tests inestables en su README [6]).</p>
+<hr>
+<details><summary><code>10182502/showcase</code> — Shipyard</summary>
+<p><strong>Que hace:</strong> un sitio de pedidos de funciones al que cualquiera puede escribir; cinco flows de Duo piden, programan, revisan, arreglan y reparan solos, y todo se despliega en Google Cloud Run.</p>
+<div class='wrap'><table><thead><tr><th></th><th></th></tr></thead><tbody><tr><td>Repo</td><td><a href="https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/10182502/showcase">https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/10182502/showcase</a> · creado 2026-10-13 · Python (FastAPI) · MIT (archivo <code>LICENSE</code>; la API devuelve licencia vacia) [1]</td></tr><tr><td>Demo</td><td><a href="https://shipyard-p6ypbeakfq-nn.a.run.app">https://shipyard-p6ypbeakfq-nn.a.run.app</a> · <code>curl</code> 200 en 4.98 s la primera vez (arranque en frio), 200 en 0.96 s y 2.11 s despues [7]</td></tr><tr><td>Devpost</td><td><code>shipyard-4dqfa6</code> · link a YouTube presente, duracion sin medir [8]</td></tr><tr><td>Equipo</td><td>105 commits de <code>sam838</code> + 18 de Samuel Christian Suhartanto (misma persona probable, no verificado) · 28 de cuentas de agentes (24 build, 3 sre, 1 fix) [2]</td></tr><tr><td>Historial</td><td>primer commit 2026-10-15 · 172 commits visibles · previos al evento: no [2]</td></tr></tbody></table></div>
+<div class='wrap'><table><thead><tr><th>Criterio</th><th>Veredicto</th><th>Evidencia</th></tr></thead><tbody><tr><td>Stage One (Duo)</td><td><code><span class="v v-fuerte">fuerte</span></code></td><td>5 flows en <code>.gitlab/duo/flows/</code> (82 a 144 lineas cada uno) + 97 pipelines <code>duo_workflow</code> entre 2026-10-15 y 2026-10-22 [3]</td></tr><tr><td>Technological Implementation 20%</td><td><code><span class="v v-fuerte">fuerte</span></code></td><td>30 MRs (24 mergeados), 13 jobs en verde antes del merge del MR 30, merge a las 12:03:45 con los jobs terminados 12:02:10 [4]; 255 deploys; 16 archivos de test, &quot;364 tests&quot; segun la ficha [5]</td></tr><tr><td>Design 20%</td><td><code><span class="v v-fuerte">fuerte</span></code></td><td>Flujo completo request → triage → build → review → fix → deploy → incidente, dibujado en un diagrama mermaid del README [6]</td></tr><tr><td>Potential Impact 20%</td><td><code><span class="v v-cumple">cumple</span></code></td><td>Mediana de 15 min de pedido a produccion sobre 21 pedidos reales [9]; la app de demo es un tablero de pedidos, el valor esta en la automatizacion reutilizable (<code>docs/ADOPT.md</code>)</td></tr><tr><td>Innovation 20%</td><td><code><span class="v v-fuerte">fuerte</span></code></td><td>&quot;Bisect de produccion&quot;: reproduce 5 versiones desplegadas y nombra el commit culpable en 24 s [6]; aprobacion falsa humana eliminada en segundos (!17)</td></tr><tr><td>Presentation 20%</td><td><code><span class="v v-cumple">cumple</span></code></td><td>Primeras 40 lineas con el pitch claro y tabla &quot;compruebalo en 10 minutos&quot;; video sin ver; sitio con arranque en frio de 5 s [6][7]</td></tr><tr><td>Bonus Google Cloud</td><td><code><span class="v v-fuerte">fuerte</span></code></td><td>Cloud Run vivo, 200; Terraform en <code>infra/</code> (7 archivos), <code>ci/cloudrun.py</code>, <code>ci/gcloud_auth.sh</code>; 255 despliegues registrados [7][10]</td></tr><tr><td>Calidad de codigo</td><td><code><span class="v v-cumple">cumple</span></code></td><td>16 archivos de test y chequeos de politica (<code>policy/</code>); no se corrieron [5]</td></tr><tr><td>Seguridad</td><td><code><span class="v v-cumple">cumple</span></code></td><td>Solo <code>.env.example</code> en el arbol; 0 <code>.env</code>/<code>.pem</code> [11]; no se revisaron commits viejos (sin clone)</td></tr></tbody></table></div>
+<p><strong>Lo mas <span class="v v-fuerte">fuerte</span>:</strong> 97 corridas de Duo y 255 despliegues, con una prueba de merge atada a CI verde.</p>
+<p><strong>Donde se cae:</strong> el sitio tarda 4.98 s en frio y el sistema se congela 3 horas antes del cierre (README), asi que el jurado ve un sitio de solo lectura.</p>
+<p><strong><span class="v v-sin-evidencia">sin evidencia</span>:</strong> duracion del video, transcripts de agentes (piden login), conteo real de tests.</p>
+</details>
+<hr>
+<h2>Donde queda tu proyecto</h2>
+<p>Mismas sondas sobre Plumb (<code>gitlab-ai-hackathon/transcend-october-2026/43144947/showcase</code>, id 87376478).</p>
+<div class='wrap'><table><thead><tr><th>Criterio</th><th>Plumb</th><th>Shipyard</th></tr></thead><tbody><tr><td>Pipelines <code>duo_workflow</code></td><td>43 [3]</td><td>97 [3]</td></tr><tr><td>MRs mergeados</td><td>12 (11 <code>fix/</code> por <code>merge-gate</code> segun <code>docs/CLAIMS.md</code>)</td><td>24, merge atado a CI verde [4]</td></tr><tr><td>Despliegues registrados (API de GitLab)</td><td>0 (<code>gcloud run deploy</code> en CI, sin environments)</td><td>255 [10]</td></tr><tr><td>Cloud Run vivo</td><td>200 en 0.29 s</td><td>200 en 4.98 s (frio) [7]</td></tr><tr><td>Infraestructura como codigo</td><td><code><span class="v v-ausente">ausente</span></code> (se miro, no hay Terraform)</td><td>7 archivos Terraform</td></tr><tr><td>Flows de Duo</td><td>1 (<code>triage-flow</code>)</td><td>5</td></tr><tr><td>Tests</td><td>13 archivos <code>*.test.js</code>/<code>*.spec.ts</code> en el repo</td><td>16 archivos de test</td></tr><tr><td>Commits</td><td>147 (123 humano, 12 <code>triage-flow</code>)</td><td>172 visibles (28 de agentes)</td></tr><tr><td>Sitio publico sin login</td><td><code><span class="v v-flojo">flojo</span></code>: <code>curl</code> redirige a la autenticacion de GitLab Pages</td><td><code><span class="v v-cumple">cumple</span></code>: sitio en Cloud Run, 200</td></tr><tr><td>Prueba de &quot;fix correcto&quot;</td><td>50 corridas seguidas verdes, medido con control negativo (33/50)</td><td><code><span class="v v-ausente">ausente</span></code> en su nicho: 0 menciones de tests inestables [6]</td></tr></tbody></table></div>
+<h3>Sugerencias</h3>
+<div class='wrap'><table><thead><tr><th>#</th><th>Sugerencia</th><th>Por que importa</th><th>Criterio (peso)</th><th>Origen</th><th>Evidencia</th><th>Esfuerzo</th><th>Mueve nota</th></tr></thead><tbody><tr><td>S-01</td><td>Registrar el deploy de Cloud Run como un environment con deployment en GitLab</td><td>El jurado que busque &quot;deployments&quot; ve 0 en Plumb y 255 en Shipyard</td><td>Technological Implementation (20%) y bonus Google Cloud</td><td>brecha</td><td>0 contra 255 en la API de deployments [10]</td><td>bajo</td><td>si</td></tr><tr><td>S-02</td><td>Verificar la home publica de Plumb sin sesion (Pages redirige a login) y, si hace falta, enlazar una copia estatica en el README</td><td>Un jurado sin login no ve la pagina del proyecto</td><td>Presentation (20%)</td><td>brecha</td><td><code>curl</code> al sitio de Plumb: 302 y termina en <code>sign_in</code> 403 [12]</td><td>bajo</td><td>si</td></tr><tr><td>S-03</td><td>Poner arriba del README una tabla corta &quot;compruebalo en 5 minutos&quot; con un link por afirmacion (ya existe el patron en <code>docs/CLAIMS.md</code>)</td><td>Shipyard guia al jurado con 10 enlaces; Plumb esta repartido en 137 lineas</td><td>Presentation (20%)</td><td>brecha</td><td>Tabla &quot;Check it yourself&quot; en el README de Shipyard [6]</td><td>bajo</td><td>si</td></tr><tr><td>S-04</td><td>Mostrar en el video y la ficha lo que Shipyard no tiene: arreglar tests inestables con 50 corridas y el caso que no se merge (33/50)</td><td>Es la unica diferencia de nicho que ningun jurado ve si no se dice</td><td>Innovation (20%)</td><td>hueco</td><td>0 menciones de &quot;flaky&quot; en el README de Shipyard [6]</td><td>bajo</td><td>si</td></tr><tr><td>S-05</td><td>Subir el volumen de corridas de Duo reales y publicas (hoy 43 contra 97) con casos nuevos que aprieten otros caminos</td><td>El jurado cuenta pruebas; mas casos, menos duda</td><td>Technological Implementation (20%)</td><td>brecha</td><td>43 contra 97 pipelines <code>duo_workflow</code> [3]</td><td>medio</td><td>si</td></tr><tr><td>S-06</td><td>Medir y publicar el tiempo de arranque en frio y el costo de la demo</td><td>Shipyard publica carbono y creditos por pedido; Plumb no publica costo</td><td>Potential Impact (20%)</td><td>brecha</td><td>&quot;19 g CO2e y 14 creditos por feature&quot; en README de Shipyard [6]</td><td>medio</td><td>si</td></tr><tr><td>S-07</td><td>Estrellas, topics y tamano del README: no tocar</td><td>No los pondera ninguno de los 5 criterios</td><td>—</td><td>—</td><td><code>docs/judging.tsv</code></td><td>—</td><td><strong>cosmetico</strong></td></tr></tbody></table></div>
+<blockquote><p>Control de sesgo: Plumb salio peor en 6 de las 10 filas de la tabla de arriba; las celdas mas comodas (innovacion, bonus Cloud) se rechequearon con el deployment count y el <code>curl</code>. Notas 1–5 mas abajo.</p></blockquote>
+<hr>
+<details><summary>Notas 1–5 por criterio</summary>
+<div class='wrap'><table><thead><tr><th>Criterio</th><th>Shipyard</th><th>Plumb</th><th>Evidencia</th></tr></thead><tbody><tr><td>Technological Implementation</td><td>5</td><td>4</td><td>97 vs 43 corridas de Duo, 255 vs 0 despliegues, 5 vs 1 flows, Terraform vs ninguno [3][10]</td></tr><tr><td>Design</td><td>5</td><td>4</td><td>Shipyard cubre las 9 etapas con un diagrama; Plumb un solo bucle muy bien probado (8 caminos reales)</td></tr><tr><td>Potential Impact</td><td>4</td><td>4</td><td>Shipyard: 21 pedidos reales, mediana 15 min [9]; Plumb: 84% de fallos pasa-a-falla son flaky (cita de Google), 9 min 47 s</td></tr><tr><td>Innovation/Idea</td><td>5</td><td>5</td><td>Bisect de produccion y aprobacion falsa [6] contra 50 corridas verdes con control negativo 33/50</td></tr><tr><td>Presentation</td><td>4</td><td>4</td><td>Shipyard: tabla de 10 minutos, sitio con arranque en frio 5 s, video sin medir; Plumb: video de 2:23, pagina con login</td></tr><tr><td><strong>Promedio</strong></td><td><strong>4.6</strong></td><td><strong>4.2</strong></td><td></td></tr><tr><td>Bonus Google Cloud</td><td>+0.2</td><td>+0.2</td><td>Ambos: Cloud Run vivo 200, codigo de deploy en el repo, Workload Identity; Shipyard ademas Terraform [7][10]</td></tr></tbody></table></div>
+<p><strong>Total:</strong> Shipyard 4.8/5.2, Plumb 4.4/5.2. Las notas son de esta revision (mas exigentes que <code>docs/JUDGING-MOCK.md</code>, que le da 4.6 a Plumb): el Technological Implementation y el Design de Plumb no se igualan con evidencia de volumen que Shipyard si tiene.</p>
+</details>
+<hr>
+<details><summary>Apendice — como se midio</summary>
+<div class='wrap'><table><thead><tr><th>Ref</th><th>Comando</th></tr></thead><tbody><tr><td>[1]</td><td><code>glab api &quot;projects/gitlab-ai-hackathon%2Ftranscend-october-2026%2F10182502%2Fshowcase&quot;</code> (id 87562729) y <code>repository/files/LICENSE/raw</code></td></tr><tr><td>[2]</td><td><code>glab api &quot;projects/87562729/repository/commits?per_page=100&amp;all=true&quot;</code> (2 paginas, ordenado por fecha) y <code>repository/contributors</code></td></tr><tr><td>[3]</td><td><code>glab api -i &quot;projects/&lt;id&gt;/pipelines?source=duo_workflow&amp;per_page=1&quot;</code> (X-Total) y min/max de <code>created_at</code> del lado del cliente</td></tr><tr><td>[4]</td><td><code>glab api &quot;projects/87562729/merge_requests/30/pipelines&quot;</code>, <code>.../pipelines/&lt;id&gt;/jobs</code> y <code>merged_at</code> de <code>merge_requests?state=merged</code></td></tr><tr><td>[5]</td><td>Arbol del repo por <code>repository/tree?recursive=true</code>: archivos <code>tests/</code> y <code>policy/test_*</code>; el 364 sale de la ficha de Devpost</td></tr><tr><td>[6]</td><td><code>repository/files/README.md/raw?ref=HEAD</code> leido por partes; <code>grep -ciE &#x27;flak&#x27;</code> y mermaid del README</td></tr><tr><td>[7]</td><td><code>curl -s -o /dev/null -w &#x27;%{http_code} %{time_total}s&#x27; https://shipyard-p6ypbeakfq-nn.a.run.app</code> (y <code>/roadmap</code>)</td></tr><tr><td>[8]</td><td><code>curl -s -A &#x27;Mozilla/5.0&#x27; https://devpost.com/software/shipyard-4dqfa6</code> y <code>curl</code> a <code>youtu.be/20B75ANpBHE</code> (303)</td></tr><tr><td>[9]</td><td><code>repository/files/docs%2FEVIDENCE.md/raw?ref=HEAD</code> (32 pedidos, 21 llegaron a produccion, mediana 15.0 min)</td></tr><tr><td>[10]</td><td><code>glab api -i &quot;projects/&lt;id&gt;/deployments?per_page=1&quot;</code> (X-Total) y <code>repository/tree</code> en <code>infra/</code></td></tr><tr><td>[11]</td><td><code>repository/tree</code> filtrado por <code>\.env$\|\.pem$\|credentials</code>: solo <code>.env.example</code></td></tr><tr><td>[12]</td><td><code>curl -sL -o /dev/null -w &#x27;%{http_code} %{url_effective}&#x27; https://showcase-8b103c.gitlab.io/</code></td></tr></tbody></table></div>
+</details>
+<p class='pie'>Generado desde el .md por hackathon-review-competitor. El .md es la fuente: este archivo no se edita a mano.</p>
+</main>
+<script>
+const RANK = {"sin evidencia":0,"ausente":1,"flojo":2,"cumple":3,"fuerte":4,
+              "baja":0,"media":1,"alta":2};
+const key = (td) => {
+  const raw = td.textContent.trim();
+  const low = raw.toLowerCase();
+  for (const word in RANK) if (low.includes(word)) return [0, RANK[word]];
+  const num = parseFloat(raw.replace(",", "."));
+  if (!isNaN(num) && /^[\d.,\s/]+$/.test(raw)) return [0, num];
+  return [1, low];
+};
+document.querySelectorAll("table.sortable th").forEach((th, i) => {
+  th.addEventListener("click", () => {
+    const table = th.closest("table");
+    const body = table.tBodies[0];
+    const desc = !th.classList.contains("desc");
+    table.querySelectorAll("th").forEach(o => o.classList.remove("asc", "desc"));
+    th.classList.add(desc ? "desc" : "asc");
+    [...body.rows]
+      .sort((a, b) => {
+        const [ka, va] = key(a.cells[i]), [kb, vb] = key(b.cells[i]);
+        if (ka !== kb) return ka - kb;
+        const cmp = typeof va === "number" ? va - vb : String(va).localeCompare(String(vb), "es");
+        return desc ? -cmp : cmp;
+      })
+      .forEach(row => body.appendChild(row));
+  });
+});
+</script>
+</body>
+</html>
