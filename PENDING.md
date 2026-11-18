@@ -15,6 +15,7 @@ Code status in one line: unit tests (48) and API checks green; every triage path
 | Surface | Where | Status | Verified |
 |---|---|---|---|
 | Repo and CI | `gitlab-ai-hackathon/transcend-october-2026/43144947/showcase` @ `c31b3de` | ok — `main` = `origin/main`, clean (only untracked local plan files); push pipeline 2983439213 success; 11 `fix/` MRs merged; public; MIT | 2026-10-24 00:10 UTC |
+| GitHub copy | https://github.com/gmassello/plumb | ok — public, MIT, full history pushed after the GitLab project was archived (push rejected with 403) | 2026-11-18 UTC |
 | Site | https://showcase-8b103c.gitlab.io/ | ok — `index.html`, `app.js`, `text.js` and `styles.css` match `origin/main` (c31b3de, no-cache); every link answers 200 except the two font `preconnect` hosts (404 at the root, expected); stat card 3/3 and the epic-stack link live | 2026-10-24 00:10 UTC |
 | Demo app | https://booking-vic4jyzsha-uc.a.run.app | down by design — project `showcase-flaky` deleted after the winners were announced; the README, `docs/submission.md` and `site/index.html` still link it | 2026-11-18 UTC |
 | Monitoring | schedule 4497507, every 6 h, job `live-health` | ok — green on schedule pipeline 2983441390 | 2026-10-24 00:10 UTC |

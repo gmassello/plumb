@@ -4,6 +4,8 @@
 
 Entry for the [GitLab Transcend "Life After Code" hackathon](https://gitlab-transcend.devpost.com/): agents that automate the DevSecOps lifecycle after code is written, built on GitLab Duo Agent Platform.
 
+> This is the GitHub copy of the entry, with its full history. Every pipeline, merge request and Duo flow session linked below ran on the [GitLab project](https://gitlab.com/gitlab-ai-hackathon/transcend-october-2026/43144947/showcase), which the event archived after judging; its Pages site now asks for a GitLab login.
+
 **Status:** entry for the GitLab Transcend hackathon. Demo video: https://youtu.be/I6_9prWib8Q. Plumb's project page, in plain English and Spanish, is live at https://showcase-8b103c.gitlab.io/, published from [`site/`](site/) by the `pages` job.
 
 ## Commands
